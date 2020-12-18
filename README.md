@@ -63,11 +63,11 @@ Embora, o código Pix gerado por esse plugin inclua o número do pedido e o nome
 
 ### No diretório oficial do Wordpress ###
 
-A página oficial do plugin pode ser encontrada em: [wordpress@wc-piggly-pix](https://wordpress.org/plugins/pix-por-piggly/).
+A página oficial do plugin pode ser encontrada em: [wordpress@pix-por-piggly](https://wordpress.org/plugins/pix-por-piggly/).
 
 ### Neste repositório ###
 
-Vá para (Releases)[https://github.com/piggly-dev/piggly-views-wordpress/releases] neste repositório e faça o download em `.zip` da versão mais recente.
+Vá para [Releases](https://github.com/piggly-dev/wc-piggly-pix/releases) neste repositório e faça o download em `.zip` da versão mais recente.
 
 Então, no **Painel Administrativo** do Wordpress, vá em `Plugins > Adicionar novo` e clique em `Upload plugin` no topo da página para enviar o arquivo `.zip`.
 
@@ -81,6 +81,8 @@ Você precisará do Git instalado para contruir da origem. Para completar os pas
 
 Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o plugin **Pix por Piggly para Woocommerce**. Assim que você ativar, o plugin já estará disponível em `Woocommerce > Configurações > Pagamentos` e você poderá inserir todas as configurações pertinentes.
 
+**Preencha corretamente a sua chave Pix. Se necessário, para testar, crie um produto teste de R$ 1,00 e faça um Pix.**
+
 ## Changelog ##
 
 ### 1.0.0 ### 
@@ -90,4 +92,4 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 ## Contribuições ##
 
 Todas as contribuições são bem-vindas e serão bem recebidas ❤. 
-Não esqueça de ler nossas políticas de contribuição em [Contribuindo](https://github.com/piggly-dev/wc-piggly-pix/blob/master/CONTRIBUTING.md)
+Não esqueça de ler nossas políticas de contribuição em [Contribuindo](https://github.com/piggly-dev/wc-piggly-pix/blob/master/CONTRIBUTING.md).
