@@ -32,7 +32,18 @@ Nas configurações do plugin você é capaz de manipular as seguintes funções
 5. Informar o nome da loja para a descrição do Pix;
 6. Inserir o nome e a cidade do titular da conta Pix;
 7. Escolher o tipo de chave e informar o valor da chave Pix;
-8. Escrever as instruções para envio do comprovante de pagamento.
+8. Escrever as instruções para envio do comprovante de pagamento;
+9. Alterar o formato do identificador do Pix;
+10. Incluir uma página para enviar o comprovante;
+11. Testar o pix com qualquer valor.
+
+O upload de arquivos no Wordpress é delicado. É necessário tomar certas precauções e alguns plugins já fazem isso muito bem como o **Gravity Forms** ou **WP Forms**. Por essa razão, por enquanto, não vamos implementar imediatamente o recurso de upload.
+
+### O que sugerimos? ###
+
+Crie uma nova página no Wordpress com um formulário para envio de arquivos, permitindo apenas as extensões jpg, png e pdf. Isso pode ser feito utilizando os plugins citados acima.Posteriormente, nas configurações do Pix em **Página para Comprovante** insira a URL da página para enviar o comprovante. 
+
+Você pode utilizar `{{pedido}}` na URL que esse termo será substituído pelo número do pedido, caso seu formulário tenha esse campo e o plugin de formulário permita o auto-preenchimento via query string.
 
 ### Testes realizados ###
 
@@ -59,6 +70,21 @@ Embora, o código Pix gerado por esse plugin inclua o número do pedido e o nome
 
 * Implementar o upload do comprovante no pedido.
 
+## Perguntas Frequentes ##
+
+### Qual é a licença do plugin? ###
+
+Este plugin esta licenciado como GPL.
+
+### O que eu preciso para utilizar este plugin? ###
+
+* Ter instalado o plugin WooCommerce 2.2 ou superior;
+* Possuir uma conta bancária com Chave Pix.
+
+### Posso utilizar com outros gateways de pagamento? ###
+
+* Sim, esse plugin funciona apenas como um método de pagamento adicional, assim como acontece com o método de transferência eletrônica.
+
 ## Como instalar? ##
 
 ### No diretório oficial do Wordpress ###
@@ -84,6 +110,13 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 **Preencha corretamente a sua chave Pix. Se necessário, para testar, crie um produto teste de R$ 1,00 e faça um Pix.**
 
 ## Changelog ##
+
+### 1.0.1 ###
+
+* Melhorias no design das informações de pagamento;
+* Correções de pequenos bugs;
+* Inclusão para encaminhar até a página para upload de arquivos;
+* Inclusão da página "Teste seu Pix".
 
 ### 1.0.0 ### 
 

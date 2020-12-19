@@ -16,28 +16,32 @@
 	<h2 style="text-align:center;">Pague agora com o <strong>Pix</strong></h2>
 
 	<p style="font-size:18px;">Para dar continuidade ao pagamento, utilize um dos métodos abaixo para pagar com o PIX e siga as instruções:</p>
-	<blockquote><?php echo wpautop( wptexturize( $data['instructions']['value'] ) ); ?></blockquote>
+	<blockquote><?php echo wpautop( wptexturize( $data->instructions ) ); ?></blockquote>
+
+	<?php if ( !empty($data->receipt_page_value) ) : ?>
+		<a href="<?=$data->receipt_page_value?>" style="text-align: center; display: table; margin: 12px auto; font-size: 16px; font-style: normal; text-decoration: none; padding: 12px; color: #565656; border: 2px solid #dcdcdc;">Clique aqui para enviar o comprovante</a>
+	<?php endif; ?>
 
 	<div style="text-align:center;display:table;width: 100%;">
-		<?php if ( $pix_qrcode ) : ?>
+		<?php if ( $data->pix_qrcode ) : ?>
 		<div style="display:inline-table; max-width: 320px; padding:24px">
 			<h3 style="font-size:24px;">A) Escaneie o QR Code abaixo com o aplicativo do seu banco:</h3>
 			<p><?php echo '<img style="margin:12px auto" src="'.$qrcode.'" alt="QR Code de Pagamento" />'; ?></p>
 		</div>
 		<?php endif; ?>
-		<?php if ( $pix_copypast ) : ?>
+		<?php if ( $data->pix_copypast ) : ?>
 		<div style="display:inline-table; max-width: 320px; padding:24px">
 			<h3>B) Utilize a função Pix Copie & Cole no aplicativo do seu banco e cole o código abaixo:</h3>
-			<input id="pix" style="font-size: 12px; width: 100%; padding: 6px; border: 0; color: #000; background-color: #efefef;" name="pix" value="<?=$pix;?>" readonly/>
-			<button style="width:100%" onclick="pigglyCopyPix();">Copiar Pix</button>
+			<input id="piggly_pix" style="font-size: 12px; width: 100%; padding: 6px; border: 0; color: #000; background-color: #efefef;" name="pix" value="<?=$pix;?>" readonly/>
+			<button style="width: 100%;position: relative;display: table;background-color: #eeeeee;border-color: #eeeeee;color: #333333;" onclick="pigglyCopyPix();">Copiar Pix</button>
 		</div>
 		<?php endif; ?>
-		<?php if ( $pix_manual ) : ?>
+		<?php if ( $data->pix_manual ) : ?>
 		<div style="display:inline-table; max-width: 320px; padding:24px">
 			<h3>C) Faça uma <strong>Transferência PIX</strong> com os dados abaixo no aplicativo do seu banco:</h3>
-			<p><strong>Tipo de Chave:</strong> <?=$data['key_type']['value']?></p>
-			<p><strong>Chave Pix:</strong> <?=$data['key_value']['value']?></p>
-			<p><strong>Valor:</strong> <?=$amount?></p>
+			<p style="margin: 0 0 8px; font-size: 20px;"><strong style="font-size: 14px; font-weight: 900; text-transform: uppercase; display: table; margin: 0 auto -8px;">Tipo de Chave</strong> <?=$data->key_type?></p>
+			<p style="margin: 0 0 8px; font-size: 20px;"><strong style="font-size: 14px; font-weight: 900; text-transform: uppercase; display: table; margin: 0 auto -8px;">Chave Pix</strong> <?=$data->key_value?></p>
+			<p style="margin: 0 0 8px; font-size: 20px;"><strong style="font-size: 14px; font-weight: 900; text-transform: uppercase; display: table; margin: 0 auto -8px;">Valor</strong> R$ <?=$amount?></p>
 		</div>
 		<?php endif; ?>
 	</div>
@@ -46,7 +50,7 @@
 <script>
 	function pigglyCopyPix() {
 		/* Get the text field */
-		var copyText = document.getElementById("pix");
+		var copyText = document.getElementById("piggly_pix");
 
 		/* Select the text field */
 		copyText.select();

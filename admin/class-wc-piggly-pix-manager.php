@@ -47,7 +47,7 @@ class WC_Piggly_Pix_Manager
 		// Check the woocommerce compatibility
 		if ( !class_exists( 'WC_Payment_Gateway' ) )
 		{ add_action( 'admin_notices', 'wc_piggly_pix_missing_notice' ); return; }
-
+		
 		// The class responsible for control all plugin settings and behavior.
 		require_once $this->parent->getPluginPath() . '/core/pix/class-wc-piggly-pix-gateway.php';
 	}
