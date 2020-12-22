@@ -5,7 +5,7 @@ if ( ! defined( 'WPINC' ) ) { die; }
 /**
  * The core plugin class.
  *
- * This is used to define internationalization, admin-specific hooks, and
+ * This is used to define internationalization, manager-specific hooks, and
  * public-facing site hooks.
  *
  * Also maintains the unique identifier of this plugin as well as the current
@@ -19,12 +19,12 @@ if ( ! defined( 'WPINC' ) ) { die; }
 class WC_Piggly_Pix
 {
 	/**
-	 * The admin class is responsible for retain all hooks and logic for admin side.
+	 * The manager class is responsible for retain all hooks and logic for admin side.
 	 * @since 1.0.0
 	 * @access protected
-	 * @var WC_Piggly_Pix_Manager $admin All hooks and logic for admin side.
+	 * @var WC_Piggly_Pix_Manager $manager All hooks and logic for admin side.
 	 */
-	protected $admin;
+	protected $manager;
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -35,50 +35,21 @@ class WC_Piggly_Pix
 	protected $loader;
 
 	/**
-	 * The unique identifier of this plugin.
-	 * @since 1.0.0
-	 * @var string $pluginName The string used to uniquely identify this plugin.
-	 */
-	protected $pluginName;
-
-	/**
-	 * The current version of the plugin.
-	 * @since 1.0.0
-	 * @var string $pluginVersion The current version of the plugin.
-	 */
-	protected $pluginVersion;
-
-	/**
-	 * The current path of the plugin.
-	 * @since 1.0.0
-	 * @var string $pluginPath The current path of the plugin.
-	 */
-	protected $pluginPath;
-
-	/**
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
-	 * Load the dependencies, define the locale, and set the hooks for the admin area and
+	 * Load the dependencies, define the locale, and set the hooks for the manager area and
 	 * the public-facing side of the site.
 	 *
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		// Plugin version
-		$this->pluginVersion = WC_PIGGLY_PIX_PLUGIN_VERSION;
-		// Plugin name
-		$this->pluginName = WC_PIGGLY_PIX_PLUGIN_NAME;
-		// Plugin path
-		$this->pluginPath = WC_PIGGLY_PIX_PLUGIN_PATH;
-
-
 		// Dependencies
 		$this->loadDependencies();
 		// Locales
 		$this->setLocale();
 
-		// Construct and start admin-side core
+		// Construct and start manager-side core
 		$this->startupManager();
 	}
 
@@ -88,7 +59,7 @@ class WC_Piggly_Pix
 	 * @return WC_Piggly_Pix_Manager
 	 */
 	public function getAdminManager () : WC_Piggly_Pix_Manager
-	{ return $this->admin; }
+	{ return $this->manager; }
 
 	/**
 	 * Get the main core plugin loader.
@@ -97,30 +68,6 @@ class WC_Piggly_Pix
 	 */
 	public function getLoader () : WC_Piggly_Pix_Loader
 	{ return $this->loader; }
-
-	/**
-	 * Get the plugin name.
-	 * @since 1.0.0
-	 * @return string
-	 */
-	public function getPluginName () : string
-	{ return $this->pluginName; }
-
-	/**
-	 * Get the plugin version.
-	 * @since 1.0.0
-	 * @return string
-	 */
-	public function getPluginVersion () : string
-	{ return $this->pluginVersion; }
-
-	/**
-	 * Get the plugin path.
-	 * @since 1.0.0
-	 * @return string
-	 */
-	public function getPluginPath () : string
-	{ return $this->pluginPath; }
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
@@ -137,10 +84,9 @@ class WC_Piggly_Pix
 	 *
 	 * - WC_Piggly_Pix_Loader. Orchestrates the hooks of the plugin.
 	 * - WC_Piggly_Pix_i18n. Defines internationalization functionality.
-	 * - WC_Piggly_Pix_Manager. Defines all hooks for the admin area.
+	 * - WC_Piggly_Pix_Manager. Defines all hooks for the manager area.
 	 * - WC_Piggly_Pix_Public. Defines all hooks for the public side of the site.
 	 * - WC_Piggly_Pix_Gateway. Defines the main core payment gateway.
-	 * - WC_Piggly_Pix_Payload. Defines the pix payload.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -152,28 +98,23 @@ class WC_Piggly_Pix
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once $this->pluginPath . '/includes/class-wc-piggly-pix-loader.php';
+		require_once WC_PIGGLY_PIX_PLUGIN_PATH . 'includes/class-wc-piggly-pix-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once $this->pluginPath . '/includes/class-wc-piggly-pix-i18n.php';
+		require_once WC_PIGGLY_PIX_PLUGIN_PATH . 'includes/class-wc-piggly-pix-i18n.php';
 
 		/**
-		 * The class responsible for defining all actions that occur in the admin area.
+		 * The class responsible for defining all actions that occur in the manager area.
 		 */
-		require_once $this->pluginPath . '/admin/class-wc-piggly-pix-manager.php';
+		require_once WC_PIGGLY_PIX_PLUGIN_PATH . 'admin/class-wc-piggly-pix-manager.php';
 
 		/**
-		 * The class responsible for generating the pix payload.
+		 * All vendor classes.
 		 */
-		require_once $this->pluginPath . '/core/pix/class-wc-piggly-pix-payload.php';
-
-		/**
-		 * The class responsible for parse some pix data.
-		 */
-		require_once $this->pluginPath . '/core/pix/class-wc-piggly-pix-parser.php';
+		require_once WC_PIGGLY_PIX_PLUGIN_PATH . 'vendor/autoload.php';
 
 		$this->loader = new WC_Piggly_Pix_Loader();
 	}
@@ -192,13 +133,13 @@ class WC_Piggly_Pix
 	}
 
 	/**
-	 * Register all of the hooks related to the admin area functionality
+	 * Register all of the hooks related to the manager area functionality
 	 * of the plugin.
 	 *
 	 * @since 1.0.0
 	 */
 	private function startupManager () {
-		$this->admin = new WC_Piggly_Pix_Manager( $this );
-		$this->loader->add_action('plugins_loaded', $this->admin, 'init');
+		$this->manager = new WC_Piggly_Pix_Manager( $this );
+		$this->loader->add_action('plugins_loaded', $this->manager, 'init');
 	}
 }

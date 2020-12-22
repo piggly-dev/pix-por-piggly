@@ -111,6 +111,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 1.0.2 ###
+
+* Melhorias no design das informações de pagamento;
+
 ### 1.0.1 ###
 
 * Melhorias no design das informações de pagamento;

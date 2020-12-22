@@ -226,7 +226,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		if( ! isset( $_GET['screen'] ) || '' === $_GET['screen'] )
 		{ parent::admin_options(); } 
 		else 
-		{ 
+		{			
 			echo '<h2><a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section='.$this->id ) . '">' . $this->method_title . '</a> > ' . __( 'Teste o seu Pix', WC_PIGGLY_PIX_PLUGIN_NAME ) . '</h2>';
 			echo '<p>Neste playground, você pode testar o Pix que é gerado durante os pedidos. Para isso, preencha os dados abaixo e clique em "Salvar alterações".</p>';
 
@@ -235,44 +235,36 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 			echo '</table>';
 
 			$amount = filter_input( INPUT_POST, 'amount', FILTER_SANITIZE_STRING );
+			$amount = str_replace(',', '.', $amount);
 			$order_id = filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_STRING );
 
 			if ( !empty($amount) && !empty($order_id) )
 			{
 				echo '<p>Teste o código Pix abaixo e verifique se as informações estão corretas.</p>';
-
-				$qrcode = '';
-		
-				$this->key_value          = WC_Piggly_Pix_Parser::parse($this->key_type, $this->key_value);
-				$this->key_type           = WC_Piggly_Pix_Parser::getAlias($this->key_type); 
+	
 				$this->instructions       = str_replace('{{pedido}}', $order_id, $this->instructions);
 				$this->receipt_page_value = str_replace('{{pedido}}', $order_id, $this->receipt_page_value);
 				$this->identifier         = str_replace('{{id}}', $order_id, $this->identifier);
  
 				$pix = 
-					(new WC_Piggly_Pix_Payload)
-						->setPixKey($this->key_value)
+					(new Piggly\Pix\Payload())
+						->setPixKey($this->key_type, $this->key_value)
 						->setDescription(sprintf('Compra em %s', $this->store_name))
 						->setMerchantName($this->merchant_name)
 						->setMerchantCity($this->merchant_city)
-						->setAmount($amount)
-						->setUniquePayment($this->asBool($this->unique_payment))
-						->setTid($this->identifier)
-						->export();
-				
-				if ( $this->pix_qrcode )
-				{ 
-					/** Include composer libraries */
-					include_once WC_PIGGLY_PIX_PLUGIN_PATH . '/vendor/autoload.php'; 
-					$qrcode = (new chillerlan\QRCode\QRCode)->render($pix);
-				}
+						->setAmount((float)$amount)
+						->setAsReusable($this->asBool($this->unique_payment))
+						->setTid($this->identifier);
+
+				// Get alias for pix
+				$this->key_type = Piggly\Pix\Parser::getAlias($this->key_type); 
 
 				wc_get_template(
 					'html-woocommerce-thank-you-page.php',
 					array(
 						'data' => $this,
-						'pix' => $pix,
-						'qrcode' => $qrcode,
+						'pix' => $pix->getPixCode(),
+						'qrcode' => $this->pix_qrcode ? $pix->getQRCode() : '',
 						'order_id' => $order_id,
 						'amount' => $amount
 					),
@@ -351,38 +343,33 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 
 	protected function generatePix ( WC_Order $order )
 	{
-		$qrcode = '';
+		$qrcode   = '';
+		$order_id = $order->get_order_number();
+		$amount   = $order->get_total();
 		
-		$this->key_value          = WC_Piggly_Pix_Parser::parse($this->key_type, $this->key_value);
-		$this->key_type           = WC_Piggly_Pix_Parser::getAlias($this->key_type); 
-		$this->instructions       = str_replace('{{pedido}}', $order->get_order_number(), $this->instructions);
-		$this->receipt_page_value = str_replace('{{pedido}}', $order->get_order_number(), $this->receipt_page_value);
-		$this->identifier         = str_replace('{{id}}', $order->get_order_number(), $this->identifier);
+		$this->instructions       = str_replace('{{pedido}}', $order_id, $this->instructions);
+		$this->receipt_page_value = str_replace('{{pedido}}', $order_id, $this->receipt_page_value);
+		$this->identifier         = str_replace('{{id}}', $order_id, $this->identifier);
 
 		$pix = 
-			(new WC_Piggly_Pix_Payload)
-				->setPixKey($this->key_value)
+			(new Piggly\Pix\Payload())
+				->setPixKey($this->key_type, $this->key_value)
 				->setDescription(sprintf('Compra em %s', $this->store_name))
 				->setMerchantName($this->merchant_name)
 				->setMerchantCity($this->merchant_city)
-				->setAmount($order->get_total())
-				->setUniquePayment($this->asBool($this->unique_payment))
-				->setTid($this->identifier)
-				->export();
-		
-		if ( $this->pix_qrcode )
-		{ 
-			/** Include composer libraries */
-			include_once WC_PIGGLY_PIX_PLUGIN_PATH . '/vendor/autoload.php'; 
-			$qrcode = (new chillerlan\QRCode\QRCode)->render($pix);
-		}
+				->setAmount($amount)
+				->setAsReusable($this->asBool($this->unique_payment))
+				->setTid($this->identifier);
 
+		// Get alias for pix
+		$this->key_type = Piggly\Pix\Parser::getAlias($this->key_type); 
+		
 		wc_get_template(
 			'html-woocommerce-thank-you-page.php',
 			array(
 				'data' => $this,
-				'pix' => $pix,
-				'qrcode' => $qrcode,
+				'pix' => $pix->getPixCode(),
+				'qrcode' => $this->pix_qrcode ? $pix->getQRCode() : '',
 				'order_id' => $order->get_order_number(),
 				'amount' => $order->get_total()
 			),
@@ -454,7 +441,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 
 		// Validates the key
 		try
-		{ WC_Piggly_Pix_Parser::validate($keyType,$keyValue); }
+		{ Piggly\Pix\Parser::validate($keyType,$keyValue); }
 		catch ( Exception $e )
 		{
 			WC_Admin_Settings::add_error($e->getMessage());

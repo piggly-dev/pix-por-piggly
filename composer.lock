@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f6d5cd785baa7bad7951754d976101a",
+    "content-hash": "54416ba18f865a58625b1a43d1f01c41",
     "packages": [
         {
             "name": "chillerlan/php-qrcode",
@@ -68,6 +68,10 @@
                 "qrcode",
                 "qrcode-generator"
             ],
+            "support": {
+                "issues": "https://github.com/chillerlan/php-qrcode/issues",
+                "source": "https://github.com/chillerlan/php-qrcode/tree/4.3.0"
+            },
             "funding": [
                 {
                     "url": "https://www.paypal.com/donate?hosted_button_id=WLYUNAT9ZTJZ4",
@@ -127,6 +131,10 @@
                 "container",
                 "helper"
             ],
+            "support": {
+                "issues": "https://github.com/chillerlan/php-settings-container/issues",
+                "source": "https://github.com/chillerlan/php-settings-container"
+            },
             "funding": [
                 {
                     "url": "https://ko-fi.com/codemasher",
@@ -134,6 +142,61 @@
                 }
             ],
             "time": "2020-10-07T13:18:35+00:00"
+        },
+        {
+            "name": "piggly/php-pix",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/piggly-dev/php-pix.git",
+                "reference": "8acd83b160528926fcf2629c59f725fedf8b5e2e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/8acd83b160528926fcf2629c59f725fedf8b5e2e",
+                "reference": "8acd83b160528926fcf2629c59f725fedf8b5e2e",
+                "shasum": ""
+            },
+            "require": {
+                "chillerlan/php-qrcode": "^4.3",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Piggly\\Pix\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Caique Araujo",
+                    "email": "caique@studiopiggly.com.br",
+                    "homepage": "https://github.com/caiquearaujo",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Uma biblioteca para preparar e gerar o código Pix do Banco Central do Brasil.",
+            "homepage": "https://github.com/piggly-dev/php-pix",
+            "keywords": [
+                "bcb",
+                "emv",
+                "payment",
+                "piggly",
+                "pix",
+                "qrcode"
+            ],
+            "support": {
+                "issues": "https://github.com/piggly-dev/php-pix/issues",
+                "source": "https://github.com/piggly-dev/php-pix/tree/1.0.0"
+            },
+            "time": "2020-12-20T16:55:12+00:00"
         }
     ],
     "packages-dev": [],
@@ -144,5 +207,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.0.0"
 }

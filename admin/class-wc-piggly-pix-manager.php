@@ -18,7 +18,7 @@ class WC_Piggly_Pix_Manager
 	 * The main class.
 	 *
 	 * @since 1.0.0
-	 * @var WC_Piggly_Pix $parent The current version of this plugin.
+	 * @var WC_Piggly_Pix $parent The plugin main core.
 	 */
 	private $parent;
 
@@ -49,7 +49,7 @@ class WC_Piggly_Pix_Manager
 		{ add_action( 'admin_notices', 'wc_piggly_pix_missing_notice' ); return; }
 		
 		// The class responsible for control all plugin settings and behavior.
-		require_once $this->parent->getPluginPath() . '/core/pix/class-wc-piggly-pix-gateway.php';
+		require_once WC_PIGGLY_PIX_PLUGIN_PATH . 'core/pix/class-wc-piggly-pix-gateway.php';
 	}
 
 	/**
