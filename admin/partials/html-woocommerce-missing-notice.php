@@ -27,4 +27,4 @@ if ( ! class_exists ( 'woocommerce' ) ) { $is_installed = true; }
 			<p><a href="http://wordpress.org/plugins/woocommerce/" class="button button-primary"><?php esc_html_e( 'Instalar WooCommerce', WC_PIGGLY_PIX_PLUGIN_NAME ); ?></a></p>
 		<?php endif; ?>
 	<?php endif; ?>
-</div>
+</div> 

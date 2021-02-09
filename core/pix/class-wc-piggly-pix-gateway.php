@@ -1,5 +1,8 @@
 <?php
 // If this file is called directly, abort.
+
+use Piggly\Pix\Payload;
+
 if ( ! defined( 'WPINC' ) ) { die; }
 
 /**
@@ -111,15 +114,13 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 				'title'       => __('Título', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'text',
 				'description' => __('Isso controla o que o usuário vê durante o checkout.', WC_PIGGLY_PIX_PLUGIN_NAME),
-				'default'     => __('Faça um PIX', WC_PIGGLY_PIX_PLUGIN_NAME),
-				'desc_tip'    => true,
+				'default'     => __('Faça um PIX', WC_PIGGLY_PIX_PLUGIN_NAME)
 			),
 			'description' => array(
 				'title'       => __('Descrição', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'text',
 				'description' => __('Isso controla a curta descrição que o usuário vê durante o checkout.', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'default'     => __('Você não precisa ter uma chave cadastrada. Pague os seus pedidos via Pix.', WC_PIGGLY_PIX_PLUGIN_NAME),
-				'desc_tip'    => true,
 				'custom_attributes' => [
 					'maxlength' => 25
 				]
@@ -129,7 +130,6 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 				'type'        => 'text',
 				'description' => __('Informe o nome da loja para acrescentar na descrição do Pix.', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'required'	  => true,
-				'desc_tip'    => true,
 				'custom_attributes' => [
 					'maxlength' => 25
 				]
@@ -138,21 +138,13 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 				'title'       => __('Nome do Titular da Conta', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'text',
 				'description' => __('Informe o nome do titular da conta que irá receber o PIX. Como consta no Banco.', WC_PIGGLY_PIX_PLUGIN_NAME),
-				'required'	  => true,
-				'desc_tip'    => true,
-				'custom_attributes' => [
-					'maxlength' => 25
-				]
+				'required'	  => true
 			),
 			'merchant_city' => array(
 				'title'       => __('Cidade do Titular da Conta', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'text',
 				'description' => __('Informe a cidade do titular da conta que irá receber o PIX. Como consta no Banco.', WC_PIGGLY_PIX_PLUGIN_NAME),
-				'required'	  => true,
-				'desc_tip'    => true,
-				'custom_attributes' => [
-					'maxlength' => 25
-				]
+				'required'	  => true
 			),
 			'key_type' => array(
 				'title'       => __('Tipo da Chave', WC_PIGGLY_PIX_PLUGIN_NAME),
@@ -164,15 +156,13 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 					'phone' => __('Telefone', WC_PIGGLY_PIX_PLUGIN_NAME),
 					'email' => __('E-mail', WC_PIGGLY_PIX_PLUGIN_NAME)
 				],
-				'required'	  => true,
-				'desc_tip'    => true,
+				'required'	  => true
 			),
 			'key_value' => array(
 				'title'       => __('Chave PIX', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'text',
 				'description' => __('Digite sua Chave PIX da forma como ela foi cadastrada.', WC_PIGGLY_PIX_PLUGIN_NAME),
-				'required'	  => true,
-				'desc_tip'    => true
+				'required'	  => true
 			),
 			'instructions' => array(
 				'title'       => __('Instruções do PIX', WC_PIGGLY_PIX_PLUGIN_NAME),
@@ -245,11 +235,11 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 				$this->instructions       = str_replace('{{pedido}}', $order_id, $this->instructions);
 				$this->receipt_page_value = str_replace('{{pedido}}', $order_id, $this->receipt_page_value);
 				$this->identifier         = str_replace('{{id}}', $order_id, $this->identifier);
- 
+
 				$pix = 
 					(new Piggly\Pix\Payload())
 						->setPixKey($this->key_type, $this->key_value)
-						->setDescription(sprintf('Compra em %s', $this->store_name))
+						->setDescription(sprintf('%s', $this->store_name))
 						->setMerchantName($this->merchant_name)
 						->setMerchantCity($this->merchant_city)
 						->setAmount((float)$amount)
@@ -264,7 +254,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 					array(
 						'data' => $this,
 						'pix' => $pix->getPixCode(),
-						'qrcode' => $this->pix_qrcode ? $pix->getQRCode() : '',
+						'qrcode' => $this->pix_qrcode ? $pix->getQRCode(Payload::OUTPUT_PNG) : '',
 						'order_id' => $order_id,
 						'amount' => $amount
 					),
@@ -320,7 +310,14 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) 
 	{
 		if ( !$sent_to_admin && $this->isPaymentWaiting($order) ) {
-			$this->generatePix($order);
+			$pixData = $this->getPix( $order );
+
+			wc_get_template(
+				'email-woocommerce-pix.php',
+				array_merge( $pixData, [ 'order' => $order] ),
+				'',
+				WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
+			);
 		}
 	}
 	
@@ -338,12 +335,22 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		if ( !$order )
 		{ return; }
 		
-		$this->generatePix( $order );
+		$pixData = $this->getPix( $order );
+
+		wc_get_template(
+			'html-woocommerce-thank-you-page.php',
+			$pixData,
+			'',
+			WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
+		);
 	}
 
-	protected function generatePix ( WC_Order $order )
+	/**
+	 * Get an array with all pix data. 
+	 * @since 1.1.0
+	 */
+	protected function getPix ( WC_Order $order ) : array
 	{
-		$qrcode   = '';
 		$order_id = $order->get_order_number();
 		$amount   = $order->get_total();
 		
@@ -363,18 +370,13 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 
 		// Get alias for pix
 		$this->key_type = Piggly\Pix\Parser::getAlias($this->key_type); 
-		
-		wc_get_template(
-			'html-woocommerce-thank-you-page.php',
-			array(
-				'data' => $this,
-				'pix' => $pix->getPixCode(),
-				'qrcode' => $this->pix_qrcode ? $pix->getQRCode() : '',
-				'order_id' => $order->get_order_number(),
-				'amount' => $order->get_total()
-			),
-			'',
-			WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
+
+		return array(
+			'data' => $this,
+			'pix' => $pix->getPixCode(),
+			'qrcode' => $this->pix_qrcode ? $pix->getQRCode(Payload::OUTPUT_PNG) : '',
+			'order_id' => $order_id,
+			'amount' => $amount
 		);
 	}
 
@@ -479,10 +481,10 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 	{
 		if ( is_string( $value ) )
 		{
-			if ( $value === 'yes' || $value === 'true' )
+			if ( $value === 'yes' || $value === 'true' || $value === true )
 			{ return true; }
-			else if ( $value === 'no' || $value === 'false' )
-			{ return true; }
+			else if ( $value === 'no' || $value === 'false' || $value === false )
+			{ return false; }
 		}
 
 		return (bool)$value;

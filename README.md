@@ -85,6 +85,10 @@ Este plugin esta licenciado como GPL.
 
 * Sim, esse plugin funciona apenas como um método de pagamento adicional, assim como acontece com o método de transferência eletrônica.
 
+### O código Pix ou QR Code está inválido! O que fazer? ###
+
+Envie o código Pix inválido para `dev@piggly.com.br`, assim poderemos testar e visualizar com mais calma.
+
 ## Como instalar? ##
 
 ### No diretório oficial do Wordpress ###
@@ -110,6 +114,17 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 **Preencha corretamente a sua chave Pix. Se necessário, para testar, crie um produto teste de R$ 1,00 e faça um Pix.**
 
 ## Changelog ##
+
+### 1.1.0 ###
+
+* Correções de bugs;
+* Melhorias na exibição do Pix no e-mail e na tela;
+* Ajuste de visualizações com base nas opçõe selecionadas;
+* Melhorias no núcleo do plugin;
+
+### 1.0.3/1.0.4 ###
+
+* Correções de bugs e reposicionamento das descrições;
 
 ### 1.0.2 ###
 

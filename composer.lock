@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "54416ba18f865a58625b1a43d1f01c41",
+    "content-hash": "9401efb3810115ee49d96fbf661ec069",
     "packages": [
         {
             "name": "chillerlan/php-qrcode",
@@ -86,16 +86,16 @@
         },
         {
             "name": "chillerlan/php-settings-container",
-            "version": "2.1.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/chillerlan/php-settings-container.git",
-                "reference": "90ab24a3dc09569bfa0f3dbc3d44bab3aaa2a6c5"
+                "reference": "98ccc1b31b31a53bcb563465c4961879b2b93096"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chillerlan/php-settings-container/zipball/90ab24a3dc09569bfa0f3dbc3d44bab3aaa2a6c5",
-                "reference": "90ab24a3dc09569bfa0f3dbc3d44bab3aaa2a6c5",
+                "url": "https://api.github.com/repos/chillerlan/php-settings-container/zipball/98ccc1b31b31a53bcb563465c4961879b2b93096",
+                "reference": "98ccc1b31b31a53bcb563465c4961879b2b93096",
                 "shasum": ""
             },
             "require": {
@@ -103,8 +103,8 @@
                 "php": "^7.4 || ^8.0"
             },
             "require-dev": {
-                "phan/phan": "^3.2.2",
-                "phpunit/phpunit": "9.4"
+                "phan/phan": "^4.0",
+                "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "autoload": {
@@ -137,24 +137,28 @@
             },
             "funding": [
                 {
+                    "url": "https://www.paypal.com/donate?hosted_button_id=WLYUNAT9ZTJZ4",
+                    "type": "custom"
+                },
+                {
                     "url": "https://ko-fi.com/codemasher",
                     "type": "ko_fi"
                 }
             ],
-            "time": "2020-10-07T13:18:35+00:00"
+            "time": "2021-01-06T15:57:03+00:00"
         },
         {
             "name": "piggly/php-pix",
-            "version": "1.0.0",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/piggly-dev/php-pix.git",
-                "reference": "8acd83b160528926fcf2629c59f725fedf8b5e2e"
+                "reference": "5e604daefcf88cc6f370f80fad592986e7c5a9bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/8acd83b160528926fcf2629c59f725fedf8b5e2e",
-                "reference": "8acd83b160528926fcf2629c59f725fedf8b5e2e",
+                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/5e604daefcf88cc6f370f80fad592986e7c5a9bc",
+                "reference": "5e604daefcf88cc6f370f80fad592986e7c5a9bc",
                 "shasum": ""
             },
             "require": {
@@ -194,9 +198,9 @@
             ],
             "support": {
                 "issues": "https://github.com/piggly-dev/php-pix/issues",
-                "source": "https://github.com/piggly-dev/php-pix/tree/1.0.0"
+                "source": "https://github.com/piggly-dev/php-pix/tree/1.0.3"
             },
-            "time": "2020-12-20T16:55:12+00:00"
+            "time": "2021-02-09T14:32:49+00:00"
         }
     ],
     "packages-dev": [],
