@@ -115,6 +115,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 1.1.1 ###
+
+* Atualização da biblioteca `piggly/php-pix`;
+
 ### 1.1.0 ###
 
 * Correções de bugs;

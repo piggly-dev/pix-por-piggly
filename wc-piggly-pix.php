@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://github.com/piggly-dev/wc-piggly-pix
- * @since             1.0.0
+ * @since             1.1.0
  * @package           WC_Piggly_Pix
  *
  * @wordpress-plugin
  * Plugin Name:       Pix por Piggly
  * Plugin URI:        https://github.com/piggly-dev/wc-piggly-pix
  * Description:       Possibilite o pagamento com Pix de uma forma simples, rápida e direta.
- * Version:           1.0.4
+ * Version:           1.1.1
  * Author:            Caique
  * Author URI:        https://github.com/caiquearaujo
  * License:           GPLv2 or later
@@ -39,7 +39,7 @@ define( 'WC_PIGGLY_PIX_PLUGIN_NAME', 'wc-piggly-pix' );
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * @var string
  */
-define( 'WC_PIGGLY_PIX_PLUGIN_VERSION', '1.1.0' );
+define( 'WC_PIGGLY_PIX_PLUGIN_VERSION', '1.1.1' );
 
 /**
  * The plugin absolute directory.
