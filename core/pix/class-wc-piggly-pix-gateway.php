@@ -62,7 +62,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		// This action hook loads the thank you page
 		add_action( 'woocommerce_thankyou_'.$this->id, array( $this, 'thankyou_page' ), 5, 1 );
 		// Add method instructions in order details page 
-		add_action( 'woocommerce_order_details_after_order_table', array( $this, 'page_instructions' ), 5, 1);
+		add_action( 'woocommerce_order_details_before_order_table', array( $this, 'page_instructions' ), 5, 1);
 		// Customer Emails
 		add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
 	}
@@ -79,36 +79,36 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 				'title'       => __('Habilitar/Desabilitar', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'label'       => __('Habilite o Pagamento via Pix', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'checkbox',
-				'description' => '',
 				'default'     => 'no'
 			),
 			'unique_payment' => array(
 				'title'       => __('BR Code Único', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'label'       => __('Marque se o código PIX gerado só poderá ser utilizado uma única vez.', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'checkbox',
-				'description' => '',
 				'default'     => 'no'
 			),
 			'pix_qrcode' => array(
 				'title'       => __('Exibir QR Code', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'label'       => __('Marque para exibir nas instruções o QR Code do Pix.', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'checkbox',
-				'description' => '',
 				'default'     => 'no'
 			),
 			'pix_copypast' => array(
 				'title'       => __('Exibir Pix Copie & Cole', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'label'       => __('Marque para exibir nas instruções o Pix Copie & Cole.', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'checkbox',
-				'description' => '',
 				'default'     => 'no'
 			),
 			'pix_manual' => array(
 				'title'       => __('Exibir Pix Manual', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'label'       => __('Marque para exibir nas instruções os dados manuais para o pix.', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'type'        => 'checkbox',
-				'description' => '',
 				'default'     => 'no'
+			),
+			'pix_code' => array(
+				'title'       => __('Código Pix Válido', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'type'        => 'text',
+				'description' => __('Tem um código Pix válido? Coloque-o aqui, clique em salvar e os dados principais serão extraídos dele.', WC_PIGGLY_PIX_PLUGIN_NAME)
 			),
 			'title' => array(
 				'title'       => __('Título', WC_PIGGLY_PIX_PLUGIN_NAME),
@@ -186,25 +186,8 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 				'type'        => 'text',
 				'description' => __('Quando preenchido, adiciona um botão para ir até a página. Informe a página que será utilizada para envio do comprovante. Algumas páginas podem receber tags para auto-preencher formulário. Utilize {{pedido}} para fazer referência ao ID do pedido (será substituido pelo ID).', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'default'	  => ''
-			),
-			'screen_button' => array(
-				'title'       => __('Teste seu Pix', WC_PIGGLY_PIX_PLUGIN_NAME),
-				'id'          => 'screen_button',
-				'type'        => 'screen_button',
 			)
 		);
-	}
-
-	/**
-	 * Button for testing.
-	 * 
-	 * @since 1.1.0
-	 */
-	public function generate_screen_button_html( $key, $value ) {		
-		echo '<tr valign="top">';
-		echo '<td colspan="2" class="forminp forminp-'.sanitize_title( $value['type'] ).'">';
-		echo '<a href="'.admin_url( 'admin.php?page=wc-settings&tab=checkout&section='.$this->id.'&screen=testing' ).'" class="button">'.__( 'Teste o seu Pix', WC_PIGGLY_PIX_PLUGIN_NAME ).'</a>';
-		echo '</td></tr>';
 	}
 
 	/**
@@ -212,79 +195,30 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 	 * 
 	 * @since 1.1.0
 	 */
-	public function admin_options () {
-		if( ! isset( $_GET['screen'] ) || '' === $_GET['screen'] )
-		{ parent::admin_options(); } 
-		else 
-		{			
-			echo '<h2><a href="' . admin_url( 'admin.php?page=wc-settings&tab=checkout&section='.$this->id ) . '">' . $this->method_title . '</a> > ' . __( 'Teste o seu Pix', WC_PIGGLY_PIX_PLUGIN_NAME ) . '</h2>';
-			echo '<p>Neste playground, você pode testar o Pix que é gerado durante os pedidos. Para isso, preencha os dados abaixo e clique em "Salvar alterações".</p>';
-
-			echo '<table class="form-table">';
-				WC_Admin_Settings::output_fields( $this->test_form_fields() );
-			echo '</table>';
-
-			$amount = filter_input( INPUT_POST, 'amount', FILTER_SANITIZE_STRING );
-			$amount = str_replace(',', '.', $amount);
-			$order_id = filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_STRING );
-
-			if ( !empty($amount) && !empty($order_id) )
-			{
-				echo '<p>Teste o código Pix abaixo e verifique se as informações estão corretas.</p>';
-	
-				$this->instructions       = str_replace('{{pedido}}', $order_id, $this->instructions);
-				$this->receipt_page_value = str_replace('{{pedido}}', $order_id, $this->receipt_page_value);
-				$this->identifier         = str_replace('{{id}}', $order_id, $this->identifier);
-
-				$pix = 
-					(new Piggly\Pix\Payload())
-						->setPixKey($this->key_type, $this->key_value)
-						->setDescription(sprintf('%s', $this->store_name))
-						->setMerchantName($this->merchant_name)
-						->setMerchantCity($this->merchant_city)
-						->setAmount((float)$amount)
-						->setAsReusable($this->asBool($this->unique_payment))
-						->setTid($this->identifier);
-
-				// Get alias for pix
-				$this->key_type = Piggly\Pix\Parser::getAlias($this->key_type); 
-
-				wc_get_template(
-					'html-woocommerce-thank-you-page.php',
-					array(
-						'data' => $this,
-						'pix' => $pix->getPixCode(),
-						'qrcode' => $this->pix_qrcode ? $pix->getQRCode(Payload::OUTPUT_PNG) : '',
-						'order_id' => $order_id,
-						'amount' => $amount
-					),
-					'',
-					WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
-				);
-			}
-	  	}
-	}
-
-	/**
-	 * Form fields for data testing.
-	 * 
-	 * @since 1.1.0
-	 */
-	public function test_form_fields ()
+	public function admin_options () 
 	{
-		return array(
-			'amount' => array(
-				'type' => 'text',
-				'id' => 'amount',
-				'title' => __( 'Qual o valor do Pix?', WC_PIGGLY_PIX_PLUGIN_NAME ),
-				'description' => __( 'Informe um valor qualquer.', WC_PIGGLY_PIX_PLUGIN_NAME ),
+		$screen = filter_input( INPUT_GET, 'screen', FILTER_SANITIZE_STRING );
+
+		if ( $screen === 'testing' ) :
+			wc_get_template(
+				'test-settings.php',
+				array(
+					'data' => $this
+				),
+				'',
+				WC_PIGGLY_PIX_PLUGIN_PATH.'admin/partials/'
+			);
+
+			return;
+		endif;
+
+		wc_get_template(
+			'main-settings.php',
+			array(
+				'data' => $this
 			),
-			'order_id' => array(
-				'type' => 'text',
-				'id' => 'order_id',
-				'title' => __( 'Qual o código do pedido?', WC_PIGGLY_PIX_PLUGIN_NAME ),
-				'description' => __( 'Informe um valor qualquer.', WC_PIGGLY_PIX_PLUGIN_NAME ),
-			),
+			'',
+			WC_PIGGLY_PIX_PLUGIN_PATH.'admin/partials/'
 		);
 	}
 
@@ -417,7 +351,23 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		if( isset( $_GET['screen'] ) && '' !== $_GET['screen'] ) 
 		{ return; }
 
-		$field = 'woocommerce_'.$this->id.'_';
+		$field   = 'woocommerce_'.$this->id.'_';
+		$pixCode = filter_input( INPUT_POST, $field.'pix_code', FILTER_SANITIZE_STRING );
+
+		if ( !empty($pixCode) )
+		{
+			$reader = new \Piggly\Pix\Reader($pixCode);
+
+			$_POST[$field.'key_value'] = $reader->getPixKey();
+			$_POST[$field.'key_type']  = \Piggly\Pix\Parser::getKeyType($_POST[$field.'key_value']);
+			$_POST[$field.'merchant_name'] = $reader->getMerchantName();
+			$_POST[$field.'merchant_city'] = $reader->getMerchantCity();
+
+			unset($_POST[$field.'pix_code']);
+			
+			parent::process_admin_options();
+			return;
+		}
 
 		$required = array(
 			'key_type' => 'Tipo da Chave',
@@ -434,7 +384,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 			if ( empty ( $postValue ) )
 			{ 
 				WC_Admin_Settings::add_error( sprintf('Por favor, preencha o campo `%s`.', $value) );
-				return false;
+				return false; 
 			}
 		}
 
@@ -477,7 +427,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 	 * @since 1.0.0
 	 * @return bool
 	 */
-	private function asBool ( $value ) : bool
+	public function asBool ( $value ) : bool
 	{
 		if ( is_string( $value ) )
 		{
