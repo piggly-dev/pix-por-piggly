@@ -1,9 +1,12 @@
 <?php
 
+use Piggly\Pix\Parser;
+
 ?>
 <style>
 .piggly-label { font-size: 12px; font-weight: bold; margin-bottom: 4px; display: block; }
 .piggly-checkbox { display: table; margin: 12px 0; }
+.piggly-featured { background-color: #00bcd4; color: #000; font-size: 12px; }
 </style>
 <h2>
 	<a href="<?=admin_url( 'admin.php?page=wc-settings&tab=checkout' );?>"><?=__('Métodos de Pagamento', WC_PIGGLY_PIX_PLUGIN_NAME);?></a> > <?=$data->method_title?> por Piggly
@@ -90,15 +93,15 @@
 	</p>
 
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_merchant_name">Nome do Titular</label>
-	<input value="<?=$data->merchant_name?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_name" id="woocommerce_wc_piggly_pix_gateway_merchant_name">
+	<input required value="<?=$data->merchant_name?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_name" id="woocommerce_wc_piggly_pix_gateway_merchant_name">
 	<p class="description">Informe o nome do titular da conta que irá receber o PIX. Como consta no Banco.</p>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_merchant_city">Cidade do Titular</label>
-	<input value="<?=$data->merchant_city?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_city" id="woocommerce_wc_piggly_pix_gateway_merchant_city">
+	<input required value="<?=$data->merchant_city?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_city" id="woocommerce_wc_piggly_pix_gateway_merchant_city">
 	<p class="description">Informe a cidade do titular da conta que irá receber o PIX. Como consta no Banco.</p>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_key_type">Tipo da Chave</label>
-	<select style="width:100%; max-width: 100%;" class="select " name="woocommerce_wc_piggly_pix_gateway_key_type" id="woocommerce_wc_piggly_pix_gateway_key_type">
+	<select required style="width:100%; max-width: 100%;" class="select " name="woocommerce_wc_piggly_pix_gateway_key_type" id="woocommerce_wc_piggly_pix_gateway_key_type">
 		<?php
 		$selected = $data->key_type;
 		$options  = [
@@ -121,13 +124,14 @@
 	<p class="description">Informe o tipo da chave PIX a ser compartilhada.</p>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_key_value">Chave Pix</label>
-	<input value="<?=$data->key_value?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_key_value" id="woocommerce_wc_piggly_pix_gateway_key_value">
+	<input required value="<?=$data->key_value?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_key_value" id="woocommerce_wc_piggly_pix_gateway_key_value">
 	<p class="description">Digite sua Chave PIX da forma como ela foi cadastrada.</p>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_instructions">Instruções</label>
-	<textarea style="width:100%;" rows="3" cols="20" class="input-text wide-input " type="textarea" name="woocommerce_wc_piggly_pix_gateway_instructions" id="woocommerce_wc_piggly_pix_gateway_instructions"><?=$data->instructions?></textarea>
+	<textarea required style="width:100%;" rows="3" cols="20" class="input-text wide-input " type="textarea" name="woocommerce_wc_piggly_pix_gateway_instructions" id="woocommerce_wc_piggly_pix_gateway_instructions"><?=$data->instructions?></textarea>
 	<p class="description">Explique ao cliente o que deve ser feito após o pagamento do Pix.</p>
-
+	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('{{pedido}}', '123456', $data->instructions);?></code></p>
+	
 	<div>
 		<h4>Recomendações</h4>
 		<p>
@@ -154,9 +158,82 @@
 		<p><code>{{id}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>
 
+	<h3>Setup dos Pedidos</h3>
+ 
+	<?php if ( class_exists('WC_Emails') ) : ?>
+		<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_email_status">Enviar no E-mail</label>
+		<select style="width:100%; max-width: 100%;" class="select " name="woocommerce_wc_piggly_pix_gateway_email_status" id="woocommerce_wc_piggly_pix_gateway_email_status">
+			<?php
+			$wc_emails = WC_Emails::instance();
+			$emails    = $wc_emails->get_emails();
+			$selected = $data->email_status;
+ 
+			foreach ( $emails as $index => $email )
+			{ 
+				if ( $index === $selected )
+				{ echo sprintf('<option value="%s" selected="selected">%s</option>', $index, $email->title); }
+				else
+				{ echo sprintf('<option value="%s">%s</option>', $index, $email->title); }
+			}
+
+			?>
+		</select>
+		<p class="description">Selecione em qual modelo de e-mail o pix deve ser enviado.</p>
+
+		<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_email_position">Enviar no E-mail</label>
+		<select style="width:100%; max-width: 100%;" class="select " name="woocommerce_wc_piggly_pix_gateway_email_position" id="woocommerce_wc_piggly_pix_gateway_email_position">
+			<?php
+			$selected = $data->email_position;
+			$options  = [
+				'before' => __('Acima da tabela do pedido', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'after' => __('Abaixo da tabela do pedido', WC_PIGGLY_PIX_PLUGIN_NAME),
+			];
+
+			foreach ( $options as $key => $value )
+			{ 
+				if ( $key === $selected )
+				{ echo sprintf('<option value="%s" selected="selected">%s</option>', $key, $value); }
+				else
+				{ echo sprintf('<option value="%s">%s</option>', $key, $value); }
+			}
+
+			?>
+		</select>
+		<p class="description">Selecione em qual modelo de e-mail o pix deve ser enviado.</p>
+	<?php endif; ?>
+ 
+	<?php if ( function_exists('wc_get_order_statuses') ) : ?>
+		<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_order_status">Migrar para o Status após a criação do pedido</label>
+		<select style="width:100%; max-width: 100%;" class="select " name="woocommerce_wc_piggly_pix_gateway_order_status" id="woocommerce_wc_piggly_pix_gateway_order_status">
+			<?php
+			$status   = wc_get_order_statuses();
+			$selected = $data->order_status;
+
+			foreach ( $status as $key => $alias )
+			{ 
+				if ( $key === $selected )
+				{ echo sprintf('<option value="%s" selected="selected">%s</option>', $key, $alias); }
+				else
+				{ echo sprintf('<option value="%s">%s</option>', $key, $alias); }
+			}
+
+			?>
+		</select>
+		<p class="description">Ao ser criado, informe qual deve ser o novo status do pedido. Por padrão será <strong>Aguardando</strong> <code>on-hold</code></p>
+	
+		<div>
+			<p>
+				Utilizamos o status Aguardando, pois na nossa concepção a loja aguarda
+				o cliente pagar o Pix. Se você criar status personalizados com plugins
+				de terceiros, você pode alterar o status para aguardando o pagamento Pix
+				de acordo com a sua grade de status.
+			</p>
+		</div>
+	<?php endif; ?>
+
 	<h3>Configurações de Exibição</h3>
 
-	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_receipt_page_value">Página do Comprovante <code>Não preencha para ocultar</code></label>
+	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_receipt_page_value">Página do Comprovante <code class="piggly-featured">Não preencha para ocultar</code></label>
 	<input value="<?=$data->receipt_page_value?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_receipt_page_value" id="woocommerce_wc_piggly_pix_gateway_receipt_page_value">
 	<p class="description">Quando preenchido, adiciona um botão para ir até a página.</p>
 	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('{{pedido}}', '123456', $data->receipt_page_value);?></code></p>
@@ -177,9 +254,10 @@
 		<p><code>{{pedido}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>
 	
-	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_whatsapp">Whatsapp para enviar o Comprovante <code>Não preencha para ocultar</code></label>
+	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_whatsapp">Whatsapp para enviar o Comprovante <code class="piggly-featured">Não preencha para ocultar</code></label>
 	<p class="description">Informe seu telefone em qualquer formato, ajustaremos para você.</p>
 	<input value="<?=$data->whatsapp?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_whatsapp" id="woocommerce_wc_piggly_pix_gateway_whatsapp">
+	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('+', '', Parser::parsePhone($data->whatsapp));?></code></p>
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_whatsapp_message">Mensagem inicial para ser enviada</label>
 	<input value="<?=$data->whatsapp_message?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_whatsapp_message" id="woocommerce_wc_piggly_pix_gateway_whatsapp_message">
 	<p class="description">Quando preenchido, exibirá um botão para compartilhar o comprovante.</p>
@@ -190,9 +268,10 @@
 		<p><code>{{pedido}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>
 
-	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_telegram">Usuário do Telegram para enviar o Comprovante <code>Não preencha para ocultar</code></label>
+	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_telegram">Usuário do Telegram para enviar o Comprovante <code class="piggly-featured">Não preencha para ocultar</code></label>
 	<p class="description">Informe somente o seu nome de usuário com ou sem @, ajustaremos para você.</p>
 	<input value="<?=$data->telegram?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_telegram" id="woocommerce_wc_piggly_pix_gateway_telegram">
+	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('@', '', $data->telegram);?></code></p>
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_telegram_message">Mensagem inicial para ser enviada</label>
 	<input value="<?=$data->telegram_message?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_telegram_message" id="woocommerce_wc_piggly_pix_gateway_telegram_message">
 	<p class="description">Quando preenchido, exibirá um botão para compartilhar o comprovante.</p>

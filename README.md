@@ -18,6 +18,7 @@ O propósito deste plugin é permitir que você utilize o método de pagamento P
 * Utilize Merge Tags em campos disponíveis para substituir variáveis e customizar ainda mais as funções do plugin;
 * Não se preocupe com a formatação, nós formatamos corretamente todos os dados preenchidos no plugin;
 * Teste antes de habilitar. Insira um valor e um número do pedido fictício para simular o código Pix e verificar se está tudo como você espera.
+* Selecione o modelo de e-mail e o status do pagamento Pix;
 
 ## Sobre a versão 1.1.2 e acima ##
 
@@ -26,6 +27,10 @@ Estamos contentes com os feedbacks que recebemos. Por essa razão, atualizamos a
 ### 1.1.5 e acima ###
 
 O comportamento do **identificador** do pedido no Pix foi atualizado. Nas versões mais recentes, o Pix aceita apenas caracteres entre A a Z e dígitos entre 0 a 9.
+
+### 1.1.6 e acima ###
+
+Controle do e-mail com código Pix e do status do pedido.
 
 ## Como funciona? ##
 
@@ -155,6 +160,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 **Preencha corretamente a sua chave Pix. Você pode testar nas configurações do plugin o funcionamento do Pix mesmo que o módulo esteja desativado.**
 
 ## Changelog ##
+
+### 1.1.6 ###
+
+* Correção do bug no campo Whatsapp, correção dos bugs com chaves vazias, controladores de e-mail e status;
 
 ### 1.1.5 ###
 
