@@ -80,8 +80,6 @@ Nosso próximo passo é possibilitar o suporte para Pix Dinâmicos, esperamos em
 
 Algumas melhorias no layout da página de pagamento Pix estão sendo planejadas. 
 
-> Em breve mudaremos a nossa biblioteca de QR Code, que exige a versão 7.4 do PHP, para aumentar a compatibilidade do plugin.
-
 ## Perguntas Frequentes ##
 
 ### Qual é a licença do plugin? ###
@@ -92,7 +90,7 @@ Este plugin esta licenciado como GPL.
 
 * Ter instalado o Wordpress 4.0 ou superior;
 * Ter instalado o plugin WooCommerce 3.0 ou superior;
-* Utilizar a versão 7.4 do php;
+* Utilizar a versão 7.2 do php;
 * Possuir uma conta bancária com Chave Pix.
 
 ### Posso utilizar com outros gateways de pagamento? ###

@@ -2,7 +2,7 @@
 Contributors: pigglydev, caiquearaujo
 Tags: woocommerce, payment, pix
 Requires at least: 4.0
-Requires PHP: 7.4
+Requires PHP: 7.2
 Tested up to: 5.6
 Stable tag: 1.1.2
 License: GPLv2
@@ -90,26 +90,24 @@ Nosso próximo passo é possibilitar o suporte para Pix Dinâmicos, esperamos em
 
 Algumas melhorias no layout da página de pagamento Pix estão sendo planejadas.
 
-> Em breve mudaremos a nossa biblioteca de QR Code, que exige a versão 7.4 do PHP, para aumentar a compatibilidade do plugin.
-
 == Frequently Asked Questions ==
 
-= Qual é a licença do plugin? =
+= **Qual é a licença do plugin?** =
 
 Este plugin esta licenciado como GPL.
 
-= O que eu preciso para utilizar este plugin? =
+= **O que eu preciso para utilizar este plugin?** =
 
 * Ter instalado o Wordpress 4.0 ou superior;
 * Ter instalado o plugin WooCommerce 3.0 ou superior;
-* Utilizar a versão 7.4 do php;
+* Utilizar a versão 7.2 do php;
 * Possuir uma conta bancária com Chave Pix.
 
-= Posso utilizar com outros gateways de pagamento? =
+= **Posso utilizar com outros gateways de pagamento?** =
 
 * Sim, esse plugin funciona apenas como um método de pagamento adicional, assim como acontece com o método de transferência eletrônica.
 
-= O código Pix ou QR Code está inválido! O que fazer? =
+= **O código Pix ou QR Code está inválido! O que fazer?** =
 
 O Pix ainda é muito recente e, apenas das padronizações do Banco Central do Brasil, muitos bancos criaram algumas variações e definiram como aceitam determinadas chaves. A nossa recomendação principal é: **utilize as chaves aleatórias**. Assim, você não expõe seus dados e ao mesmo tempo tem compatibilidade total de pagamentos.
 
@@ -157,15 +155,19 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Changelog ==
 
-= 1.1.2
+= 1.1.3 =
+
+* Suporte para o PHP 7.2 (conforme solicitado por muitos utilizadores);
+
+= 1.1.2 =
 
 * Atualização da biblioteca `piggly/php-pix` e do painel de configurações;
 
-= 1.1.1
+= 1.1.1 =
 
 * Atualização da biblioteca `piggly/php-pix`;
 
-= 1.1.0
+= 1.1.0 =
 
 * Correções de bugs;
 * Melhorias na exibição do Pix no e-mail e na tela;
