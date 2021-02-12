@@ -4,7 +4,7 @@ Tags: woocommerce, payment, pix
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.1.2
+Stable tag: 1.1.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,9 +17,19 @@ O propósito deste plugin é permitir que você utilize o método de pagamento P
 
 > Se você apreciar a função deste plugin e quiser apoiar este trabalho, sinta-se livre para fazer qualquer doação para a chave aleatória Pix `aae2196f-5f93-46e4-89e6-73bf4138427b` ❤.
 
-== Sobre a versão 1.1.2 ==
+== Vantagens do Pix por Piggly ==
 
-Estamos contentes com os feedbacks que recebemos. Por essa razão, atualizamos as páginas de configurações do plugin. Deixamos muito mais explicativas e detalhadas. Além de implementarmos a "Importação Pix" que irá ler um código Pix válido que você tenha e importar os dados para as configurações do plugin. Bem legal, né? Continuem dando o feedback de vocês para que possamos sempre melhorar.
+**Sempre atualize para continuar aproveitando**
+
+* Importe os dados Pix de uma chave Pix válida;
+* Direcione o usuário para qualquer página carregando o código do Pedido, seja uma página para enviar comprovantes ou um link para enviar via Whatsapp e/ou Telegram;
+* Utilize Merge Tags em campos disponíveis para substituir variáveis e customizar ainda mais as funções do plugin;
+* Não se preocupe com a formatação, nós formatamos corretamente todos os dados preenchidos no plugin;
+* Teste antes de habilitar. Insira um valor e um número do pedido fictício para simular o código Pix e verificar se está tudo como você espera.
+
+== Sobre a versão 1.1.2 e acima ==
+
+Estamos contentes com os feedbacks que recebemos. Por essa razão, atualizamos as páginas de configurações do plugin. Deixamos muito mais explicativas e detalhadas. Além de implementarmos a "Importação Pix" que irá ler um código Pix válido que você tenha e importar os dados para as configurações do plugin. Também acrescentamos botões específicos para enviar comprovantes via Whatsapp e/ou Telegram personalizando a mensagem. Bem legal, né? Continuem dando o feedback de vocês para que possamos sempre melhorar.
 
 == Como funciona? ==
 
@@ -154,6 +164,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 4. Configurações do método de pagamento.
 
 == Changelog ==
+
+= 1.1.4 =
+
+* Botões para Whatsapp e Telegram, além de melhorias no layout;
 
 = 1.1.3 =
 

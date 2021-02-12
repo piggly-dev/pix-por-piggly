@@ -7,9 +7,20 @@ O propósito deste plugin é permitir que você utilize o método de pagamento P
 
 > Se você apreciar a função deste plugin e quiser apoiar este trabalho, sinta-se livre para fazer qualquer doação para a chave aleatória Pix `aae2196f-5f93-46e4-89e6-73bf4138427b` ❤.
 
-## Sobre a versão 1.1.2 ##
 
-Estamos contentes com os feedbacks que recebemos. Por essa razão, atualizamos as páginas de configurações do plugin. Deixamos muito mais explicativas e detalhadas. Além de implementarmos a "Importação Pix" que irá ler um código Pix válido que você tenha e importar os dados para as configurações do plugin. Bem legal, né? Continuem dando o feedback de vocês para que possamos sempre melhorar.
+## Vantagens do Pix por Piggly ##
+
+**Sempre atualize para continuar aproveitando**
+
+* Importe os dados Pix de uma chave Pix válida;
+* Direcione o usuário para qualquer página carregando o código do Pedido, seja uma página para enviar comprovantes ou um link para enviar via Whatsapp e/ou Telegram;
+* Utilize Merge Tags em campos disponíveis para substituir variáveis e customizar ainda mais as funções do plugin;
+* Não se preocupe com a formatação, nós formatamos corretamente todos os dados preenchidos no plugin;
+* Teste antes de habilitar. Insira um valor e um número do pedido fictício para simular o código Pix e verificar se está tudo como você espera.
+* 
+## Sobre a versão 1.1.2 e acima ##
+
+Estamos contentes com os feedbacks que recebemos. Por essa razão, atualizamos as páginas de configurações do plugin. Deixamos muito mais explicativas e detalhadas. Além de implementarmos a "Importação Pix" que irá ler um código Pix válido que você tenha e importar os dados para as configurações do plugin. Também acrescentamos botões específicos para enviar comprovantes via Whatsapp e/ou Telegram personalizando a mensagem. Bem legal, né? Continuem dando o feedback de vocês para que possamos sempre melhorar.
 
 ## Como funciona? ##
 
@@ -140,6 +151,14 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 1.1.4 ###
+
+* Botões para Whatsapp e Telegram, além de melhorias no layout;
+
+### 1.1.3 ###
+
+* Suporte para o PHP 7.2 (conforme solicitado por muitos utilizadores);
+
 ### 1.1.2 ###
 
 * Atualização da biblioteca `piggly/php-pix` e do painel de configurações;
@@ -173,7 +192,7 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 ### 1.0.0 ### 
 
 * Versão inicial do plugin.
-
+ 
 ## Contribuições ##
 
 Todas as contribuições são bem-vindas e serão bem recebidas ❤. 

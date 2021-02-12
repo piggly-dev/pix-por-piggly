@@ -26,10 +26,22 @@
  $success    = file_put_contents($file, $data_);
 ?>
 
-<p>Caso tenha perdido o link para pagamento, ou fechado antes da conclusão, <a href="<?=$order->get_checkout_payment_url();?>">clique aqui</a>.</p>
+<p>Caso tenha perdido o link para pagamento, ou fechado antes da conclusão, <a href="<?=$order->get_checkout_payment_url();?>">clique aqui</a>. Não esqueça de enviar o comprovante Pix para agilizar o processo de identificação do seu pagamento.</p>
+
+<?php if ( !empty($data->receipt_page_value) ) : ?>
+	<a href="<?=$data->receipt_page_value?>">Enviar Comprovante</a><br>
+<?php endif; ?>
+
+<?php if ( !empty($data->whatsapp) ) : ?>
+	<a href="<?=sprintf('https://wa.me/%s?text=%s',$data->whatsapp,urlencode($data->whatsapp_message))?>">Enviar Comprovante via Whatsapp</a><br>
+<?php endif; ?>
+
+<?php if ( !empty($data->telegram) ) : ?>
+	<a href="<?=sprintf('https://t.me/%s?text=%s',$data->telegram,urlencode($data->telegram_message))?>">Enviar Comprovante via Telegram</a><br>
+<?php endif; ?>
 
 <?php if ( $data->pix_qrcode && $success ) : ?>
-<div style="margin: 72px auto; text-align: center;">
+<div style="margin: 36px auto; text-align: center;">
 	<h4 style="text-align: center; font-size: 24px;">Pague com o QR Code</h4>
 	<?php echo '<img style="margin: 0 auto; display: table; background-color: #FFF" src="'.$uploadUrl.$fileName.'" alt="QR Code de Pagamento" />'; ?>
 </div>
@@ -37,7 +49,7 @@
 	
 <?php if ( $data->pix_copypast ) : ?>
 <p style="text-align: center">- OU -<p>
-<div style="margin: 72px auto;">
+<div style="margin: 36px auto;">
 	<h4 style="text-align: center; font-size: 24px;">Pix Copie & Cole</h4>
 	<p>Copie o código para realizar o pagamento <code style="background-color: #CCC; font-size: 12px"><?=$pix;?></code></p>
 </div>
@@ -45,7 +57,7 @@
 	
 <?php if ( $data->pix_manual ) : ?>
 <p style="text-align: center">- OU -<p>
-<div style="margin: 72px auto;">
+<div style="margin: 36px auto;">
 	<h4 style="text-align: center; font-size: 24px;">Faça uma Transferência PIX</h4>
 	<p style="margin: 0 0 8px; font-size: 20px;"><strong style="font-size: 14px; font-weight: 900; text-transform: uppercase; display: table;">Tipo de Chave</strong> <?=$data->key_type?></p>
 	<p style="margin: 0 0 8px; font-size: 20px;"><strong style="font-size: 14px; font-weight: 900; text-transform: uppercase; display: table;">Chave Pix</strong> <?=$data->key_value?></p>

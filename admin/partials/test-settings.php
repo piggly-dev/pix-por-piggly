@@ -40,6 +40,8 @@ use Piggly\Pix\Payload;
 		if ( !empty($order_id) ) :
 			$data->instructions       = str_replace('{{pedido}}', $order_id, $data->instructions);
 			$data->receipt_page_value = str_replace('{{pedido}}', $order_id, $data->receipt_page_value);
+			$data->whatsapp_message   = str_replace('{{pedido}}', $order_id, $data->whatsapp_message);
+			$data->telegram_message   = str_replace('{{pedido}}', $order_id, $data->telegram_message); 
 			$data->identifier         = str_replace('{{id}}', $order_id, $data->identifier);
 		endif;
 

@@ -1,6 +1,7 @@
 <?php
 // If this file is called directly, abort.
 
+use Piggly\Pix\Parser;
 use Piggly\Pix\Payload;
 
 if ( ! defined( 'WPINC' ) ) { die; }
@@ -50,6 +51,10 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		$this->instructions = $this->get_option( 'instructions' );
 		$this->identifier = $this->get_option( 'identifier' );
 		$this->receipt_page_value = $this->get_option( 'receipt_page_value' );
+		$this->whatsapp = $this->get_option( 'whatsapp' );
+		$this->telegram = $this->get_option( 'telegram' );
+		$this->whatsapp_message = $this->get_option( 'whatsapp_message' );
+		$this->telegram_message = $this->get_option( 'telegram_message' );
 		$this->enabled = $this->get_option( 'enabled' );
 
 		// When it is admin...
@@ -186,6 +191,30 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 				'type'        => 'text',
 				'description' => __('Quando preenchido, adiciona um botão para ir até a página. Informe a página que será utilizada para envio do comprovante. Algumas páginas podem receber tags para auto-preencher formulário. Utilize {{pedido}} para fazer referência ao ID do pedido (será substituido pelo ID).', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'default'	  => ''
+			),
+			'whatsapp' => array(
+				'title'       => __('Whatsapp', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'type'        => 'text',
+				'description' => __('Quando preenchido, adiciona um botão para o whatsapp.', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'default'	  => ''
+			),
+			'telegram' => array(
+				'title'       => __('Telegram', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'type'        => 'text',
+				'description' => __('Quando preenchido, adiciona um botão para o telegram.', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'default'	  => ''
+			),
+			'whatsapp_message' => array(
+				'title'       => __('Mensagem inicial para Whatsapp', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'type'        => 'text',
+				'description' => __('Mensagem inicial para enviar via whatsapp.', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'default'	  => 'Segue o comprovante para o pedido {{pedido}}:'
+			),
+			'telegram_message' => array(
+				'title'       => __('Mensagem inicial para Telegram', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'type'        => 'text',
+				'description' => __('Mensagem inicial para enviar via telegram.', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'default'	  => 'Segue o comprovante para o pedido {{pedido}}:'
 			)
 		);
 	}
@@ -290,6 +319,8 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		
 		$this->instructions       = str_replace('{{pedido}}', $order_id, $this->instructions);
 		$this->receipt_page_value = str_replace('{{pedido}}', $order_id, $this->receipt_page_value);
+		$this->whatsapp_message   = str_replace('{{pedido}}', $order_id, $this->whatsapp_message);
+		$this->telegram_message   = str_replace('{{pedido}}', $order_id, $this->telegram_message);
 		$this->identifier         = str_replace('{{id}}', $order_id, $this->identifier);
 
 		$pix = 
@@ -399,6 +430,15 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 			WC_Admin_Settings::add_error($e->getMessage());
 			return false;
 		}
+
+		$whatsapp = filter_input( INPUT_POST, $field.'whatsapp', FILTER_SANITIZE_STRING );
+		$telegram = filter_input( INPUT_POST, $field.'telegram', FILTER_SANITIZE_STRING );
+
+		if ( !empty($whatsapp) )
+		{ $_POST[$field.'whatsapp'] = str_replace('+', '', Parser::parsePhone($whatsapp)); }
+
+		if ( !empty($telegram) )
+		{ $_POST[$field.'telegram'] = str_replace('@', '', $telegram); }
 		
 		parent::process_admin_options();
 	}

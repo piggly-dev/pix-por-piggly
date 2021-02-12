@@ -153,7 +153,9 @@
 		<p><code>{{id}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>
 
-	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_receipt_page_value">Página do Comprovante</label>
+	<h3>Configurações de Exibição</h3>
+
+	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_receipt_page_value">Página do Comprovante <code>Não preencha para ocultar</code></label>
 	<input value="<?=$data->receipt_page_value?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_receipt_page_value" id="woocommerce_wc_piggly_pix_gateway_receipt_page_value">
 	<p class="description">Quando preenchido, adiciona um botão para ir até a página.</p>
 	
@@ -170,6 +172,30 @@
 			Ao fazer isso, o formulário na página <code>/comprovante-pix</code> receberá o número do pedido automaticamente. Facilitando para o comprador.
 		</p>
 		<h4>Merge Tags</h4>
+		<p><code>{{pedido}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
+	</div>
+	
+	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_whatsapp">Whatsapp para enviar o Comprovante <code>Não preencha para ocultar</code></label>
+	<p class="description">Informe seu telefone em qualquer formato, ajustaremos para você.</p>
+	<input value="<?=$data->whatsapp?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_whatsapp" id="woocommerce_wc_piggly_pix_gateway_whatsapp">
+	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_whatsapp_message">Mensagem inicial para ser enviada</label>
+	<input value="<?=$data->whatsapp_message?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_whatsapp_message" id="woocommerce_wc_piggly_pix_gateway_whatsapp_message">
+	<p class="description">Quando preenchido, exibirá um botão para compartilhar o comprovante.</p>
+	
+	<div>
+		<h4>Merge Tags da Mensagem Inicial</h4>
+		<p><code>{{pedido}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
+	</div>
+
+	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_telegram">Usuário do Telegram para enviar o Comprovante <code>Não preencha para ocultar</code></label>
+	<p class="description">Informe somente o seu nome de usuário com ou sem @, ajustaremos para você.</p>
+	<input value="<?=$data->telegram?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_telegram" id="woocommerce_wc_piggly_pix_gateway_telegram">
+	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_telegram_message">Mensagem inicial para ser enviada</label>
+	<input value="<?=$data->telegram_message?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_telegram_message" id="woocommerce_wc_piggly_pix_gateway_telegram_message">
+	<p class="description">Quando preenchido, exibirá um botão para compartilhar o comprovante.</p>
+	
+	<div>
+		<h4>Merge Tags da Mensagem Inicial</h4>
 		<p><code>{{pedido}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>
 
