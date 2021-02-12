@@ -139,8 +139,9 @@
 	</div>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_identifier">Identificador</label>
-	<input value="<?=$data->identifier?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_identifier" id="woocommerce_wc_piggly_pix_gateway_identifier">
-	<p class="description">Crie o formato para o identificador Pix.</p>
+	<input maxlength="25" value="<?=$data->identifier?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_identifier" id="woocommerce_wc_piggly_pix_gateway_identifier">
+	<p class="description">Crie o formato para o identificador Pix. Utilize letras de A a Z e números.</p>
+	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('{{id}}', '123456', $data->identifier);?></code></p>
 	
 	<div>
 		<h4>Recomendações</h4>
@@ -158,6 +159,7 @@
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_receipt_page_value">Página do Comprovante <code>Não preencha para ocultar</code></label>
 	<input value="<?=$data->receipt_page_value?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_receipt_page_value" id="woocommerce_wc_piggly_pix_gateway_receipt_page_value">
 	<p class="description">Quando preenchido, adiciona um botão para ir até a página.</p>
+	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('{{pedido}}', '123456', $data->receipt_page_value);?></code></p>
 	
 	<div>
 		<h4>Recomendações</h4>
@@ -181,6 +183,7 @@
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_whatsapp_message">Mensagem inicial para ser enviada</label>
 	<input value="<?=$data->whatsapp_message?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_whatsapp_message" id="woocommerce_wc_piggly_pix_gateway_whatsapp_message">
 	<p class="description">Quando preenchido, exibirá um botão para compartilhar o comprovante.</p>
+	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('{{pedido}}', '123456', $data->whatsapp_message);?></code></p>
 	
 	<div>
 		<h4>Merge Tags da Mensagem Inicial</h4>
@@ -193,6 +196,7 @@
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_telegram_message">Mensagem inicial para ser enviada</label>
 	<input value="<?=$data->telegram_message?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_telegram_message" id="woocommerce_wc_piggly_pix_gateway_telegram_message">
 	<p class="description">Quando preenchido, exibirá um botão para compartilhar o comprovante.</p>
+	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('{{pedido}}', '123456', $data->telegram_message);?></code></p>
 	
 	<div>
 		<h4>Merge Tags da Mensagem Inicial</h4>

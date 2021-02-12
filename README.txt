@@ -4,7 +4,7 @@ Tags: woocommerce, payment, pix
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,6 +14,8 @@ O **Pix** é o mais novo método de pagamento eletrônico criado pelo Banco Cent
 Você encontra todos os detalhes na [página oficial](https://www.bcb.gov.br/estabilidadefinanceira/pix) do Pix.
 
 O propósito deste plugin é permitir que você utilize o método de pagamento Pix em sua loja **Woocommerce** sem qualquer custo de forma simples, rápida e direta.
+
+* Compatível com o Pix versão 2.2.1, veja mais detalhes [clicando aqui](https://www.bcb.gov.br/content/estabilidadefinanceira/pix/Regulamento_Pix/II-ManualdePadroesparaIniciacaodoPix.pdf).
 
 > Se você apreciar a função deste plugin e quiser apoiar este trabalho, sinta-se livre para fazer qualquer doação para a chave aleatória Pix `aae2196f-5f93-46e4-89e6-73bf4138427b` ❤.
 
@@ -30,6 +32,10 @@ O propósito deste plugin é permitir que você utilize o método de pagamento P
 == Sobre a versão 1.1.2 e acima ==
 
 Estamos contentes com os feedbacks que recebemos. Por essa razão, atualizamos as páginas de configurações do plugin. Deixamos muito mais explicativas e detalhadas. Além de implementarmos a "Importação Pix" que irá ler um código Pix válido que você tenha e importar os dados para as configurações do plugin. Também acrescentamos botões específicos para enviar comprovantes via Whatsapp e/ou Telegram personalizando a mensagem. Bem legal, né? Continuem dando o feedback de vocês para que possamos sempre melhorar.
+
+= 1.1.5 e acima =
+
+O comportamento do **identificador** do pedido no Pix foi atualizado. Nas versões mais recentes, o Pix aceita apenas caracteres entre A a Z e dígitos entre 0 a 9.
 
 == Como funciona? ==
 
@@ -164,6 +170,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 4. Configurações do método de pagamento.
 
 == Changelog ==
+
+= 1.1.5 =
+
+* Atualização da formataçã do campo **Identificador**;
 
 = 1.1.4 =
 

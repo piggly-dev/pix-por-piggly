@@ -5,8 +5,9 @@ Você encontra todos os detalhes na [página oficial](https://www.bcb.gov.br/est
 
 O propósito deste plugin é permitir que você utilize o método de pagamento Pix em sua loja **Woocommerce** sem qualquer custo de forma simples, rápida e direta.
 
-> Se você apreciar a função deste plugin e quiser apoiar este trabalho, sinta-se livre para fazer qualquer doação para a chave aleatória Pix `aae2196f-5f93-46e4-89e6-73bf4138427b` ❤.
+* Compatível com o Pix versão 2.2.1, veja mais detalhes [clicando aqui](https://www.bcb.gov.br/content/estabilidadefinanceira/pix/Regulamento_Pix/II-ManualdePadroesparaIniciacaodoPix.pdf).
 
+> Se você apreciar a função deste plugin e quiser apoiar este trabalho, sinta-se livre para fazer qualquer doação para a chave aleatória Pix `aae2196f-5f93-46e4-89e6-73bf4138427b` ❤.
 
 ## Vantagens do Pix por Piggly ##
 
@@ -17,10 +18,14 @@ O propósito deste plugin é permitir que você utilize o método de pagamento P
 * Utilize Merge Tags em campos disponíveis para substituir variáveis e customizar ainda mais as funções do plugin;
 * Não se preocupe com a formatação, nós formatamos corretamente todos os dados preenchidos no plugin;
 * Teste antes de habilitar. Insira um valor e um número do pedido fictício para simular o código Pix e verificar se está tudo como você espera.
-* 
+
 ## Sobre a versão 1.1.2 e acima ##
 
 Estamos contentes com os feedbacks que recebemos. Por essa razão, atualizamos as páginas de configurações do plugin. Deixamos muito mais explicativas e detalhadas. Além de implementarmos a "Importação Pix" que irá ler um código Pix válido que você tenha e importar os dados para as configurações do plugin. Também acrescentamos botões específicos para enviar comprovantes via Whatsapp e/ou Telegram personalizando a mensagem. Bem legal, né? Continuem dando o feedback de vocês para que possamos sempre melhorar.
+
+### 1.1.5 e acima ###
+
+O comportamento do **identificador** do pedido no Pix foi atualizado. Nas versões mais recentes, o Pix aceita apenas caracteres entre A a Z e dígitos entre 0 a 9.
 
 ## Como funciona? ##
 
@@ -150,6 +155,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 **Preencha corretamente a sua chave Pix. Você pode testar nas configurações do plugin o funcionamento do Pix mesmo que o módulo esteja desativado.**
 
 ## Changelog ##
+
+### 1.1.5 ###
+
+* Atualização da formataçã do campo **Identificador**;
 
 ### 1.1.4 ###
 
