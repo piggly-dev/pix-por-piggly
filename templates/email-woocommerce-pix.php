@@ -10,20 +10,24 @@
  * @subpackage Piggly_Woocommerce_Pix/templates
  */
 
- $upload     = wp_upload_dir();
- $uploadPath = $upload['basedir'].'/qrcodes/';
- $uploadUrl  = $upload['baseurl'].'/qrcodes/';
+$upload     = wp_upload_dir();
+$uploadPath = $upload['basedir'].'/qrcodes/';
+$uploadUrl  = $upload['baseurl'].'/qrcodes/';
 
- if ( ! file_exists( $uploadPath ) ) {
-	wp_mkdir_p( $uploadPath );
+if ( ! file_exists( $uploadPath ) ) 
+{ wp_mkdir_p( $uploadPath ); }
+
+$sucess = false;
+
+if ( !empty( $qrcode ) )
+{
+	$img        = str_replace('data:image/png;base64,', '', $qrcode);
+	$img        = str_replace(' ', '+', $img);
+	$data_      = base64_decode($img);
+	$fileName   = uniqid() . '.png';
+	$file       = $uploadPath . $fileName;
+	$success    = file_put_contents($file, $data_);
 }
-
- $img        = str_replace('data:image/png;base64,', '', $qrcode);
- $img        = str_replace(' ', '+', $img);
- $data_      = base64_decode($img);
- $fileName   = uniqid() . '.png';
- $file       = $uploadPath . $fileName;
- $success    = file_put_contents($file, $data_);
 ?>
 
 <p>Caso tenha perdido o link para pagamento, ou fechado antes da conclusão, <a href="<?=$order->get_checkout_payment_url();?>">clique aqui</a>. Não esqueça de enviar o comprovante Pix para agilizar o processo de identificação do seu pagamento.</p>

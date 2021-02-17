@@ -1,34 +1,43 @@
 === Pix por Piggly ===
+
 Contributors: pigglydev, caiquearaujo
-Tags: woocommerce, payment, pix
+Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.1.6
-License: GPLv2
+Stable tag: 1.1.7
+License: GPLv2 or later
+Language: pt_BR
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+Pix por Piggly adiciona suporte para pagamentos via Pix sem taxas. Precisa do Woocommerce para funcionar.
+WooCommerce 3.x compatible.
 
 == Bem-vindo ao Pix por Piggly ==
 
 O **Pix** é o mais novo método de pagamento eletrônico criado pelo Banco Central do Brasil.
 Você encontra todos os detalhes na [página oficial](https://www.bcb.gov.br/estabilidadefinanceira/pix) do Pix.
 
-O propósito deste plugin é permitir que você utilize o método de pagamento Pix em sua loja **Woocommerce** sem qualquer custo de forma simples, rápida e direta.
+O propósito deste plugin é permitir que você utilize o método de pagamento Pix em sua loja **Woocommerce** sem qualquer custo de forma simples, rápida e direta. Acesse as configurações do plugin em `Woocommerce > Configurações > Pagamentos > Pix`.
 
-* Compatível com o Pix versão 2.2.1, veja mais detalhes [clicando aqui](https://www.bcb.gov.br/content/estabilidadefinanceira/pix/Regulamento_Pix/II-ManualdePadroesparaIniciacaodoPix.pdf).
+* Compatível com o Pix versão 2.2.1, veja mais detalhes [clicando aqui](https://www.bcb.gov.br/content/estabilidadefinanceira/pix/Regulamento_Pix/II-ManualdePadroesparaIniciacaodoPix.pdf). Se você tiver problemas de incompatibilidade, sugirimos o uso da Chave Aleatória da sua conta Pix.
+
+**Quer saber mais?** Assista ao vídeo tutorial de configuração no [Youtube](https://www.youtube.com/watch?v=PqRqXFgWOsg&t=200s).
 
 > Se você apreciar a função deste plugin e quiser apoiar este trabalho, sinta-se livre para fazer qualquer doação para a chave aleatória Pix `aae2196f-5f93-46e4-89e6-73bf4138427b` ❤.
 
-== Vantagens do Pix por Piggly ==
+> Não esqueça de deixar a sua avaliação sobre o plugin! Isso nos incentivará a lançar mais atualizações e continuar prestando um suporte de qualidade.
+
+== Vantagens do Pix por Piggly para Woocommerce ==
 
 **Sempre atualize para continuar aproveitando**
 
-* Importe os dados Pix de uma chave Pix válida;
+* Importe os dados Pix de uma chave Pix válida e não precise digitar manualmente os dados da sua conta Pix;
 * Direcione o usuário para qualquer página carregando o código do Pedido, seja uma página para enviar comprovantes ou um link para enviar via Whatsapp e/ou Telegram;
 * Utilize Merge Tags em campos disponíveis para substituir variáveis e customizar ainda mais as funções do plugin;
-* Não se preocupe com a formatação, nós formatamos corretamente todos os dados preenchidos no plugin;
-* Teste antes de habilitar. Insira um valor e um número do pedido fictício para simular o código Pix e verificar se está tudo como você espera.
-* Selecione o modelo de e-mail e o status do pagamento Pix;
+* Não se preocupe com a formatação, nós formatamos corretamente todos os dados preenchidos no plugin para máxima compatibilidade e facilidade;
+* Teste antes de habilitar! Insira um valor e um número do pedido fictício para simular o código Pix e verificar se está tudo como você espera. Você ainda pode usar essa função para gerar pagamentos Pix e enviar para clientes via Whatsapp e/ou Telegram;
+* Selecione o modelo de e-mail onde o Pix será enviado e o status do pedido enquanto aguarda a conferência do pagamento Pix;
 
 == Sobre a versão 1.1.2 e acima ==
 
@@ -56,7 +65,7 @@ Dessa forma, nosso plugin gera os três principais métodos de pagamento:
 
 Nosso plugin gera de forma automática o código Pix com base nas informações do Pedido e nas informações preenchidas na configuração do plugin. 
 
-> Não importa como você digita a chave Pix, ela será automaticamente convertidas para os formatos apropriados, okay? Caso ela esteja inválida, de acordo com o formato escolhido, você será notificado.
+> Não importa como você digita a chave Pix, ela será automaticamente convertida para os formatos apropriados, okay? Caso ela esteja inválida, de acordo com o formato escolhido, você será notificado.
 
 == Funcionalidades ==
 
@@ -84,6 +93,8 @@ Você pode utilizar `{{pedido}}` na URL pois esse termo será substituído pelo 
 
 Por exemplo, com o número do pedido `1234` defina a URL em **Página para Comprovante** como, por exemplo, `https://minhaloja.com.br/comprovante-pix/?order_id={{pedido}}`. Nosso plugin traduzirá essa URL para `https://minhaloja.com.br/comprovante-pix/?order_id=1234`, basta então ler o campo `order_id` da URL com o seu formulário no campo apropriado.
 
+Você também pode inserir seu número do Whatsapp e/ou usuário do Telegram para que seu cliente envie o comprovante de pagamento Pix por esses canais.
+
 = Testes realizados =
 
 O código Pix gerado por esse plugin, incluindo a função **QR Code** e **Pix Copia & Cola**, foi testado nos seguintes aplicativos de banco:
@@ -107,7 +118,7 @@ Assim como uma transferência bancária tradicional, ainda não é possível val
 
 Embora, o código Pix gerado por esse plugin inclua o número do pedido e o nome da Loja, alguns bancos ainda não possibilitam visualizar esses dados do Pix de origem.
 
-Nosso próximo passo é possibilitar o suporte para Pix Dinâmicos, esperamos em breve colocar um suporte as APIs para fazer esses tipos de transações. Por enquanto, a comunicação entre bancos e provedores de pagamento está muito complicada.
+Nosso próximo passo é possibilitar o suporte para Pix Dinâmicos, esperamos em breve colocar um suporte as APIs para fazer esses tipos de transações. Por enquanto, a comunicação entre bancos e provedores de pagamento está muito complicada e precisará ser feita de forma manual.
 
 Algumas melhorias no layout da página de pagamento Pix estão sendo planejadas.
 
@@ -126,7 +137,11 @@ Este plugin esta licenciado como GPL.
 
 = **Posso utilizar com outros gateways de pagamento?** =
 
-* Sim, esse plugin funciona apenas como um método de pagamento adicional, assim como acontece com o método de transferência eletrônica.
+Sim, esse plugin funciona apenas como um método de pagamento adicional, assim como acontece com o método de transferência eletrônica.
+
+= **Como conferir o pagamento Pix?** =
+
+A conferência do Pix ainda é manual, assim como acontece em uma transferência eletrônica. Para facilitar, o plugin gera os Pix com um código identificador. Esse código possuí o número do pedido e você pode personalizá-lo na página de configurações. Ao abrir o aplicativo do seu banco, você poderá ver detalhes sobre o recebimento Pix e lá estará o código identificador do Pix.
 
 = **O código Pix ou QR Code está inválido! O que fazer?** =
 
@@ -149,17 +164,21 @@ Neste caso, precisamos verificar cada caso. E você pode contribuir com isso env
 
 A página oficial do plugin pode ser encontrada em: [wordpress@pix-por-piggly](https://wordpress.org/plugins/pix-por-piggly/).
 
-= Neste repositório =
+= No repositório do Github =
 
 Vá para [Releases](https://github.com/piggly-dev/piggly-views-wordpress/releases) neste repositório e faça o download em `.zip` da versão mais recente.
 
 Então, no **Painel Administrativo** do Wordpress, vá em `Plugins > Adicionar novo` e clique em `Upload plugin` no topo da página para enviar o arquivo `.zip`.
+
+> Você precisará, posteriormente, ir até a pasta do plugin no terminal do seu servidor Web e executar o comando `composer install` caso escolha essa opção.
 
 = Da origem =
 
 Você precisará do Git instalado para contruir da origem. Para completar os passos a seguir, você precisará abrir um terminal de comando. Clone o repositório:
 
 `git clone https://github.com/piggly-dev/wc-piggly-pix.git`
+
+> Você precisará, posteriormente, executar o comando `composer install` caso escolha essa opção.
 
 == Como utilizar? ==
 
@@ -175,6 +194,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 4. Configurações do método de pagamento.
 
 == Changelog ==
+
+= 1.1.7 =
+
+* Correções e melhorias;
 
 = 1.1.6 =
 

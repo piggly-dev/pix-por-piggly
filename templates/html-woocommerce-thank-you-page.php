@@ -66,7 +66,7 @@ use Piggly\Pix\Parser;
 		<?php endif; ?>
 	</div>
 
-	<?php if ( $data->pix_qrcode ) : ?>
+	<?php if ( $data->pix_qrcode && !empty($qrcode) ) : ?>
 	<div class="pix-method">
 		<h4>Pague com o QR Code</h4>
 		<?php echo '<img src="'.$qrcode.'" alt="QR Code de Pagamento" />'; ?>

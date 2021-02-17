@@ -16,13 +16,13 @@
  * Plugin Name:       Pix por Piggly
  * Plugin URI:        https://github.com/piggly-dev/wc-piggly-pix
  * Description:       Possibilite o pagamento com Pix de uma forma simples, rápida e direta.
- * Version:           1.1.6
+ * Version:           1.1.7
  * Author:            Caique 
  * Author URI:        https://github.com/caiquearaujo
  * License:           GPLv2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       wc-piggly-pix
- * Domain Path:       /languages
+ * Domain Path:       /languages 
  */
 
 // If this file is called directly, abort.
@@ -39,7 +39,7 @@ define( 'WC_PIGGLY_PIX_PLUGIN_NAME', 'wc-piggly-pix' );
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * @var string
  */
-define( 'WC_PIGGLY_PIX_PLUGIN_VERSION', '1.1.6' );
+define( 'WC_PIGGLY_PIX_PLUGIN_VERSION', '1.1.7' );
 
 /**
  * The plugin absolute directory.
@@ -79,7 +79,7 @@ function run_wc_piggly_pix () {
  * @since 1.0.0
  */
 function wc_piggly_pix_missing_notice ()
-{ include WC_PIGGLY_PIX_PLUGIN_PATH . 'admin/partials/html-notice-missing-woocommerce.php'; }
+{ include WC_PIGGLY_PIX_PLUGIN_PATH . 'admin/partials/html-woocommerce-missing-notice.php'; }
 
 require WC_PIGGLY_PIX_PLUGIN_PATH . 'vendor/autoload.php';
 run_wc_piggly_pix();

@@ -1,8 +1,16 @@
 <?php
-
+use Piggly\Pix\Parser;
 use Piggly\Pix\Payload;
+use Piggly\Pix\StaticPayload;
 
 ?>
+
+<?php if ( !(extension_loaded('gd') && function_exists('gd_info')) ) : ?>
+<div class="error">
+	<p>Você precisa da extensão <strong>GD</strong> do PHP para gerar os <strong>QR Codes</strong>. Instale e habilite a extensão no seu servidor web.</p>
+</div> 
+<?php endif; ?>
+
 <style>
 #mainform p.submit { display: none; }
 #mainform p.force-submit { display: block !important; }
@@ -46,24 +54,23 @@ use Piggly\Pix\Payload;
 		endif;
 
 		$pix = 
-			(new Piggly\Pix\Payload())
+			(new StaticPayload())
 				->setPixKey($data->key_type, $data->key_value)
-				->setDescription(sprintf('%s', $data->store_name))
+				->setDescription(sprintf('Compra em %s', $data->store_name))
 				->setMerchantName($data->merchant_name)
 				->setMerchantCity($data->merchant_city)
 				->setAmount((float)$amount)
-				->setAsReusable($data->asBool($data->unique_payment))
 				->setTid($data->identifier);
 
 		// Get alias for pix
-		$data->key_type = Piggly\Pix\Parser::getAlias($data->key_type); 
+		$data->key_type = Parser::getAlias($data->key_type); 
 
 		wc_get_template(
 			'html-woocommerce-thank-you-page.php',
 			array(
 				'data' => $data,
 				'pix' => $pix->getPixCode(),
-				'qrcode' => $data->pix_qrcode ? $pix->getQRCode(Payload::OUTPUT_PNG) : '',
+				'qrcode' => $data->pix_qrcode && (extension_loaded('gd') && function_exists('gd_info')) ? $pix->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) : '',
 				'order_id' => $order_id,
 				'amount' => $amount
 			),

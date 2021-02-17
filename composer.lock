@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4cf64a35a4808c2eb0b6f951c15ad0e4",
+    "content-hash": "d88b6b9b5f5725a49bc3dee253a5a5d0",
     "packages": [
         {
             "name": "chillerlan/php-qrcode",
@@ -137,16 +137,16 @@
         },
         {
             "name": "piggly/php-pix",
-            "version": "1.1.2",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/piggly-dev/php-pix.git",
-                "reference": "59789878f9fd7c1dc6c53b761f641ad56e40ab90"
+                "reference": "c1d76f34d39c381ef1859d1d6b3ff6fb4aee5722"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/59789878f9fd7c1dc6c53b761f641ad56e40ab90",
-                "reference": "59789878f9fd7c1dc6c53b761f641ad56e40ab90",
+                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/c1d76f34d39c381ef1859d1d6b3ff6fb4aee5722",
+                "reference": "c1d76f34d39c381ef1859d1d6b3ff6fb4aee5722",
                 "shasum": ""
             },
             "require": {
@@ -186,9 +186,9 @@
             ],
             "support": {
                 "issues": "https://github.com/piggly-dev/php-pix/issues",
-                "source": "https://github.com/piggly-dev/php-pix/tree/1.1.2"
+                "source": "https://github.com/piggly-dev/php-pix/tree/1.2.1"
             },
-            "time": "2021-02-12T12:48:10+00:00"
+            "time": "2021-02-16T20:55:31+00:00"
         }
     ],
     "packages-dev": [],

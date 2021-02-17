@@ -3,7 +3,7 @@
     "description": "Implemente o Pix de uma forma simples e rápida em sua loja Woocommerce.",
     "type": "wordpress-plugin",
     "require": {
-        "piggly/php-pix": "^1.1.2"
+        "piggly/php-pix": "^1.2.0"
     },
     "license": "GPL-2.0+",
     "authors": [

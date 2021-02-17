@@ -14,7 +14,6 @@ $is_installed = false;
 if ( ! class_exists ( 'woocommerce' ) ) { $is_installed = true; }
 
 ?>
-
 <div class="error">
 	<p><strong><?php esc_html_e( 'WooCommerce Pix', WC_PIGGLY_PIX_PLUGIN_NAME ); ?></strong> <?php esc_html_e( 'necessita da última versão do Woocommerce para funcionar.', WC_PIGGLY_PIX_PLUGIN_NAME ); ?></p>
 

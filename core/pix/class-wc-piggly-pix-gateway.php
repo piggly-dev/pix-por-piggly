@@ -1,8 +1,13 @@
 <?php
 // If this file is called directly, abort.
 
+use Piggly\Pix\Exceptions\InvalidPixCodeException;
+use Piggly\Pix\Exceptions\InvalidPixKeyException;
+use Piggly\Pix\Exceptions\InvalidPixKeyTypeException;
 use Piggly\Pix\Parser;
 use Piggly\Pix\Payload;
+use Piggly\Pix\Reader;
+use Piggly\Pix\StaticPayload;
 
 if ( ! defined( 'WPINC' ) ) { die; }
 
@@ -50,15 +55,16 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		$this->email_status = $this->get_option( 'email_status', 'WC_Email_Customer_On_Hold_Order' );
 		$this->email_position = $this->get_option( 'email_position', 'before' );
 		$this->order_status = $this->get_option( 'order_status', 'wc-on-hold' );
-		$this->instructions = $this->get_option( 'instructions', __('Faça um Pix abaixo e envie seu comprovante', WC_PIGGLY_PIX_PLUGIN_NAME) );
+		$this->instructions = $this->get_option( 'instructions', __('Faça o pagamento via PIX. O pedido número {{pedido}} será liberado assim que a confirmação do pagamento for efetuada.', WC_PIGGLY_PIX_PLUGIN_NAME) );
 		$this->identifier = $this->get_option( 'identifier', 'P{{id}}' );
 		$this->receipt_page_value = $this->get_option( 'receipt_page_value' );
-		$this->whatsapp = $this->get_option( 'whatsapp' );
+		$this->whatsapp = preg_replace('/^[5]{3,}/', '', $this->get_option( 'whatsapp' ));
 		$this->telegram = $this->get_option( 'telegram' );
 		$this->whatsapp_message = $this->get_option( 'whatsapp_message', __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME) );
 		$this->telegram_message = $this->get_option( 'telegram_message', __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME) );
 		$this->enabled = $this->get_option( 'enabled', 'no' );
-
+		$this->help_text = $this->asBool($this->get_option( 'help_text', 'no' ));
+		
 		// When it is admin...
 		if ( is_admin() ) 
 		{ add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) ); }
@@ -80,6 +86,10 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 	{
 		$this->form_fields = array(
 			'enabled' => array(
+				'type'        => 'checkbox',
+				'default'     => 'no'
+			),
+			'help_text' => array(
 				'type'        => 'checkbox',
 				'default'     => 'no'
 			),
@@ -145,7 +155,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 			),
 			'instructions' => array(
 				'type'        => 'textarea',
-				'default'	  => __('Faça o pagamento via PIX e envie o comprovante para <dados></br>O pedido será liberado assim que a confirmação do pagamento for efetuada.', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'default'	  => __('Faça o pagamento via PIX. O pedido número {{pedido}} será liberado assim que a confirmação do pagamento for efetuada.', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'required'	  => true
 			),
 			'identifier' => array(
@@ -276,26 +286,59 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		$this->telegram_message   = str_replace('{{pedido}}', $order_id, $this->telegram_message);
 		$this->identifier         = str_replace('{{id}}', $order_id, $this->identifier);
 
-		$pix = 
-			(new Piggly\Pix\Payload())
-				->setPixKey($this->key_type, $this->key_value)
-				->setDescription(sprintf('Compra em %s', $this->store_name))
-				->setMerchantName($this->merchant_name)
-				->setMerchantCity($this->merchant_city)
-				->setAmount($amount)
-				->setAsReusable(true)
-				->setTid($this->identifier);
+		// Pix payload
+		$payload = $this->getPixPayload(
+			$this->key_type,
+			$this->key_value,
+			$this->store_name,
+			$this->merchant_name,
+			$this->merchant_city,
+			$amount,
+			$this->identifier
+		);
 
 		// Get alias for pix
-		$this->key_type = Piggly\Pix\Parser::getAlias($this->key_type); 
+		$this->key_type = Parser::getAlias($this->key_type); 
 
 		return array(
 			'data' => $this,
-			'pix' => $pix->getPixCode(),
-			'qrcode' => $this->pix_qrcode ? $pix->getQRCode(Payload::OUTPUT_PNG) : '',
+			'pix' => $payload->getPixCode(),
+			'qrcode' => $this->pix_qrcode && (extension_loaded('gd') && function_exists('gd_info')) ? $payload->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) : '',
 			'order_id' => $order_id,
 			'amount' => $amount
 		);
+	}
+
+	/**
+	 * Get the pix payload object.
+	 * 
+	 * @param string $keyType
+	 * @param string $keyValue
+	 * @param string $storeName
+	 * @param string $merchantName
+	 * @param string $merchantCity
+	 * @param float $amount
+	 * @param string $identifier
+	 * @return StaticPayload
+	 */
+	protected function getPixPayload (
+		$keyType,
+		$keyValue,
+		$storeName,
+		$merchantName,
+		$merchantCity,
+		$amount,
+		$identifier 
+	) : StaticPayload
+	{
+		return
+			(new StaticPayload())
+				->setPixKey($keyType, $keyValue)
+				->setDescription(sprintf('Compra em %s', $storeName))
+				->setMerchantName($merchantName)
+				->setMerchantCity($merchantCity)
+				->setAmount((float)$amount)
+				->setTid($identifier);
 	}
 
 	/**
@@ -343,14 +386,32 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 
 		if ( !empty($pixCode) )
 		{
-			$reader = new \Piggly\Pix\Reader($pixCode);
+			try
+			{
+				$reader = new Reader($pixCode);
 
-			$_POST[$field.'key_value'] = $reader->getPixKey();
-			$_POST[$field.'key_type']  = \Piggly\Pix\Parser::getKeyType($_POST[$field.'key_value']);
-			$_POST[$field.'merchant_name'] = $reader->getMerchantName();
-			$_POST[$field.'merchant_city'] = $reader->getMerchantCity();
+				$_POST[$field.'key_value'] = $reader->getPixKey();
+				$_POST[$field.'key_type']  = Parser::getKeyType($_POST[$field.'key_value']);
+				$_POST[$field.'merchant_name'] = $reader->getMerchantName();
+				$_POST[$field.'merchant_city'] = $reader->getMerchantCity();
 
-			unset($_POST[$field.'pix_code']);
+				unset($_POST[$field.'pix_code']);
+			}
+			catch ( InvalidPixCodeException $e )
+			{ 
+				WC_Admin_Settings::add_error( 'O código Pix importado é inválido.' ); 
+				return false;
+			}
+			catch ( InvalidPixKeyTypeException $e )
+			{ 
+				WC_Admin_Settings::add_error( 'O tipo da chave do código Pix importado é inválido.' ); 
+				return false;
+			}
+			catch ( InvalidPixKeyException $e )
+			{ 
+				WC_Admin_Settings::add_error( 'A chave do código Pix importado é inválida.' ); 
+				return false;
+			}
 			
 			parent::process_admin_options();
 			return;
@@ -380,7 +441,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 
 		if ( empty( $keyType ) || empty( $keyValue ) )
 		{ 
-			WC_Admin_Settings::add_error( 'Os valores da chave não foram preenchidos.' );
+			WC_Admin_Settings::add_error( 'Os valores da chave Pix não foram preenchidos.' );
 			return false; 
 		}
 
@@ -403,7 +464,14 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 	 * @return bool
 	 */
 	private function isPaymentWaiting ( WC_Order $order ) : bool
-	{ return $this->id === $order->get_payment_method() && in_array( $order->get_status(), array( 'new', 'on-hold' ) ); }
+	{ 
+		return $this->id === $order->get_payment_method() 
+					&& in_array( 
+							$order->get_status(), 
+							array( 'new', 'on-hold', str_replace('wc-', '', $this->order_status) 
+						) 
+				); 
+		}
 
 	/**
 	 * Return if endpoint url is 'view-order'.

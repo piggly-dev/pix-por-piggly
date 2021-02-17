@@ -1,8 +1,15 @@
 <?php
-
 use Piggly\Pix\Parser;
 
+$helpText = $data->help_text;
 ?>
+
+<?php if ( !(extension_loaded('gd') && function_exists('gd_info')) ) : ?>
+<div class="error">
+	<p>Você precisa da extensão <strong>GD</strong> do PHP para gerar os <strong>QR Codes</strong>. Instale e habilite a extensão no seu servidor web.</p>
+</div>
+<?php endif; ?>
+
 <style>
 .piggly-label { font-size: 12px; font-weight: bold; margin-bottom: 4px; display: block; }
 .piggly-checkbox { display: table; margin: 12px 0; }
@@ -17,17 +24,26 @@ use Piggly\Pix\Parser;
 	<p>
 		Este plugin habilitará o método de pagamento via Pix. 
 		O Pix, configurado abaixo, será automaticamente inserido nas 
-		Páginas de Obrigado, na Página do Pedido e no E-mail.
+		Páginas de Obrigado, na Página do Pedido e no E-mail. 
 	</p>
+	<p class="notice notice-info" style="padding: 10px"><em>
+		Sua avaliação é muito importante para que continuemos a atualizar
+		o plugin e prestar um suporte de qualidade! Clique em "Avaliar o Plugin"
+		e nos avalie em Wordpress. <strong>Gostou o bastante?</strong> Se você apreciar a 
+		função deste plugin e quiser apoiar este trabalho, sinta-se livre para 
+		fazer qualquer doação para a chave aleatória Pix 
+		<code>aae2196f-5f93-46e4-89e6-73bf4138427b</code> ❤.
+	</em></p>
 
 	<a href="<?=admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway&screen=testing' );?>" class="button">Teste o seu Pix</a>
-
-	<h3>Importação Pix</h3>
+	<a style="margin-left: 5px" href="https://wordpress.org/plugins/pix-por-piggly/#reviews" class="button button-primary">Avaliar o Plugin</a>
+	
+	<h3>Importe seus dados de um Pix</h3>
 
 	<p>
-		Para facilitar o processo, você pode inserir abaixo um
+		Para facilitar o processo de cadastramento de uma Conta Pix, você pode inserir abaixo um
 		<strong>código Pix</strong> válido gerado pelo seu banco. O plugin extrairá automaticamente
-		os dados do seu Pix.
+		os dados do seu Pix. Códigos Pix válidos começam com: <code>000201</code>.
 	</p>
 
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_pix_code">Código Pix Válido</label>
@@ -38,6 +54,7 @@ use Piggly\Pix\Parser;
 	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Importar Configurações">Importar Configurações</button>
 	</p> 
 
+	<?php if ( !$helpText ) : ?>
 	<p>
 		O Pix é um método novo e alguns bancos ainda estão implementando os
 		padrões estabelecidos pelo Banco Central do Brasil. 
@@ -45,11 +62,16 @@ use Piggly\Pix\Parser;
 		<a href="https://wordpress.org/plugins/pix-por-piggly/">clicando aqui</a>. 
 		Vamos atender ao seu chamado assim que pudermos.
 	</p>
+	<?php endif ?>
 
 	<h3>Configurações Gerais</h3>
 
 	<label class="piggly-label piggly-checkbox" for="woocommerce_wc_piggly_pix_gateway_enabled">
 		<input type="checkbox" name="woocommerce_wc_piggly_pix_gateway_enabled" id="woocommerce_wc_piggly_pix_gateway_enabled" value="1" <?=(($data->enabled == 1 || $data->enabled == 'yes') ? 'checked="checked"' : '');?>> Habilitar o pagamento via Pix
+	</label>
+	
+	<label class="piggly-label piggly-checkbox" for="woocommerce_wc_piggly_pix_gateway_help_text">
+		<input type="checkbox" name="woocommerce_wc_piggly_pix_gateway_help_text" id="woocommerce_wc_piggly_pix_gateway_help_text" value="1" <?=(($data->help_text == 1 || $data->help_text == 'yes') ? 'checked="checked"' : '');?>> Ocultar os textos de ajuda
 	</label>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_title">Título do Método de Pagamento</label>
@@ -85,12 +107,6 @@ use Piggly\Pix\Parser;
 	</p>
 
 	<h3>Dados do Pix</h3>
-
-	<p>
-		Para facilitar o processo, você pode inserir abaixo um
-		<strong>código Pix</strong> válido gerado pelo seu banco. O plugin extrairá automaticamente
-		os dados do seu Pix.
-	</p>
 
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_merchant_name">Nome do Titular</label>
 	<input required value="<?=$data->merchant_name?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_name" id="woocommerce_wc_piggly_pix_gateway_merchant_name">
@@ -133,27 +149,31 @@ use Piggly\Pix\Parser;
 	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('{{pedido}}', '123456', $data->instructions);?></code></p>
 	
 	<div>
+	<?php if ( !$helpText ) : ?>
 		<h4>Recomendações</h4>
 		<p>
 			Escreva uma chamada para ação como: <code>Faça o pagamento via PIX, o pedido será liberado assim que a confirmação do pagamento for efetuada.</code>
 			Se você utilizar a <strong>Página do Comprovante</strong> abaixo, continue com algo como <code>Após realizar o pagamento, clique no botão abaixo para enviar o comprovante.</code>
 		</p>
+	<?php endif ?>
 		<h4>Merge Tags</h4>
 		<p><code>{{pedido}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>
-	
+
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_identifier">Identificador</label>
 	<input maxlength="25" value="<?=$data->identifier?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_identifier" id="woocommerce_wc_piggly_pix_gateway_identifier">
 	<p class="description">Crie o formato para o identificador Pix. Utilize letras de A a Z e números.</p>
 	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('{{id}}', '123456', $data->identifier);?></code></p>
 	
 	<div>
+	<?php if ( !$helpText ) : ?>
 		<h4>Recomendações</h4>
 		<p>
 			Todo Pix tem um identificador, ao receber o seu Pix você verá este identificador. Crie um modelo que seja fácil para você.
 			Por exemplo, com a <strong>Loja Dummy</strong> o identificador pode ser <code>LD-{{id}}</code>.
 			Perceba que acima, utilizamos <code>{{id}}</code> essa é uma merge tag. Ela será substituída pelo número do pedido.
 		</p>
+	<?php endif ?>
 		<h4>Merge Tags</h4>
 		<p><code>{{id}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>
@@ -221,14 +241,16 @@ use Piggly\Pix\Parser;
 		</select>
 		<p class="description">Ao ser criado, informe qual deve ser o novo status do pedido. Por padrão será <strong>Aguardando</strong> <code>on-hold</code></p>
 	
-		<div>
-			<p>
-				Utilizamos o status Aguardando, pois na nossa concepção a loja aguarda
-				o cliente pagar o Pix. Se você criar status personalizados com plugins
-				de terceiros, você pode alterar o status para aguardando o pagamento Pix
-				de acordo com a sua grade de status.
-			</p>
-		</div>
+		<?php if ( !$helpText ) : ?>
+			<div>
+				<p>
+					Utilizamos o status Aguardando, pois na nossa concepção a loja aguarda
+					o cliente pagar o Pix. Se você criar status personalizados com plugins
+					de terceiros, você pode alterar o status para aguardando o pagamento Pix
+					de acordo com a sua grade de status.
+				</p>
+			</div>
+		<?php endif ?>
 	<?php endif; ?>
 
 	<h3>Configurações de Exibição</h3>
@@ -239,6 +261,7 @@ use Piggly\Pix\Parser;
 	<p class="description"><strong>Pré-visualize</strong> <code><?=str_replace('{{pedido}}', '123456', $data->receipt_page_value);?></code></p>
 	
 	<div>
+	<?php if ( !$helpText ) : ?>
 		<h4>Recomendações</h4>
 		<p>
 			Crie um formulário com os plugins <strong>Gravity Forms</strong>, <strong>WP Forms</strong> ou similares.
@@ -250,6 +273,8 @@ use Piggly\Pix\Parser;
 			<code>order_id</code>. Assim, preencha a <strong>Página do Comprovante</strong> como <code>https://minhaloja.com.br/comprovante-pix/?order_id={{pedido}}</code>.
 			Ao fazer isso, o formulário na página <code>/comprovante-pix</code> receberá o número do pedido automaticamente. Facilitando para o comprador.
 		</p>
+	<?php endif ?>
+
 		<h4>Merge Tags</h4>
 		<p><code>{{pedido}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>

@@ -1,0 +1,129 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wc-piggly-pix\n"
+"POT-Creation-Date: 2021-02-17 09:39-0300\n"
+"PO-Revision-Date: 2021-02-17 09:40-0300\n"
+"Language-Team: Piggly Dev\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3.1\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;esc_attr_e\n"
+"Last-Translator: \n"
+"Language: pt_BR\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: admin/class-wc-piggly-pix-manager.php:76
+msgid "Configurações do Pix"
+msgstr ""
+
+#: admin/partials/main-settings.php:20 admin/partials/test-settings.php:21
+msgid "Métodos de Pagamento"
+msgstr ""
+
+#: admin/partials/main-settings.php:116
+#: core/pix/class-wc-piggly-pix-parser.php:35
+msgid "Chave Aleatória"
+msgstr ""
+
+#: admin/partials/main-settings.php:117
+#: core/pix/class-wc-piggly-pix-parser.php:37
+msgid "CPF/CNPJ"
+msgstr ""
+
+#: admin/partials/main-settings.php:118
+#: core/pix/class-wc-piggly-pix-parser.php:41
+msgid "Telefone"
+msgstr ""
+
+#: admin/partials/main-settings.php:119
+#: core/pix/class-wc-piggly-pix-parser.php:39
+msgid "E-mail"
+msgstr ""
+
+#: admin/partials/main-settings.php:200
+msgid "Acima da tabela do pedido"
+msgstr ""
+
+#: admin/partials/main-settings.php:201
+msgid "Abaixo da tabela do pedido"
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-gateway.php:34
+msgid "Pix"
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-gateway.php:35
+msgid ""
+"Habilite o pagamento de pedidos via Pix. Este plugin automaticamente "
+"adiciona as instruções Pix na Página de Obrigado e na Página do Pedido."
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-gateway.php:45
+msgid "Faça um Pix"
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-gateway.php:46
+#: core/pix/class-wc-piggly-pix-gateway.php:122
+msgid ""
+"Você não precisa ter uma chave cadastrada. Pague os seus pedidos via Pix."
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-gateway.php:58
+#: core/pix/class-wc-piggly-pix-gateway.php:158
+msgid ""
+"Faça o pagamento via PIX. O pedido número {{pedido}} será liberado assim que "
+"a confirmação do pagamento for efetuada."
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-gateway.php:63
+#: core/pix/class-wc-piggly-pix-gateway.php:64
+msgid "Segue o comprovante para o pedido {{pedido}}:"
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-gateway.php:114
+msgid ""
+"Tem um código Pix válido? Coloque-o aqui, clique em salvar e os dados "
+"principais serão extraídos dele."
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-gateway.php:118
+msgid "Faça um PIX"
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-gateway.php:360
+msgid "Aguardando pagamento via Pix"
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-parser.php:44
+msgid "Chave Desconhecida"
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-parser.php:69
+#: core/pix/class-wc-piggly-pix-parser.php:145
+#, php-format
+msgid "A chave `%s` é desconhecida."
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-parser.php:82
+#, php-format
+msgid "A chave aleatória `%s` está inválida."
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-parser.php:95
+#, php-format
+msgid "A chave de CPF/CNPJ `%s` está inválida."
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-parser.php:108
+#, php-format
+msgid "A chave de e-mail `%s` está inválida."
+msgstr ""
+
+#: core/pix/class-wc-piggly-pix-parser.php:121
+#, php-format
+msgid "A chave de telefone `%s` está inválida."
+msgstr ""
