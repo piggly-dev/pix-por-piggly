@@ -177,6 +177,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 1.1.8 ###
+
+* Correção de bugs, melhorias da documentação, controle de erros e inserção nas instruções via e-mail;
+
 ### 1.1.7 ###
 
 * Correção do bug no campo Whatsapp, correção dos bugs com chaves vazias, controladores de e-mail e status;

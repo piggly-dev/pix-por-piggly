@@ -5,10 +5,16 @@ use Piggly\Pix\StaticPayload;
 
 ?>
 
-<?php if ( !(extension_loaded('gd') && function_exists('gd_info')) ) : ?>
+<?php if ( ((float)phpversion('Core') < 7.2) ) : ?>
+<div class="error">
+	<p><strong>O plugin exige a versão do PHP 7.2 ou acima</strong>. Contate seu servidor de hospedagem para atualizar.</p>
+</div>
+<?php endif; ?>
+
+<?php if ( !Payload::supportQrCode() ) : ?>
 <div class="error">
 	<p>Você precisa da extensão <strong>GD</strong> do PHP para gerar os <strong>QR Codes</strong>. Instale e habilite a extensão no seu servidor web.</p>
-</div> 
+</div>
 <?php endif; ?>
 
 <style>
@@ -45,38 +51,49 @@ use Piggly\Pix\StaticPayload;
 	$order_id = filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_STRING );
 
 	if ( !empty($amount) ) :
-		if ( !empty($order_id) ) :
-			$data->instructions       = str_replace('{{pedido}}', $order_id, $data->instructions);
-			$data->receipt_page_value = str_replace('{{pedido}}', $order_id, $data->receipt_page_value);
-			$data->whatsapp_message   = str_replace('{{pedido}}', $order_id, $data->whatsapp_message);
-			$data->telegram_message   = str_replace('{{pedido}}', $order_id, $data->telegram_message); 
-			$data->identifier         = str_replace('{{id}}', $order_id, $data->identifier);
-		endif;
+		try
+		{
+			if ( !empty($order_id) ) :
+				$data->instructions       = str_replace('{{pedido}}', $order_id, $data->instructions);
+				$data->receipt_page_value = str_replace('{{pedido}}', $order_id, $data->receipt_page_value);
+				$data->whatsapp_message   = str_replace('{{pedido}}', $order_id, $data->whatsapp_message);
+				$data->telegram_message   = str_replace('{{pedido}}', $order_id, $data->telegram_message); 
+				$data->identifier         = str_replace('{{id}}', $order_id, $data->identifier);
+			endif;
 
-		$pix = 
-			(new StaticPayload())
-				->setPixKey($data->key_type, $data->key_value)
-				->setDescription(sprintf('Compra em %s', $data->store_name))
-				->setMerchantName($data->merchant_name)
-				->setMerchantCity($data->merchant_city)
-				->setAmount((float)$amount)
-				->setTid($data->identifier);
+			$pix = 
+				(new StaticPayload())
+					->setPixKey($data->key_type, $data->key_value)
+					->setDescription(sprintf('Compra em %s', $data->store_name))
+					->setMerchantName($data->merchant_name)
+					->setMerchantCity($data->merchant_city)
+					->setAmount((float)$amount)
+					->setTid($data->identifier);
 
-		// Get alias for pix
-		$data->key_type = Parser::getAlias($data->key_type); 
+			// Get alias for pix
+			$data->key_type_alias = Parser::getAlias($data->key_type); 
 
-		wc_get_template(
-			'html-woocommerce-thank-you-page.php',
-			array(
-				'data' => $data,
-				'pix' => $pix->getPixCode(),
-				'qrcode' => $data->pix_qrcode && (extension_loaded('gd') && function_exists('gd_info')) ? $pix->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) : '',
-				'order_id' => $order_id,
-				'amount' => $amount
-			),
-			'',
-			WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
-		);
+			wc_get_template(
+				'html-woocommerce-thank-you-page.php',
+				array(
+					'data' => $data,
+					'pix' => $pix->getPixCode(),
+					'qrcode' => $data->pix_qrcode && Payload::supportQrCode() ? $pix->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) : '',
+					'order_id' => $order_id,
+					'amount' => $amount
+				),
+				'',
+				WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
+			);
+		}
+		catch ( Exception $e )
+		{
+			?>
+			<p class="notice notice-error" style="padding: 10px">
+				<strong>Um erro foi capturado, informe o suporte: <code><?=$e->getMessage();?></code>
+			</p>
+			<?php
+		}
 	endif;
 	?>
 	

@@ -88,7 +88,7 @@ use Piggly\Pix\Parser;
 	<div class="pix-or"></div>
 	<div class="pix-method">
 		<h4>Faça uma Transferência PIX</h4>
-		<p class="pix-data"><strong>Tipo de Chave</strong> <?=$data->key_type?></p>
+		<p class="pix-data"><strong>Tipo de Chave</strong> <?=$data->key_type_alias?></p>
 		<p class="pix-data"><strong>Chave Pix</strong> <?=$data->key_value?></p>
 		<p class="pix-data"><strong>Valor</strong> R$ <?=$amount?></p>
 	</div>

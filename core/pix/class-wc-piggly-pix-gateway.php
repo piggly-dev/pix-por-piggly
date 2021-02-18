@@ -298,12 +298,12 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		);
 
 		// Get alias for pix
-		$this->key_type = Parser::getAlias($this->key_type); 
+		$this->key_type_alias = Parser::getAlias($this->key_type); 
 
 		return array(
 			'data' => $this,
 			'pix' => $payload->getPixCode(),
-			'qrcode' => $this->pix_qrcode && (extension_loaded('gd') && function_exists('gd_info')) ? $payload->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) : '',
+			'qrcode' => $this->pix_qrcode && Payload::supportQrCode() ? $payload->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) : '',
 			'order_id' => $order_id,
 			'amount' => $amount
 		);
@@ -412,6 +412,11 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 				WC_Admin_Settings::add_error( 'A chave do código Pix importado é inválida.' ); 
 				return false;
 			}
+			catch ( Exception $e )
+			{ 
+				WC_Admin_Settings::add_error( sprintf('Um erro foi capturado, informe ao suporte: %s', $e->getMessage()) ); 
+				return false;
+			}
 			
 			parent::process_admin_options();
 			return;
@@ -450,7 +455,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		{ Piggly\Pix\Parser::validate($keyType,$keyValue); }
 		catch ( Exception $e )
 		{
-			WC_Admin_Settings::add_error($e->getMessage());
+			WC_Admin_Settings::add_error( sprintf('Um erro foi capturado, informe ao suporte: %s', $e->getMessage()) ); 
 			return false;
 		}
 

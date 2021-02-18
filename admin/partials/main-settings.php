@@ -1,10 +1,17 @@
 <?php
 use Piggly\Pix\Parser;
+use Piggly\Pix\Payload;
 
 $helpText = $data->help_text;
 ?>
 
-<?php if ( !(extension_loaded('gd') && function_exists('gd_info')) ) : ?>
+<?php if ( ((float)phpversion('Core') < 7.2) ) : ?>
+<div class="error">
+	<p><strong>O plugin exige a versão do PHP 7.2 ou acima</strong>. Contate seu servidor de hospedagem para atualizar.</p>
+</div>
+<?php endif; ?>
+
+<?php if ( !Payload::supportQrCode() ) : ?>
 <div class="error">
 	<p>Você precisa da extensão <strong>GD</strong> do PHP para gerar os <strong>QR Codes</strong>. Instale e habilite a extensão no seu servidor web.</p>
 </div>
@@ -26,13 +33,22 @@ $helpText = $data->help_text;
 		O Pix, configurado abaixo, será automaticamente inserido nas 
 		Páginas de Obrigado, na Página do Pedido e no E-mail. 
 	</p>
-	<p class="notice notice-info" style="padding: 10px"><em>
+
+	<p class="notice notice-info is-dismissible" style="padding: 10px"><em>
 		Sua avaliação é muito importante para que continuemos a atualizar
 		o plugin e prestar um suporte de qualidade! Clique em "Avaliar o Plugin"
 		e nos avalie em Wordpress. <strong>Gostou o bastante?</strong> Se você apreciar a 
 		função deste plugin e quiser apoiar este trabalho, sinta-se livre para 
 		fazer qualquer doação para a chave aleatória Pix 
 		<code>aae2196f-5f93-46e4-89e6-73bf4138427b</code> ❤.
+	</em></p>
+	
+	<p class="notice notice-warning is-dismissible" style="padding: 10px"><em>
+		<strong>Enfrentando algum problema?</strong> Não desista do plugin! Estamos
+		investindo todos os nossos esforços para democratizar o acesso ao Pix sem taxas
+		para lojas Woocommerce. Abra um chamado no suporte do plugin ou envie um e-mail para 
+		<a href="mailto:dev@piggly.com.br">dev@piggly.com.br</a> para que possamos 
+		continuamente melhorar esse plugin juntos. <em>Mantenha-o sempre atualizado</em>.
 	</em></p>
 
 	<a href="<?=admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway&screen=testing' );?>" class="button">Teste o seu Pix</a>
@@ -45,6 +61,15 @@ $helpText = $data->help_text;
 		<strong>código Pix</strong> válido gerado pelo seu banco. O plugin extrairá automaticamente
 		os dados do seu Pix. Códigos Pix válidos começam com: <code>000201</code>.
 	</p>
+
+	<section class="notice notice-info">
+	<p>
+		<strong>Para obter um código Pix válido</strong>: acesse o aplicativo 
+		do banco com sua conta Pix e crie um novo Pix para pagamento.
+		Copie o "Pix Copia & Cola" gerado pelo seu banco e cole-o abaixo,
+		ou leia o QR Code com algum aplicativo e cole o código lido abaixo.
+	</p> 
+	</section>
 
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_pix_code">Código Pix Válido</label>
 	<input style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_pix_code" id="woocommerce_wc_piggly_pix_gateway_pix_code">
@@ -178,6 +203,10 @@ $helpText = $data->help_text;
 		<p><code>{{id}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>
 
+	<p class="submit">
+	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Salvar">Salvar</button>
+	</p>
+
 	<h3>Setup dos Pedidos</h3>
  
 	<?php if ( class_exists('WC_Emails') ) : ?>
@@ -200,7 +229,7 @@ $helpText = $data->help_text;
 		</select>
 		<p class="description">Selecione em qual modelo de e-mail o pix deve ser enviado.</p>
 
-		<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_email_position">Enviar no E-mail</label>
+		<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_email_position">Posição no E-mail</label>
 		<select style="width:100%; max-width: 100%;" class="select " name="woocommerce_wc_piggly_pix_gateway_email_position" id="woocommerce_wc_piggly_pix_gateway_email_position">
 			<?php
 			$selected = $data->email_position;
@@ -219,7 +248,7 @@ $helpText = $data->help_text;
 
 			?>
 		</select>
-		<p class="description">Selecione em qual modelo de e-mail o pix deve ser enviado.</p>
+		<p class="description">Selecione em qual posição do e-mail o pix deve ser enviado.</p>
 	<?php endif; ?>
  
 	<?php if ( function_exists('wc_get_order_statuses') ) : ?>
@@ -253,6 +282,10 @@ $helpText = $data->help_text;
 		<?php endif ?>
 	<?php endif; ?>
 
+	<p class="submit">
+	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Salvar">Salvar</button>
+	</p>
+	
 	<h3>Configurações de Exibição</h3>
 
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_receipt_page_value">Página do Comprovante <code class="piggly-featured">Não preencha para ocultar</code></label>
@@ -310,7 +343,7 @@ $helpText = $data->help_text;
 	<p class="submit">
 	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Salvar">Salvar</button>
 	</p>
-
+ 
 	<h3>Problemas com o Pix?</h3>
 
 	<p>
