@@ -235,7 +235,8 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false, $email ) 
 	{
-		if ( get_class($email) === $this->email_status ) {
+		if ( get_class($email) === $this->email_status 
+				&& $order->get_payment_method() === $this->id ) {
 			$pixData = $this->getPix( $order );
 
 			wc_get_template(
