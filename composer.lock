@@ -137,16 +137,16 @@
         },
         {
             "name": "piggly/php-pix",
-            "version": "1.2.2",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/piggly-dev/php-pix.git",
-                "reference": "4826b1e0e8c227b637054d9b710736830d1b7036"
+                "reference": "083be0c48b2e29a7e8e7917332c111eb92764f69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/4826b1e0e8c227b637054d9b710736830d1b7036",
-                "reference": "4826b1e0e8c227b637054d9b710736830d1b7036",
+                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/083be0c48b2e29a7e8e7917332c111eb92764f69",
+                "reference": "083be0c48b2e29a7e8e7917332c111eb92764f69",
                 "shasum": ""
             },
             "require": {
@@ -187,9 +187,9 @@
             ],
             "support": {
                 "issues": "https://github.com/piggly-dev/php-pix/issues",
-                "source": "https://github.com/piggly-dev/php-pix/tree/1.2.2"
+                "source": "https://github.com/piggly-dev/php-pix/tree/1.2.3"
             },
-            "time": "2021-02-18T17:56:25+00:00"
+            "time": "2021-02-19T03:18:08+00:00"
         }
     ],
     "packages-dev": [],

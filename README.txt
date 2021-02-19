@@ -5,9 +5,9 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 License: GPLv2 or later
-Language: pt_BR
+Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Pix por Piggly adiciona suporte para pagamentos via Pix sem taxas. Precisa do Woocommerce para funcionar. **Compatível com Woocommerce 3.x**.
@@ -195,6 +195,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 4. Configurações do método de pagamento.
 
 == Changelog ==
+
+= 1.1.9 =
+
+* Correção de bugs para versões 7.3- do PHP;
 
 = 1.1.8 =
 

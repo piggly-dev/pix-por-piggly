@@ -177,6 +177,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 1.1.9 ###
+
+* Correção de bugs para versões 7.3- do PHP;
+
 ### 1.1.8 ###
 
 * Correção de bugs, melhorias da documentação, controle de erros e inserção nas instruções via e-mail;
