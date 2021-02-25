@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.1.10
+Stable tag: 1.1.12
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -125,26 +125,26 @@ Algumas melhorias no layout da página de pagamento Pix estão sendo planejadas.
 
 == Frequently Asked Questions ==
 
-= **Qual é a licença do plugin?** =
+= Qual é a licença do plugin? =
 
 Este plugin esta licenciado como GPL.
 
-= **O que eu preciso para utilizar este plugin?** =
+= O que eu preciso para utilizar este plugin? =
 
 * Ter instalado o Wordpress 4.0 ou superior;
 * Ter instalado o plugin WooCommerce 3.0 ou superior;
 * Utilizar a versão 7.2 do php;
 * Possuir uma conta bancária com Chave Pix.
 
-= **Posso utilizar com outros gateways de pagamento?** =
+= Posso utilizar com outros gateways de pagamento? =
 
 Sim, esse plugin funciona apenas como um método de pagamento adicional, assim como acontece com o método de transferência eletrônica.
 
-= **Como conferir o pagamento Pix?** =
+= Como conferir o pagamento Pix? =
 
 A conferência do Pix ainda é manual, assim como acontece em uma transferência eletrônica. Para facilitar, o plugin gera os Pix com um código identificador. Esse código possuí o número do pedido e você pode personalizá-lo na página de configurações. Ao abrir o aplicativo do seu banco, você poderá ver detalhes sobre o recebimento Pix e lá estará o código identificador do Pix.
 
-= **O código Pix ou QR Code está inválido! O que fazer?** =
+= O código Pix ou QR Code está inválido! O que fazer? =
 
 O Pix ainda é muito recente e, apenas das padronizações do Banco Central do Brasil, muitos bancos criaram algumas variações e definiram como aceitam determinadas chaves. A nossa recomendação principal é: **utilize as chaves aleatórias**. Assim, você não expõe seus dados e ao mesmo tempo tem compatibilidade total de pagamentos.
 
@@ -195,6 +195,14 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 4. Configurações do método de pagamento.
 
 == Changelog ==
+
+= 1.1.12 =
+
+* Correções de bugs;
+
+= 1.1.11 =
+
+* Melhorias no texto de apoio e captura de erros com textos de apoio;
 
 = 1.1.10 =
 

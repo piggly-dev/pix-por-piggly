@@ -2,7 +2,6 @@
 use Piggly\Pix\Parser;
 use Piggly\Pix\Payload;
 use Piggly\Pix\StaticPayload;
-
 ?>
 
 <?php if ( ((float)phpversion('Core') < 7.2) ) : ?>
@@ -87,7 +86,7 @@ use Piggly\Pix\StaticPayload;
 			);
 		}
 		catch ( Exception $e )
-		{
+		{ 
 			?>
 			<p class="notice notice-error" style="padding: 10px">
 				<strong>Um erro foi capturado, informe o suporte: <code><?=$e->getMessage();?></code>

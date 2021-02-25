@@ -42,6 +42,14 @@ $helpText = $data->help_text;
 		fazer qualquer doação para a chave aleatória Pix 
 		<code>aae2196f-5f93-46e4-89e6-73bf4138427b</code> ❤.
 	</em></p>
+
+	<section class="notice notice-warning  is-dismissible">
+		<p>
+			<strong>Clientes do Banco Itaú</strong>: para gerar pagamentos via Pix
+			fora do aplicativo do seu banco, é necessário solicitar uma autorização ao gerente
+			para criação de QR Codes estáticos.
+		</p> 
+	</section>
 	
 	<p class="notice notice-warning is-dismissible" style="padding: 10px"><em>
 		<strong>Enfrentando algum problema?</strong> Não desista do plugin! Estamos
@@ -54,31 +62,6 @@ $helpText = $data->help_text;
 	<a href="<?=admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway&screen=testing' );?>" class="button">Teste o seu Pix</a>
 	<a style="margin-left: 5px" href="https://wordpress.org/plugins/pix-por-piggly/#reviews" class="button button-primary">Avaliar o Plugin</a>
 	
-	<h3>Importe seus dados de um Pix</h3>
-
-	<p>
-		Para facilitar o processo de cadastramento de uma Conta Pix, você pode inserir abaixo um
-		<strong>código Pix</strong> válido gerado pelo seu banco. O plugin extrairá automaticamente
-		os dados do seu Pix. Códigos Pix válidos começam com: <code>000201</code>.
-	</p>
-
-	<section class="notice notice-info">
-	<p>
-		<strong>Para obter um código Pix válido</strong>: acesse o aplicativo 
-		do banco com sua conta Pix e crie um novo Pix para pagamento.
-		Copie o "Pix Copia & Cola" gerado pelo seu banco e cole-o abaixo,
-		ou leia o QR Code com algum aplicativo e cole o código lido abaixo.
-	</p> 
-	</section>
-
-	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_pix_code">Código Pix Válido</label>
-	<input style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_pix_code" id="woocommerce_wc_piggly_pix_gateway_pix_code">
-	<p class="description">Tem um código Pix válido? Coloque-o aqui, clique em salvar e os dados principais serão extraídos dele.</p>
-	
-	<p class="submit">
-	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Importar Configurações">Importar Configurações</button>
-	</p> 
-
 	<?php if ( !$helpText ) : ?>
 	<p>
 		O Pix é um método novo e alguns bancos ainda estão implementando os
@@ -131,7 +114,38 @@ $helpText = $data->help_text;
 	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Salvar">Salvar</button>
 	</p>
 
-	<h3>Dados do Pix</h3>
+	<h3>Importe os dados da sua Conta Pix</h3>
+
+	<p>
+		Quando os dados da sua conta Pix são preenchidos incorretamente, podem haver incompatibilidades.
+		Para facilitar o processo de cadastramento de uma Conta Pix, você pode inserir abaixo um
+		<strong>código Pix</strong> gerado pelo seu banco. O plugin extrairá automaticamente
+		os dados como <em>Nome do Titular, Cidade, Tipo da Chave e Chave</em> do seu Pix. 
+		Os códigos Pix são gerados pelo aplicativo do seu banco e começam com: <code>000201</code>.
+	</p>
+
+	<?php if ( !$helpText ) : ?>
+	<section class="notice notice-info">
+		<p>
+			<strong>Para obter um código Pix válido</strong>: acesse o aplicativo 
+			do banco com sua conta Pix e crie um novo Pix para pagamento. Informe
+			qualquer valor, apenas para gerar um Pix de pagamento. E, então,
+			copie o "Pix Copia & Cola" gerado pelo seu banco e cole-o abaixo.
+			Caso seu banco não tenha a opção "Pix Copia & Cola", recomendamos que
+			leia o código do QR Code de pagamento gerado com algum aplicativo.
+		</p> 
+	</section>
+	<?php endif; ?>
+
+	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_pix_code">Código "Pix Copia & Cola" gerado pelo seu banco:</label>
+	<input style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_pix_code" id="woocommerce_wc_piggly_pix_gateway_pix_code">
+	<p class="description">Ao colar o código e clicar em "Importar Configurações", os dados da sua Conta Pix serão extraídos do código.</p>
+
+	<p class="submit">
+	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Importar Configurações">Importar Configurações</button>
+	</p> 
+
+	<h3>Preencha os dados da sua Conta Pix</h3>
 
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_merchant_name">Nome do Titular</label>
 	<input required value="<?=$data->merchant_name?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_name" id="woocommerce_wc_piggly_pix_gateway_merchant_name">

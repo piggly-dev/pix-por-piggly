@@ -177,6 +177,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 1.1.11 ###
+
+* Melhorias no texto de apoio e captura de erros com textos de apoio;
+
 ### 1.1.10 ###
 
 * Correção de bug no envio de e-mail;

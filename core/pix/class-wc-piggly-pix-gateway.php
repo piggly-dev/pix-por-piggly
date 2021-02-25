@@ -453,10 +453,10 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 
 		// Validates the key
 		try
-		{ Piggly\Pix\Parser::validate($keyType,$keyValue); }
+		{ Parser::validate($keyType,$keyValue); }
 		catch ( Exception $e )
 		{
-			WC_Admin_Settings::add_error( sprintf('Um erro foi capturado, informe ao suporte: %s', $e->getMessage()) ); 
+			WC_Admin_Settings::add_error( sprintf('Chave inválida: %s', $e->getMessage()) ); 
 			return false;
 		}
 
@@ -506,4 +506,4 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 
 		return (bool)$value;
 	}
-}
+} 
