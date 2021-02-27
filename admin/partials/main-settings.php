@@ -42,15 +42,7 @@ $helpText = $data->help_text;
 		fazer qualquer doação para a chave aleatória Pix 
 		<code>aae2196f-5f93-46e4-89e6-73bf4138427b</code> ❤.
 	</em></p>
-
-	<section class="notice notice-warning  is-dismissible">
-		<p>
-			<strong>Clientes do Banco Itaú</strong>: para gerar pagamentos via Pix
-			fora do aplicativo do seu banco, é necessário solicitar uma autorização ao gerente
-			para criação de QR Codes estáticos.
-		</p> 
-	</section>
-	
+	 
 	<p class="notice notice-warning is-dismissible" style="padding: 10px"><em>
 		<strong>Enfrentando algum problema?</strong> Não desista do plugin! Estamos
 		investindo todos os nossos esforços para democratizar o acesso ao Pix sem taxas
@@ -116,6 +108,14 @@ $helpText = $data->help_text;
 
 	<h3>Importe os dados da sua Conta Pix</h3>
 
+	<section class="notice notice-warning  is-dismissible">
+		<p>
+			<strong>Clientes do Banco Itaú</strong>: para gerar pagamentos via Pix
+			fora do aplicativo do seu banco, é necessário solicitar uma autorização ao gerente
+			para criação de QR Codes Simples (estáticos).
+		</p> 
+	</section>
+
 	<p>
 		Quando os dados da sua conta Pix são preenchidos incorretamente, podem haver incompatibilidades.
 		Para facilitar o processo de cadastramento de uma Conta Pix, você pode inserir abaixo um
@@ -127,7 +127,7 @@ $helpText = $data->help_text;
 	<?php if ( !$helpText ) : ?>
 	<section class="notice notice-info">
 		<p>
-			<strong>Para obter um código Pix válido</strong>: acesse o aplicativo 
+			<strong>Gere um código Pix no seu banco</strong>: acesse o aplicativo 
 			do banco com sua conta Pix e crie um novo Pix para pagamento. Informe
 			qualquer valor, apenas para gerar um Pix de pagamento. E, então,
 			copie o "Pix Copia & Cola" gerado pelo seu banco e cole-o abaixo.
@@ -147,16 +147,24 @@ $helpText = $data->help_text;
 
 	<h3>Preencha os dados da sua Conta Pix</h3>
 
+	<section class="notice notice-warning  is-dismissible">
+		<p>
+			<strong>Clientes do Banco Itaú</strong>: para gerar pagamentos via Pix
+			fora do aplicativo do seu banco, é necessário solicitar uma autorização ao gerente
+			para criação de QR Codes Simples (estáticos).
+		</p> 
+	</section>
+
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_merchant_name">Nome do Titular</label>
-	<input required value="<?=$data->merchant_name?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_name" id="woocommerce_wc_piggly_pix_gateway_merchant_name">
+	<input value="<?=$data->merchant_name?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_name" id="woocommerce_wc_piggly_pix_gateway_merchant_name">
 	<p class="description">Informe o nome do titular da conta que irá receber o PIX. Como consta no Banco.</p>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_merchant_city">Cidade do Titular</label>
-	<input required value="<?=$data->merchant_city?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_city" id="woocommerce_wc_piggly_pix_gateway_merchant_city">
+	<input value="<?=$data->merchant_city?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_city" id="woocommerce_wc_piggly_pix_gateway_merchant_city">
 	<p class="description">Informe a cidade do titular da conta que irá receber o PIX. Como consta no Banco.</p>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_key_type">Tipo da Chave</label>
-	<select required style="width:100%; max-width: 100%;" class="select " name="woocommerce_wc_piggly_pix_gateway_key_type" id="woocommerce_wc_piggly_pix_gateway_key_type">
+	<select style="width:100%; max-width: 100%;" class="select " name="woocommerce_wc_piggly_pix_gateway_key_type" id="woocommerce_wc_piggly_pix_gateway_key_type">
 		<?php
 		$selected = $data->key_type;
 		$options  = [
@@ -179,7 +187,7 @@ $helpText = $data->help_text;
 	<p class="description">Informe o tipo da chave PIX a ser compartilhada.</p>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_key_value">Chave Pix</label>
-	<input required value="<?=$data->key_value?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_key_value" id="woocommerce_wc_piggly_pix_gateway_key_value">
+	<input value="<?=$data->key_value?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_key_value" id="woocommerce_wc_piggly_pix_gateway_key_value">
 	<p class="description">Digite sua Chave PIX da forma como ela foi cadastrada.</p>
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_instructions">Instruções</label>

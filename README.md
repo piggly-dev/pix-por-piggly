@@ -1,5 +1,7 @@
 # Bem-vindo ao Pix por Piggly #
 
+> Clientes do **Banco Itaú**: para gerar pagamentos via Pix fora do aplicativo do seu banco, é necessário solicitar uma autorização ao gerente para criação de QR Codes estáticos.
+
 O **Pix** é o mais novo método de pagamento eletrônico criado pelo Banco Central do Brasil.
 Você encontra todos os detalhes na [página oficial](https://www.bcb.gov.br/estabilidadefinanceira/pix) do Pix.
 
@@ -176,6 +178,14 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 **Preencha corretamente a sua chave Pix. Você pode testar nas configurações do plugin o funcionamento do Pix mesmo que o módulo esteja desativado.**
 
 ## Changelog ##
+ 
+### 1.1.13 ###
+
+* Adição do botão de configuração e ajustes na importação;
+
+### 1.1.12 ###
+
+* Correções de bugs;
 
 ### 1.1.11 ###
 

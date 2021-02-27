@@ -32,7 +32,7 @@ class WC_Piggly_Pix_Manager
 		$this->parent = $parent;
 
 		// Add action link to setting
-		$this->parent->getLoader()->add_filter( 'plugin_action_links_wc_piggly_pix_gateway', $this, 'actionLinks' );
+		$this->parent->getLoader()->add_filter( 'plugin_action_links_'.WC_PIGGLY_PIX_BASE_NAME, $this, 'actionLinks' );
 		// Main filter
 		$this->parent->getLoader()->add_filter( 'woocommerce_payment_gateways', $this, 'initGateway' ); 
 	}
@@ -73,7 +73,7 @@ class WC_Piggly_Pix_Manager
 	 */
 	public function actionLinks ( $links ) {
 		$plugin_links = array();
-		$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway' ) ) . '">' . __( 'Configurações do Pix', $this->parent->getPluginName() ) . '</a>';
+		$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway' ) ) . '">' . __( 'Configurações do Pix', WC_PIGGLY_PIX_PLUGIN_NAME ) . '</a>';
 		return array_merge( $plugin_links, $links );
 	}
 }

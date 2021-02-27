@@ -16,7 +16,7 @@
  * Plugin Name:       Pix por Piggly
  * Plugin URI:        https://github.com/piggly-dev/wc-piggly-pix
  * Description:       Possibilite o pagamento com Pix de uma forma simples, rápida e direta. Mantenha atualizado para garantir todas as correções e recursos.
- * Version:           1.1.12
+ * Version:           1.1.13
  * Author:            Caique 
  * Author URI:        https://github.com/caiquearaujo
  * License:           GPLv2 or later
@@ -53,6 +53,12 @@ define( 'WC_PIGGLY_PIX_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
  */
 define( 'WC_PIGGLY_PIX_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
+/**
+ * The plugin base name.
+ * @var string
+ */ 
+define( 'WC_PIGGLY_PIX_BASE_NAME', plugin_basename( __FILE__ ) );
+ 
 /**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
