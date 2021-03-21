@@ -197,7 +197,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 				array(
 					'data' => $this
 				),
-				'',
+				'woocommerce/wc-piggly-pix/',
 				WC_PIGGLY_PIX_PLUGIN_PATH.'admin/partials/'
 			);
 
@@ -209,7 +209,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 			array(
 				'data' => $this
 			),
-			'',
+			'woocommerce/wc-piggly-pix/',
 			WC_PIGGLY_PIX_PLUGIN_PATH.'admin/partials/'
 		);
 	}
@@ -242,7 +242,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 			wc_get_template(
 				'email-woocommerce-pix.php',
 				array_merge( $pixData, [ 'order' => $order] ),
-				'',
+				'woocommerce/wc-piggly-pix/',
 				WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
 			);
 		}

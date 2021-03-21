@@ -81,7 +81,7 @@ use Piggly\Pix\StaticPayload;
 					'order_id' => $order_id,
 					'amount' => $amount
 				),
-				'',
+				'woocommerce/wc-piggly-pix/',
 				WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
 			);
 		}
