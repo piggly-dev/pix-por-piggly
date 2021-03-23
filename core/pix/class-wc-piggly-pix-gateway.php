@@ -56,13 +56,13 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		$this->email_position = $this->get_option( 'email_position', 'before' );
 		$this->order_status = $this->get_option( 'order_status', 'wc-on-hold' );
 		$this->instructions = $this->get_option( 'instructions', __('Faça o pagamento via PIX. O pedido número {{pedido}} será liberado assim que a confirmação do pagamento for efetuada.', WC_PIGGLY_PIX_PLUGIN_NAME) );
-		$this->identifier = $this->get_option( 'identifier', 'P{{id}}' );
+		$this->identifier = $this->get_option( 'identifier' );
 		$this->receipt_page_value = $this->get_option( 'receipt_page_value' );
 		$this->whatsapp = preg_replace('/^[5]{3,}/', '', $this->get_option( 'whatsapp' ));
 		$this->telegram = $this->get_option( 'telegram' );
 		$this->whatsapp_message = $this->get_option( 'whatsapp_message', __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME) );
 		$this->telegram_message = $this->get_option( 'telegram_message', __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME) );
-		$this->enabled = $this->get_option( 'enabled', 'no' );
+		$this->enabled = empty($this->key_value) ? 'no' : $this->get_option( 'enabled', 'no' );
 		$this->help_text = $this->asBool($this->get_option( 'help_text', 'no' ));
 		
 		// When it is admin...
@@ -160,7 +160,7 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 			),
 			'identifier' => array(
 				'type'        => 'text',
-				'default'	  => 'P-{{id}}'
+				'default'	  => 'P{{id}}'
 			),
 			'receipt_page_value' => array(
 				'type'        => 'text',
@@ -192,26 +192,13 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		$screen = filter_input( INPUT_GET, 'screen', FILTER_SANITIZE_STRING );
 
 		if ( $screen === 'testing' ) :
-			wc_get_template(
-				'test-settings.php',
-				array(
-					'data' => $this
-				),
-				'',
-				WC_PIGGLY_PIX_PLUGIN_PATH.'admin/partials/'
-			);
-
+			$data = $this;
+			require_once(WC_PIGGLY_PIX_PLUGIN_PATH.'admin/partials/test-settings.php');
 			return;
 		endif;
 
-		wc_get_template(
-			'main-settings.php',
-			array(
-				'data' => $this
-			),
-			'',
-			WC_PIGGLY_PIX_PLUGIN_PATH.'admin/partials/'
-		);
+		$data = $this;
+		require_once(WC_PIGGLY_PIX_PLUGIN_PATH.'admin/partials/main-settings.php');
 	}
 
 	/**
@@ -236,13 +223,18 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false, $email ) 
 	{
 		if ( get_class($email) === $this->email_status 
-				&& $order->get_payment_method() === $this->id ) {
+				&& $order->get_payment_method() === $this->id ) 
+		{
+			// If pix Key is not set...
+			if ( empty($this->key_value) ) 
+			{ return; }
+
 			$pixData = $this->getPix( $order );
 
 			wc_get_template(
 				'email-woocommerce-pix.php',
 				array_merge( $pixData, [ 'order' => $order] ),
-				'',
+				WC()->template_path() . 'pix-por-piggly/',
 				WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
 			);
 		}
@@ -262,12 +254,16 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 		if ( !$order )
 		{ return; }
 		
+		// If pix Key is not set...
+		if ( empty($this->key_value) ) 
+		{ return; }
+		
 		$pixData = $this->getPix( $order );
 
 		wc_get_template(
 			'html-woocommerce-thank-you-page.php',
 			$pixData,
-			'',
+			WC()->template_path() . 'pix-por-piggly/',
 			WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
 		);
 	}
@@ -423,41 +419,54 @@ class WC_Piggly_Pix_Gateway extends WC_Payment_Gateway
 			return;
 		}
 
-		$required = array(
-			'key_type' => 'Tipo da Chave',
-			'key_value' => 'Chave PIX',
-			'merchant_name' => 'Nome do Titular da Conta',
-			'merchant_city' => 'Cidade do Titular da Conta',
-			'instructions' => 'Instruções do PIX'
-		);
-
-		foreach ( $required as $key => $value )
+		if ( !empty(filter_input( INPUT_POST, $field.'key_value', FILTER_SANITIZE_STRING )) )
 		{
-			$postValue = filter_input( INPUT_POST, $field.$key, FILTER_SANITIZE_STRING );
+			$required = array(
+				'key_type' => 'Tipo da Chave',
+				'key_value' => 'Chave PIX',
+				'merchant_name' => 'Nome do Titular da Conta',
+				'merchant_city' => 'Cidade do Titular da Conta',
+				'instructions' => 'Instruções do PIX'
+			);
 
-			if ( empty ( $postValue ) || is_null ( $postValue ) )
-			{ 
-				WC_Admin_Settings::add_error( sprintf('Por favor, preencha o campo `%s`.', $value) );
-				return false; 
+			foreach ( $required as $key => $value )
+			{
+				$postValue = filter_input( INPUT_POST, $field.$key, FILTER_SANITIZE_STRING );
+
+				if ( empty ( $postValue ) || is_null ( $postValue ) )
+				{ 
+					WC_Admin_Settings::add_error( sprintf('Por favor, preencha o campo `%s`.', $value) );
+					unset($_POST[$field.$key]);
+				}
 			}
-		}
 
-		$keyType  = filter_input( INPUT_POST, $field.'key_type', FILTER_SANITIZE_STRING );
-		$keyValue = filter_input( INPUT_POST, $field.'key_value', FILTER_SANITIZE_STRING );
+			$keyType  = filter_input( INPUT_POST, $field.'key_type', FILTER_SANITIZE_STRING );
+			$keyValue = filter_input( INPUT_POST, $field.'key_value', FILTER_SANITIZE_STRING );
 
-		if ( empty( $keyType ) || empty( $keyValue ) )
-		{ 
-			WC_Admin_Settings::add_error( 'Os valores da chave Pix não foram preenchidos.' );
-			return false; 
-		}
+			if ( empty( $keyType ) || empty( $keyValue ) )
+			{ 
+				WC_Admin_Settings::add_error( 'Os valores da chave Pix não foram preenchidos.' ); 
+				unset($_POST[$field.'key_value']);
+			}
 
-		// Validates the key
-		try
-		{ Parser::validate($keyType,$keyValue); }
-		catch ( Exception $e )
-		{
-			WC_Admin_Settings::add_error( sprintf('Chave inválida: %s', $e->getMessage()) ); 
-			return false;
+			// Validates the key
+			try
+			{ Parser::validate($keyType,$keyValue); }
+			catch ( InvalidPixKeyTypeException $e )
+			{
+				WC_Admin_Settings::add_error( sprintf('Chave inválida: O tipo selecionado é incompatível.') ); 
+				unset($_POST[$field.'key_value']);
+			}
+			catch ( InvalidPixKeyException $e )
+			{
+				WC_Admin_Settings::add_error( sprintf('Chave inválida: O valor `%s` é incompatível com o tipo de chave selecionado.', $keyValue) ); 
+				unset($_POST[$field.'key_value']);
+			}
+			catch ( Exception $e )
+			{
+				WC_Admin_Settings::add_error( sprintf('Chave inválida: %s', $e->getMessage()) ); 
+				unset($_POST[$field.'key_value']);
+			}
 		}
 
 		parent::process_admin_options();

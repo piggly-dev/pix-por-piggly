@@ -2,6 +2,7 @@
 use Piggly\Pix\Parser;
 use Piggly\Pix\Payload;
 use Piggly\Pix\StaticPayload;
+
 ?>
 
 <?php if ( ((float)phpversion('Core') < 7.2) ) : ?>
@@ -60,6 +61,9 @@ use Piggly\Pix\StaticPayload;
 				$data->identifier         = str_replace('{{id}}', $order_id, $data->identifier);
 			endif;
 
+			if ( empty($data->key_value) )
+			{ throw new Exception('A chave Pix não foi preenchida, não é possível prosseguir...'); }
+
 			$pix = 
 				(new StaticPayload())
 					->setPixKey($data->key_type, $data->key_value)
@@ -81,7 +85,7 @@ use Piggly\Pix\StaticPayload;
 					'order_id' => $order_id,
 					'amount' => $amount
 				),
-				'',
+				WC()->template_path() . 'pix-por-piggly/',
 				WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
 			);
 		}

@@ -10,6 +10,8 @@
  * @subpackage Piggly_Woocommerce_Pix/templates
  */
 
+use Piggly\Pix\Parser;
+
 $upload     = wp_upload_dir();
 $uploadPath = $upload['basedir'].'/qrcodes/';
 $uploadUrl  = $upload['baseurl'].'/qrcodes/';
@@ -32,7 +34,7 @@ if ( !empty( $qrcode ) )
 
 <p>
 	Caso tenha perdido o link para pagamento, ou fechado antes da conclusão, 
-	<a href="<?=$order->get_checkout_payment_url();?>">clique aqui</a>.
+	<a href="<?=$order->get_checkout_order_received_url();?>">clique aqui</a>.
 	<?php echo wptexturize( $data->instructions ); ?>
 </p>
 
@@ -46,14 +48,14 @@ if ( !empty( $qrcode ) )
 	<?php endif; ?>
 
 	<?php if ( !empty($data->whatsapp) ) : ?>
-		<a href="<?=sprintf('https://wa.me/%s?text=%s',$data->whatsapp,urlencode($data->whatsapp_message))?>" style="margin: 5px; position: relative; vertical-align: middle; display: inline-table;font-weight: bold;color: #000;padding: 12px 24px;border: 1px solid;background-color: #25D366; border-color: #25D366;text-decoration: none;text-align: center;font-size: 14px;border-radius: 48px;">
+		<a href="<?=sprintf('https://wa.me/%s?text=%s',str_replace('+', '', Parser::parsePhone($data->whatsapp)),urlencode($data->whatsapp_message))?>" style="margin: 5px; position: relative; vertical-align: middle; display: inline-table;font-weight: bold;color: #000;padding: 12px 24px;border: 1px solid;background-color: #25D366; border-color: #25D366;text-decoration: none;text-align: center;font-size: 14px;border-radius: 48px;">
 			Comprovante via Whatsapp
 		</a>
 	<?php endif; ?>
 
 	<?php if ( !empty($data->telegram) ) : ?>
-		<a href="<?=sprintf('https://t.me/%s?text=%s',$data->telegram,urlencode($data->telegram_message))?>" style="margin: 5px; position: relative; vertical-align: middle; display: inline-table;font-weight: bold;color: #000;padding: 12px 24px;border: 1px solid;background-color: #6CC1E3; border-color: #6CC1E3;text-decoration: none;text-align: center;font-size: 14px;border-radius: 48px;">
-			Comprovante via Whatsapp
+		<a href="<?=sprintf('https://t.me/%s?text=%s',str_replace('@', '', $data->telegram),urlencode($data->telegram_message))?>" style="margin: 5px; position: relative; vertical-align: middle; display: inline-table;font-weight: bold;color: #000;padding: 12px 24px;border: 1px solid;background-color: #6CC1E3; border-color: #6CC1E3;text-decoration: none;text-align: center;font-size: 14px;border-radius: 48px;">
+			Comprovante via Telegram
 		</a>
 	<?php endif; ?>
 	</div>

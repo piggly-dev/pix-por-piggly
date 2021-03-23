@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.1.13
+Stable tag: 1.1.14
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -161,6 +161,25 @@ Neste caso, precisamos verificar cada caso. E você pode contribuir com isso env
 * Tipo de Erro;
 * Chave Pix gerada;
 
+= Como customizar os templates? =
+
+O plugin utiliza dois templates, um para a página de obrigado e outro para o e-mail. Crie, em seu tema, a pasta `woocommerce/pix-por-piggly` e insira os seguintes arquivos para sobrescrever:
+
+* `email-woocommerce-pix.php`: Sobrescreve o conteúdo do e-mail;
+* `html-woocommerce-thank-you-page.php`: Sobrescreve o conteúdo na página de obrigado;
+
+Será enviado para as páginas acima, os seguintes atributos:
+
+* `$data`: Com os dados de configuração do plugin;
+* `$pix`: Com o Pix Copia & Cola;
+* `$qrcode`: Com a `base64` para a imagem do QR Code;
+* `$order_id`: Com o ID do pedido;
+* `$amount`: Com o valor do pedido;
+
+> **AVISO**: Ao customizar os templates você pode perder funcionalidades importantes do plugin e comportamentos pré-existentes nos templates originais. Tenha certeza sobre o que está fazendo para garantir que tudo funcione como deve ser. 
+
+> **AVISO**: Não é nossa intenção dispobilizar a customização fácil do template por hora. Visamos para uma versão PRO do plugin. **Não prestaremos suporte para customizações**.
+
 == Como instalar? ==
 
 = No diretório oficial do Wordpress =
@@ -197,6 +216,14 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 4. Configurações do método de pagamento.
 
 == Changelog ==
+
+= 1.1.14 =
+
+* Dicas de apoio para preenchimento do Pix;
+* Correções dos botões Whatsapp e Telegram no e-mail;
+* Link para ver o pedido no e-mail ao invés do link para pagamento;
+* Correções ao salvar configurações;
+* Adição do caminho para sobrescrever os templates.
 
 = 1.1.13 =
 

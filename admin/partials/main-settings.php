@@ -65,10 +65,16 @@ $helpText = $data->help_text;
 	<?php endif ?>
 
 	<h3>Configurações Gerais</h3>
-
+ 
 	<label class="piggly-label piggly-checkbox" for="woocommerce_wc_piggly_pix_gateway_enabled">
 		<input type="checkbox" name="woocommerce_wc_piggly_pix_gateway_enabled" id="woocommerce_wc_piggly_pix_gateway_enabled" value="1" <?=(($data->enabled == 1 || $data->enabled == 'yes') ? 'checked="checked"' : '');?>> Habilitar o pagamento via Pix
-	</label>
+	</label> 
+	
+	<?php if ( empty($data->key_value) ) : ?>
+	<p class="notice notice-warning" style="padding: 10px"><em>
+		Antes de habilitar o plugin, preencha a Chave Pix.
+	</em></p>
+	<?php endif; ?>
 	
 	<label class="piggly-label piggly-checkbox" for="woocommerce_wc_piggly_pix_gateway_help_text">
 		<input type="checkbox" name="woocommerce_wc_piggly_pix_gateway_help_text" id="woocommerce_wc_piggly_pix_gateway_help_text" value="1" <?=(($data->help_text == 1 || $data->help_text == 'yes') ? 'checked="checked"' : '');?>> Ocultar os textos de ajuda
@@ -85,7 +91,16 @@ $helpText = $data->help_text;
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_store_name">Nome da Loja</label>
 	<input value="<?=$data->store_name?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_store_name" id="woocommerce_wc_piggly_pix_gateway_store_name">
 	<p class="description">Informe o nome da loja para acrescentar na descrição do Pix.</p>
+	<p class="description"><strong>Pré-visualize</strong> <code><?=sprintf('Compra em %s', $data->store_name)?></code></p>
 	
+	<?php if ( strlen($data->store_name) >= 30 ) : ?>
+	<p class="notice notice-warning" style="padding: 10px"><em>
+		O <strong>Nome da Loja</strong> possuí mais de <code>30</code> caracteres.
+		Isso pode acarretar problemas de leitura do Pix em alguns bancos. Considere,
+		por tanto, reduzir o nome.
+	</em></p>
+	<?php endif; ?>
+
 	<p class="submit">
 	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Salvar">Salvar</button>
 	</p>
@@ -159,6 +174,14 @@ $helpText = $data->help_text;
 	<input value="<?=$data->merchant_name?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_name" id="woocommerce_wc_piggly_pix_gateway_merchant_name">
 	<p class="description">Informe o nome do titular da conta que irá receber o PIX. Como consta no Banco.</p>
 	
+	<?php if ( strlen($data->merchant_name) >= 25 ) : ?>
+	<p class="notice notice-warning" style="padding: 10px"><em>
+		O <strong>Nome do Titular</strong> possuí mais de <code>25</code> caracteres.
+		Isso pode acarretar problemas de leitura do Pix em alguns bancos. Considere,
+		por tanto, reduzir o nome.
+	</em></p>
+	<?php endif; ?>
+
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_merchant_city">Cidade do Titular</label>
 	<input value="<?=$data->merchant_city?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_merchant_city" id="woocommerce_wc_piggly_pix_gateway_merchant_city">
 	<p class="description">Informe a cidade do titular da conta que irá receber o PIX. Como consta no Banco.</p>

@@ -23,7 +23,7 @@ use Piggly\Pix\Parser;
 	.pix-instructions h3 { text-transform: uppercase; letter-spacing: 2px; }
 	.pix-button { margin: 5px; position: relative; vertical-align: middle; display: inline-table; background-color: #87ff8e;font-weight: bold;color: #000;padding: 12px 24px;border: 1px solid #87ff8e;text-decoration: none;text-align: center;font-size: 14px;border-radius: 48px; }
 	.pix-button svg { width: 15px; height: 15px; margin-right: 6px; }
-	.pix-copy { width: 100%; position: relative; display: table; background-color: #87ff8e; font-weight: bold; color: #333333; padding: 12px; text-transform: uppercase; border: 1px solid #87ff8e; }
+	.pix-copy { right:unset; bottom: unset; width: 100%; position: relative; display: table; background-color: #87ff8e; font-weight: bold; color: #333333; padding: 12px; text-transform: uppercase; border: 1px solid #87ff8e; }
 	.pix-method { margin: 36px auto; }
 	.pix-method .pix-wrapper { margin: 0 auto; max-width: 420px; }
 	.pix-method h4 { text-align: center; font-size: 24px; }
