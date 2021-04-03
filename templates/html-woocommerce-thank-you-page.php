@@ -10,6 +10,8 @@
  * @subpackage Piggly_Woocommerce_Pix/templates
  */
 
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
 use Piggly\Pix\Parser;
 
 ?>

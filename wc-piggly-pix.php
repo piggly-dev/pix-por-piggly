@@ -9,16 +9,16 @@
  * that starts the plugin.
  *
  * @link              https://github.com/piggly-dev/wc-piggly-pix
- * @since             1.1.0
- * @package           WC_Piggly_Pix
+ * @since             1.2.0
+ * @package           \Piggly\WC\Pix
  *
  * @wordpress-plugin
  * Plugin Name:       Pix por Piggly
  * Plugin URI:        https://github.com/piggly-dev/wc-piggly-pix
- * Description:       Possibilite o pagamento com Pix de uma forma simples, rápida e direta. Mantenha atualizado para garantir todas as correções e recursos.
- * Version:           1.1.14
- * Author:            Caique 
- * Author URI:        https://github.com/caiquearaujo
+ * Description:       Possibilite o pagamento com Pix de uma forma simples, rápida e direta. Aplique desconto automático, personalize o comportamento e muito mais.
+ * Version:           1.2.0
+ * Author:            Piggly Lab 
+ * Author URI:        https://github.com/piggly-dev
  * License:           GPLv2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       wc-piggly-pix
@@ -39,7 +39,7 @@ define( 'WC_PIGGLY_PIX_PLUGIN_NAME', 'wc-piggly-pix' );
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * @var string 
  */
-define( 'WC_PIGGLY_PIX_PLUGIN_VERSION', '1.1.14' );
+define( 'WC_PIGGLY_PIX_PLUGIN_VERSION', '1.2.0' );
 
 /**
  * The plugin absolute directory.
@@ -58,25 +58,32 @@ define( 'WC_PIGGLY_PIX_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
  * @var string
  */ 
 define( 'WC_PIGGLY_PIX_BASE_NAME', plugin_basename( __FILE__ ) );
- 
-/**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and public-facing site hooks.
- */
-require WC_PIGGLY_PIX_PLUGIN_PATH . 'includes/class-wc-piggly-pix.php';
 
 /**
- * Begins execution of the plugin.
- *
- * Since everything within the plugin is registered via hooks,
- * then kicking off the plugin from this point in the file does
- * not affect the page life cycle.
- *
+ * The plugin dir name.
+ * @var string
+ */ 
+define( 'WC_PIGGLY_PIX_DIR_NAME', dirname(plugin_basename( __FILE__ )) );
+ 
+// Include composer autoloader
+require __DIR__ . '/vendor/autoload.php';
+
+/**
+ * Global function holder. Works similar to a singleton's instance().
+ * 
  * @since 1.0.0
+ * @return \Piggly\WC\Pix\Core
  */
-function run_wc_piggly_pix () {
-	$plugin = new WC_Piggly_Pix();
-	$plugin->run();
+function wc_piggly_pix () 
+{
+	/** @var \Piggly\WC\Pix\Core $core */
+	static $core;
+
+	// Create core if not created...
+	if ( !isset($core) ) $core = new \Piggly\WC\Pix\Core();
+	
+	// Return core
+	return $core;
 }
 
 /**
@@ -85,7 +92,12 @@ function run_wc_piggly_pix () {
  * @since 1.0.0
  */
 function wc_piggly_pix_missing_notice ()
-{ include WC_PIGGLY_PIX_PLUGIN_PATH . 'admin/partials/html-woocommerce-missing-notice.php'; }
+{ include WC_PIGGLY_PIX_PLUGIN_PATH . 'templates/admin/woocommerce-missing.php'; }
 
-require WC_PIGGLY_PIX_PLUGIN_PATH . 'vendor/autoload.php';
-run_wc_piggly_pix();
+// Activate plugin
+register_activation_hook( __FILE__, array(\Piggly\WC\Pix\WP\Activator::class, 'activate'));
+// Desactivate plugin
+register_deactivation_hook( __FILE__, array(\Piggly\WC\Pix\WP\Desactivator::class, 'desactivate'));
+
+// Startup Plugin
+wc_piggly_pix();

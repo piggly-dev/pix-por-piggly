@@ -10,6 +10,17 @@
         {
             "name": "Caique Araujo",
             "email": "caique@piggly.com.br"
+        },
+        {
+            "name": "Piggly Lab",
+            "email": "dev@piggly.com.br"
         }
-    ]
+    ],
+	"autoload": {
+        "psr-4": {
+            "Piggly\\WC\\Pix\\": "src/"
+        }
+	},
+	"minimum-stability": "stable",
+	"version": "1.2.0"
 }
