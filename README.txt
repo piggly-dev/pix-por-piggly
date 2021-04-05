@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -163,7 +163,7 @@ Nas configurações do Plugin acesse "Suporte" e verifique a seção "Como subst
 
 > **AVISO**: Ao customizar os templates você pode perder funcionalidades importantes do plugin e comportamentos pré-existentes nos templates originais. Tenha certeza sobre o que está fazendo para garantir que tudo funcione como deve ser. **Não prestaremos suporte para customizações**.
 
-== Como instalar? ==
+== Installation ==
 
 = No diretório oficial do Wordpress =
 
@@ -199,6 +199,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 4. Configurações do método de pagamento.
 
 == Changelog ==
+
+= 1.2.1 =
+
+* Auto corrige automaticamente os campos do dados Pix baseado no Banco selecionado.
 
 = 1.2.0 =
 
@@ -292,3 +296,9 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 = 1.0.0 = 
 
 * Versão inicial do plugin.
+
+== Upgrade Notice ==
+
+= 1.2.1 =
+
+A versão **1.2.0** auto corrige automaticamente os campos do dados Pix baseado no Banco selecionado.

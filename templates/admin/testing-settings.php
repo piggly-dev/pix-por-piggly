@@ -26,14 +26,14 @@ use Piggly\Pix\StaticPayload;
 	<p class="description">Simule o valor para pagamento do Pix.</p>
 
 	<label class="piggly-label" for="order_id">Escolha um pedido para simular</label>
-	<select style="width:100%; max-width: 100%;" class="select" name="order_id" id="order_id">
+	<select style="width:100%; max-width: 100%;" class="select  wc-enhanced-select" name="order_id" id="order_id">
 		<option value="000001">Nenhum selecionado</option>
-	<?php 
-	$orders = wc_get_orders( array('limit' => 10) );
-	
-	foreach ( $orders as $order )
-	{ echo sprintf('<option value="%s">Pedido #%s</option>', $order->get_order_number(), $order->get_order_number()); }
-	?>
+		<?php 
+		$orders = wc_get_orders( array('limit' => 10) );
+		
+		foreach ( $orders as $order )
+		{ echo sprintf('<option value="%s">Pedido #%s</option>', $order->get_order_number(), $order->get_order_number()); }
+		?>
 	</select>
 	<p class="description">Nenhuma alteração será feita no pedido selecionado.</p>
 
@@ -75,6 +75,7 @@ use Piggly\Pix\StaticPayload;
 			<h3>Dados de Depuração</h3>
 			<p>Confira abaixo todos os valores que seu plugin está gerando 👇</p>
 			<ul style="list-style: disc; padding: 0px 25px">
+				<li>Banco Origem: <code><?=$data->bank === 0 ? 'Nenhum' : 'CÓDIGO '.$data->bank;?></code></li>
 				<li>Tipo da Chave: <code><?=$data->key_type_alias?></code></li>
 				<li>Chave: <code><?=$data->key_value?></code></li>
 				<li>Titular: <code><?=$data->merchant_name?></code></li>
@@ -82,7 +83,12 @@ use Piggly\Pix\StaticPayload;
 				<li>Identificador: <code><?=$data->identifier?></code></li>
 				<li>Valor: <code>R$ <?=$amount?></code></li>
 				<li>Código Pix: <code><?=$pix->getPixCode()?></code></li>
-				
+			</ul>
+
+			<?php if ( !empty($data->receipt_page_value) || !empty($data->whatsapp) || !empty($data->telegram) ) : ?>
+			<h3>Links Gerados</h3>
+			<p>Confira abaixo todos os links que seu plugin está gerando 👇</p>
+			<ul style="list-style: disc; padding: 0px 25px">
 				<?php if ( !empty($data->receipt_page_value) ) : ?>
 					<?php $link = $data->receipt_page_value; ?>
 					<li>Link Página do Comprovante: <code><?=$link?></code> <a href="<?=$link?>" target="_blank">Abrir Link</a></li>
@@ -91,16 +97,17 @@ use Piggly\Pix\StaticPayload;
 				<?php if ( !empty($data->whatsapp) ) : ?>
 					<?php $link = sprintf('https://wa.me/%s?text=%s',str_replace('+', '', Parser::parsePhone($data->whatsapp)),urlencode($data->whatsapp_message)); ?>
 					<li>Link Whatsapp: <code><?=$link?></code> <a href="<?=$link?>" target="_blank">Abrir Link</a></li>
-					<li>Mensagem: <code><?=$data->whatsapp_message?></code></li>
+					<li>Mensagem Whatsapp: <code><?=$data->whatsapp_message?></code></li>
 				<?php endif; ?>
 
 				<?php if ( !empty($data->telegram) ) : ?>
 					<?php $link = sprintf('https://t.me/%s?text=%s',str_replace('@', '', $data->telegram),urlencode($data->telegram_message)); ?>
 					<li>Link Telegram: <code><?=$link?></code> <a href="<?=$link?>" target="_blank">Abrir Link</a></li>
-					<li>Mensagem: <code><?=$data->telegram_message?></code></li>
-				<?php endif; ?>
+					<li>Mensagem Telegram: <code><?=$data->telegram_message?></code></li>
+				<?php endif; ?>		
 			</ul>
-			
+			<?php endif; ?>
+
 			<p>Confira abaixo o template que está sendo carregado 👇</p>
 			
 			<?php

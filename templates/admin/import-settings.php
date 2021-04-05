@@ -40,6 +40,18 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST['error']) )
 	<input style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_pix_code" id="woocommerce_wc_piggly_pix_gateway_pix_code">
 	<p class="description">Ao colar o código e clicar em "Importar Configurações", os dados da sua Conta Pix serão extraídos do código.</p>
 
+	<label class="piggly-label piggly-checkbox" for="woocommerce_wc_piggly_pix_gateway_auto_fix">
+		<input type="checkbox" name="woocommerce_wc_piggly_pix_gateway_auto_fix" id="woocommerce_wc_piggly_pix_gateway_auto_fix" value="1" <?=(($data->auto_fix == 1) ? 'checked="checked"' : '');?>> Auto corrigir dados Pix que contenham caracteres inválidos.
+	</label>
+	
+	<p class="description">
+		A partir da versão <strong>2.3.0</strong> do Pix, alguns bancos podem apresentar
+		erros ao ler códigos Pix com caracteres inválidos. A auto correção busca resolver esse problema.
+		Caso você prefira que a auto correção não aconteça, remova a seleção acima.
+		Entretanto, sem a auto correção, é possível que existam problemas de incompatibilidades
+		Pix. Você poderá resolver esses problemas manualmente na guia <a href="<?=admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway&screen=support' );?>">Suporte</a>.
+	</p> 
+
 	<p class="submit force-submit">
 	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Importar Configurações">Importar Configurações</button>
 	</p> 

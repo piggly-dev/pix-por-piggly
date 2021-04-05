@@ -72,11 +72,6 @@ $helpText = $data->help_text;
 	</em></p>
 	<?php endif; ?>
 	
-	<label class="piggly-label piggly-checkbox" for="woocommerce_wc_piggly_pix_gateway_debug">
-		<input type="checkbox" name="woocommerce_wc_piggly_pix_gateway_debug" id="woocommerce_wc_piggly_pix_gateway_debug" value="1" <?=(($data->debug == 1) ? 'checked="checked"' : '');?>> Modo Debug
-	</label>
-	<p class="description">O modo debug salvará operações, erros e outras informações no log de registro do plugin. Ideal para receber suporte.</p>
-	
 	<label class="piggly-label piggly-checkbox" for="woocommerce_wc_piggly_pix_gateway_help_text">
 		<input type="checkbox" name="woocommerce_wc_piggly_pix_gateway_help_text" id="woocommerce_wc_piggly_pix_gateway_help_text" value="1" <?=(($data->help_text == 1 || $data->help_text == 'yes') ? 'checked="checked"' : '');?>> Ocultar os textos de ajuda
 	</label>
@@ -91,15 +86,18 @@ $helpText = $data->help_text;
 	
 	<label class="piggly-label" for="woocommerce_wc_piggly_pix_gateway_store_name">Nome da Loja</label>
 	<input value="<?=$data->store_name?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_store_name" id="woocommerce_wc_piggly_pix_gateway_store_name">
-	<p class="description">Informe o nome da loja para acrescentar na descrição do Pix.</p>
+	<p class="description">Informe o nome da loja para acrescentar na descrição do Pix. São aceitos os caracteres: <code>A-Z</code>, <code>a-z</code> e <code>espaço</code>.</p>
+	
+	<?php if ( !empty($data->store_name) ) : ?>
 	<p class="description"><strong>Pré-visualize</strong> <code><?=sprintf('Compra em %s', $data->store_name)?></code></p>
+	<?php endif?> 
 	
 	<?php if ( strlen($data->store_name) >= 30 ) : ?>
-	<p class="notice notice-warning" style="padding: 10px"><em>
+	<p class="notice notice-warning" style="padding: 10px">
 		O <strong>Nome da Loja</strong> possuí mais de <code>30</code> caracteres.
 		Isso pode acarretar problemas de leitura do Pix em alguns bancos. Considere,
 		por tanto, reduzir o nome.
-	</em></p>
+	</p>
 	<?php endif; ?>
 
 	<p class="submit">

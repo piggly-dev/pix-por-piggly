@@ -1,4 +1,9 @@
-<?php if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
+<?php 
+if ( ! defined( 'ABSPATH' ) ) { exit; } 
+
+$log_link  = admin_url( 'admin.php?page=wc-status&tab=logs' );
+$test_link = admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway&screen=testing' );
+?>
 <h1>Problemas com o Pix?</h1>
 
 <div style="max-width:720px; display: table">
@@ -17,6 +22,45 @@
 		continuamente melhorar esse plugin juntos. <em>Mantenha-o sempre atualizado</em>.</em>
 	</p>
 
+	<h3>Habilite o modo de debug para investigação de erros 🐞</h3>
+
+	<label class="piggly-label piggly-checkbox" for="woocommerce_wc_piggly_pix_gateway_debug">
+		<input type="checkbox" name="woocommerce_wc_piggly_pix_gateway_debug" id="woocommerce_wc_piggly_pix_gateway_debug" value="1" <?=(($data->debug == 1) ? 'checked="checked"' : '');?>> Modo Debug
+	</label>
+	<p class="description">O modo debug salvará operações, erros e outras informações no log de registro do plugin. Ideal para receber suporte.</p>
+	
+	<p>
+		Os logs de informações e erros do plugin, quando o <strong>Modo Debug</strong>
+		estiver ativado, será salvo em <a href="<?=$log_link?>">Logs do Woocommerce</a>
+		em um arquivo com o seguinte formato <code><?=WC_PIGGLY_PIX_PLUGIN_NAME?>-{ano}-{mes}-{dia}-{hash}.log</code>.
+	</p>
+
+	<p class="submit force-submit">
+		<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Salvar">Salvar Modo Debug</button>
+	</p>
+
+	<h3>O que enviar ao entrar em contato com o Suporte 👇</h3>
+
+	<ul>
+		<li>
+			✅ Se o seu Wordpress apresentou erro fatal ao gerar o código Pix, acesse
+			<a href="<?=$log_link?>">Logs do Woocommerce</a>, encontre o último log
+			com o nome <code>fatal-errors</code> e compartilhe conosco.
+		</li>
+		<li>
+			✅ Se o seu Wordpress não apresentou erro, mas o plugin acusou um erro
+			compartilhe a mensagem de erro apresentada ou
+			habilite o Modo Debug, reproduza novamente o erro, acesse
+			<a href="<?=$log_link?>">Logs do Woocommerce</a>, encontre o último log
+			com o nome <code>wc-piggly-pix</code> e compartilhe conosco.
+		</li>
+		<li>
+			✅ Se os seus clientes não conseguem efetuar pagamento do Pix,
+			gere um novo <a href="<?=$test_link?>">Teste</a> e compartilhe
+			conosco os dados de depuração.
+		</li>
+	</ul>
+
 	<h3>Como substituir os templates de e-mail e da página de obrigado 👇</h3>
 
 	<p>
@@ -26,7 +70,7 @@
 		para o diretório do seu tema ativo em <code><?=get_template_directory().WC()->template_path().\WC_PIGGLY_PIX_DIR_NAME.'/'?></code>.	
 	</p>
 
-	<p class="notice notice-warning" style="padding: 10px"><em>
+	<p class="notice notice-warning" style="padding: 10px">
 		⚠ <strong>Tenha cuidado!</strong> Ao criar seu próprio template, você pode
 		perder funções nativas do plugin. Só faça se souber o que está fazendo.
 		O suporte para templates personalizados não será concedido.
@@ -35,28 +79,14 @@
 	<h3>O plugin apresenta erro e não gera o QR Code ou o Código Pix  👇</h3>
 
 	<p>
-		Primeiro, anote a mensagem de erro que aparece na sua tela do Wordpress.
-		Essa mensagem é importante. Depois vá em <a href="">Logs</a> e copie as últimas
-		mensagens de erro.
-	</p>
-
-	<p>
-		Depois, compartilhe essas informações na página de 
+		Depois, compartilhe sua solicitação de suporte em
 		<a href="https://wordpress.org/support/plugin/pix-por-piggly/">Suporte Gratuito</a>
 		do plugin. A comunidade poderá ajudá-lo e conforme disponibilidade 
-		responderemos também.
+		responderemos também. Não esqueça de verificar <mark>O que enviar ao entrar em
+		contato com o Suporte</mark>.
 	</p>
 
-	<ul style="list-style: disc; padding: 18px;">
-		<li>Versão do Wordpress;</li>
-		<li>Versão do WooCommerce;</li>
-		<li>Banco Emitente (Conta Pix);</li>
-		<li>Banco Pagador (que está utilizando o Código Pix);</li>
-		<li>Tipo de Erro;</li>
-		<li>Chave Pix gerada;</li>
-	</ul>
-
-	<h3>O plugin gera o QR Code, mas não consigo pagá-lo 👇</h3>
+	<h3>O plugin gera o QR Code, mas alguns clientes não conseguem pagá-lo 👇</h3>
 
 	<p>
 		Caso o plugin esteja gerando o QR Code, não há um erro no plugin.
@@ -64,6 +94,19 @@
 	</p>
 
 	<ul style="list-style: disc; padding: 18px;">
+		<?php if ( strlen($data->store_name) >= 25 ) : ?>
+		<li>
+			O <strong>Nome do Loja</strong> possuí mais de <code>25</code> caracteres.
+			Isso pode acarretar problemas de leitura do Pix em alguns bancos. Considere,
+			por tanto, reduzir o nome.
+		</li>
+		<?php endif; ?>
+		<?php if ( preg_match('/[^A-Za-z\s]/',$data->merchant_name) ) : ?>
+		<li>
+			O <strong>Nome da Loja</strong> contem números ou caracteres inválidos, remova-os. Alguns bancos
+			não serão capazes de ler o código caso o Nome da Loja contenha números ou caracteres inválidos.
+		</li>
+		<?php endif; ?>
 		<?php if ( strlen($data->merchant_name) >= 25 ) : ?>
 		<li>
 			O <strong>Nome do Titular</strong> possuí mais de <code>25</code> caracteres.
@@ -71,10 +114,29 @@
 			por tanto, reduzir o nome.
 		</li>
 		<?php endif; ?>
-		<?php if ( preg_match('/[0-9]/',$data->merchant_name) ) : ?>
+		<?php if ( preg_match('/[^A-Za-z\s]/',$data->merchant_name) ) : ?>
 		<li>
-			O <strong>Nome do Titular</strong> contem números, remova-os. Alguns bancos
-			não serão capazes de ler o código caso o Nome do Titular contenha números.
+			O <strong>Nome do Titular</strong> contem números ou caracteres inválidos, remova-os. Alguns bancos
+			não serão capazes de ler o código caso o Nome do Titular contenha números ou caracteres inválidos.
+		</li>
+		<?php endif; ?>
+		<?php if ( strlen($data->merchant_city) >= 25 ) : ?>
+		<li>
+			A <strong>Cidade do Titular</strong> possuí mais de <code>25</code> caracteres.
+			Isso pode acarretar problemas de leitura do Pix em alguns bancos. Considere,
+			por tanto, reduzir o nome.
+		</li>
+		<?php endif; ?>
+		<?php if ( preg_match('/[^A-Za-z\s]/',$data->merchant_city) ) : ?>
+		<li>
+			A <strong>Cidade do Titular</strong> contem números ou caracteres inválidos, remova-os. Alguns bancos
+			não serão capazes de ler o código caso a Cidade do Titular contenha números ou caracteres inválidos.
+		</li>
+		<?php endif; ?>
+		<?php if ( preg_match('/[^A-Za-z0-9\{\}]/',$data->identifier) ) : ?>
+		<li>
+			O <strong>Identificador</strong> contem caracteres inválidos, remova-os. Alguns bancos
+			não serão capazes de ler o código caso o Identificador contenha caracteres inválidos.
 		</li>
 		<?php endif; ?>
 		<li>

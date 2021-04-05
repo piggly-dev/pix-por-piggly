@@ -87,7 +87,7 @@ class PixGateway extends WC_Payment_Gateway
 		$this->email_position = $this->get_option( 'email_position', 'before' );
 		$this->order_status = $this->get_option( 'order_status', 'wc-on-hold' );
 		$this->instructions = $this->get_option( 'instructions', __('Faça o pagamento via PIX. O pedido número {{pedido}} será liberado assim que a confirmação do pagamento for efetuada.', WC_PIGGLY_PIX_PLUGIN_NAME) );
-		$this->identifier = $this->get_option( 'identifier' );
+		$this->identifier = $this->get_option( 'identifier', '***');
 		$this->receipt_page_value = $this->get_option( 'receipt_page_value' );
 		$this->whatsapp = preg_replace('/^[5]{3,}/', '', $this->get_option( 'whatsapp' ));
 		$this->telegram = $this->get_option( 'telegram' );
@@ -95,9 +95,11 @@ class PixGateway extends WC_Payment_Gateway
 		$this->telegram_message = $this->get_option( 'telegram_message', __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME) );
 		$this->help_text = $this->as_bool($this->get_option( 'help_text', 'no' ));
 		$this->debug = $this->as_bool($this->get_option('debug','no'));
+		$this->auto_fix = $this->as_bool($this->get_option('auto_fix','no'));
 		$this->discount = $this->get_option( 'discount', '' );		
 		$this->discount_label = $this->get_option( 'discount_label', __('Desconto Pix Aplicado', WC_PIGGLY_PIX_PLUGIN_NAME) );	
 		$this->hide_in_order = $this->as_bool($this->get_option('hide_in_order','no'));
+		$this->bank = $this->get_option( 'bank', 0 );	
 	}
 
 	/**
@@ -212,7 +214,7 @@ class PixGateway extends WC_Payment_Gateway
 		{ $screen = 'main'; }
 
 		// Not save when screen does not need to be save.
-		if ( in_array( $screen, ['testing','support','faq','news','shortcode']) )
+		if ( in_array( $screen, ['testing','faq','news','shortcode']) )
 		{ return false; }
 
 		// Field prefix
@@ -237,6 +239,12 @@ class PixGateway extends WC_Payment_Gateway
 			{
 				if ( empty($_POST[$field.$_field]) )
 				{ $_POST[$field.$_field] = $default; }
+			}
+			
+			if ( $this->auto_fix )
+			{
+				// Fix
+				$_POST[$field.'store_name'] = $this->replace_char($_POST[$field.'store_name']);
 			}
 		}
 
@@ -294,14 +302,26 @@ class PixGateway extends WC_Payment_Gateway
 			}
 
 			$fields = [
+				'bank' => 0,
 				'instructions' => __('Faça o pagamento via PIX. O pedido número {{pedido}} será liberado assim que a confirmação do pagamento for efetuada.', WC_PIGGLY_PIX_PLUGIN_NAME),
-				'identifier' => ''
+				'identifier' => '***'
 			];
 
 			foreach ( $fields as $_field => $default )
 			{
 				if ( empty($_POST[$field.$_field]) )
 				{ $_POST[$field.$_field] = $default; }
+			}
+
+			if ( empty($_POST[$field.'auto_fix']) )
+			{ $_POST[$field.'auto_fix'] = 'no'; }
+
+			if ( $_POST[$field.'auto_fix'] !== 'no' )
+			{
+				// Fix
+				$_POST[$field.'merchant_name'] = $this->replace_char($_POST[$field.'merchant_name']);
+				$_POST[$field.'merchant_city'] = $this->replace_char($_POST[$field.'merchant_city']);
+				$_POST[$field.'identifier'] = preg_replace('/[^A-Za-z0-9\*\{\}]+/', '', $_POST[$field.'identifier']);
 			}
 		}
 
@@ -319,6 +339,9 @@ class PixGateway extends WC_Payment_Gateway
 				return false;
 			}
 
+			if ( empty($_POST[$field.'auto_fix']) )
+			{ $_POST[$field.'auto_fix'] = 'no'; }
+
 			try
 			{
 				// Read pix data and save it...
@@ -326,8 +349,17 @@ class PixGateway extends WC_Payment_Gateway
 
 				$_POST[$field.'key_value'] = $reader->getPixKey();
 				$_POST[$field.'key_type']  = Parser::getKeyType($_POST[$field.'key_value']);
-				$_POST[$field.'merchant_name'] = $reader->getMerchantName();
-				$_POST[$field.'merchant_city'] = $reader->getMerchantCity();
+
+				if ( $_POST[$field.'auto_fix'] !== 'no' )
+				{
+					$_POST[$field.'merchant_name'] = $this->replace_char($reader->getMerchantName());
+					$_POST[$field.'merchant_city'] = $this->replace_char($reader->getMerchantCity());
+				}
+				else
+				{
+					$_POST[$field.'merchant_name'] = $reader->getMerchantName();
+					$_POST[$field.'merchant_city'] = $reader->getMerchantCity();
+				}
 
 				unset($_POST[$field.'pix_code']);
 			}
@@ -388,6 +420,20 @@ class PixGateway extends WC_Payment_Gateway
 				'whatsapp_message' => __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'telegram' => '',
 				'telegram_message' => __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME),
+			];
+
+			foreach ( $fields as $_field => $default )
+			{
+				if ( empty($_POST[$field.$_field]) )
+				{ $_POST[$field.$_field] = $default; }
+			}
+		}
+
+		// If screen is "support"
+		if ( $screen === 'support' )
+		{
+			$fields = [
+				'debug' => 'no'
 			];
 
 			foreach ( $fields as $_field => $default )
@@ -729,5 +775,23 @@ class PixGateway extends WC_Payment_Gateway
 		}
 
 		return (bool)$value;
+	}
+
+	/**
+	 * Replaces any invalid character to a valid one.
+	 * 
+	 * @since 1.1.0
+	 * @param string $str
+	 * @return string
+	 */
+	private function replace_char ( string $str ) : string
+	{
+		$invalid = array("Á", "À", "Â", "Ä", "Ă", "Ā", "Ã", "Å", "Ą", "Æ", "Ć", "Ċ", "Ĉ", "Č", "Ç", "Ď", "Đ", "Ð", "É", "È", "Ė", "Ê", "Ë", "Ě", "Ē", "Ę", "Ə", "Ġ", "Ĝ", "Ğ", "Ģ", "á", "à", "â", "ä", "ă", "ā", "ã", "å", "ą", "æ", "ć", "ċ", "ĉ", "č", "ç", "ď", "đ", "ð", "é", "è", "ė", "ê", "ë", "ě", "ē", "ę", "ə", "ġ", "ĝ", "ğ", "ģ", "Ĥ", "Ħ", "Í", "Ì", "İ", "Î", "Ï", "Ī", "Į", "Ĳ", "Ĵ", "Ķ", "Ļ", "Ł", "Ń", "Ň", "Ñ", "Ņ", "Ó", "Ò", "Ô", "Ö", "Õ", "Ő", "Ø", "Ơ", "Œ", "ĥ", "ħ", "ı", "í", "ì", "î", "ï", "ī", "į", "ĳ", "ĵ", "ķ", "ļ", "ł", "ń", "ň", "ñ", "ņ", "ó", "ò", "ô", "ö", "õ", "ő", "ø", "ơ", "œ", "Ŕ", "Ř", "Ś", "Ŝ", "Š", "Ş", "Ť", "Ţ", "Þ", "Ú", "Ù", "Û", "Ü", "Ŭ", "Ū", "Ů", "Ų", "Ű", "Ư", "Ŵ", "Ý", "Ŷ", "Ÿ", "Ź", "Ż", "Ž", "ŕ", "ř", "ś", "ŝ", "š", "ş", "ß", "ť", "ţ", "þ", "ú", "ù", "û", "ü", "ŭ", "ū", "ů", "ų", "ű", "ư", "ŵ", "ý", "ŷ", "ÿ", "ź", "ż", "ž");
+		$valid   = array("A", "A", "A", "A", "A", "A", "A", "A", "A", "AE", "C", "C", "C", "C", "C", "D", "D", "D", "E", "E", "E", "E", "E", "E", "E", "E", "G", "G", "G", "G", "G", "a", "a", "a", "a", "a", "a", "a", "a", "a", "ae", "c", "c", "c", "c", "c", "d", "d", "d", "e", "e", "e", "e", "e", "e", "e", "e", "g", "g", "g", "g", "g", "H", "H", "I", "I", "I", "I", "I", "I", "I", "IJ", "J", "K", "L", "L", "N", "N", "N", "N", "O", "O", "O", "O", "O", "O", "O", "O", "CE", "h", "h", "i", "i", "i", "i", "i", "i", "i", "ij", "j", "k", "l", "l", "n", "n", "n", "n", "o", "o", "o", "o", "o", "o", "o", "o", "o", "R", "R", "S", "S", "S", "S", "T", "T", "T", "U", "U", "U", "U", "U", "U", "U", "U", "U", "U", "W", "Y", "Y", "Y", "Z", "Z", "Z", "r", "r", "s", "s", "s", "s", "B", "t", "t", "b", "u", "u", "u", "u", "u", "u", "u", "u", "u", "u", "w", "y", "y", "y", "z", "z", "z");
+		$str     = str_ireplace( $invalid, $valid, $str );
+		$str     = preg_replace('/[\!\.\,\@\#\$\%\&\*\(\)\/\?\{\}]+/', ' ', $str);
+		$str     = preg_replace('/[\s]{2,}/', ' ', $str);
+
+		return $str;
 	}
 }

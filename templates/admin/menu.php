@@ -5,6 +5,7 @@
 	.piggly-label { font-size: 14px; font-weight: bold; margin-bottom: 4px; display: block; }
 	.piggly-checkbox { display: table; margin: 12px 0; }
 	.piggly-featured { background-color: #00bcd4; color: #000; font-size: 12px; }
+	.piggly-space { padding: 6px 0; }
 </style>
 <?php
 

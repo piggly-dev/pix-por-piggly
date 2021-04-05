@@ -188,6 +188,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 # Changelog #
 
+## 1.2.1 ##
+
+* Auto corrige automaticamente os campos do dados Pix baseado no Banco selecionado.
+
 ## 1.2.0 ##
 
 * Reformulação das configurações;

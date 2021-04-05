@@ -30,6 +30,8 @@ use Piggly\Pix\Parser;
 		<?php endif ?>
 	</div>
 	
+	<div class="piggly-space"></div>
+	
 	<h3>Whatsapp para enviar o Comprovante <code class="piggly-featured">Não preencha para ocultar</code></h3>
 	<p class="description">Informe seu telefone em qualquer formato, ajustaremos para você.</p>
 	<input value="<?=$data->whatsapp?>" style="width:100%;" class="input-text regular-input " type="text" name="woocommerce_wc_piggly_pix_gateway_whatsapp" id="woocommerce_wc_piggly_pix_gateway_whatsapp">
@@ -42,6 +44,8 @@ use Piggly\Pix\Parser;
 		<h4>Merge Tags da Mensagem Inicial</h4>
 		<p><code>{{pedido}}</code> Insira para substituir para fazer referência ao número do pedido.</p>
 	</div>
+	
+	<div class="piggly-space"></div>
 
 	<h3>Usuário do Telegram para enviar o Comprovante <code class="piggly-featured">Não preencha para ocultar</code></h3>
 	<p class="description">Informe somente o seu nome de usuário com ou sem @, ajustaremos para você.</p>
