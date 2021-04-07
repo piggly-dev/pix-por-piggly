@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -200,6 +200,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Changelog ==
 
+= 1.2.3 =
+
+* Corrige avisos do PHP e permite o ID da transação vazio como `***`.
+
 = 1.2.2 =
 
 * Correção da ausência do botão em Teste seu Pix.
@@ -303,6 +307,6 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Upgrade Notice ==
 
-= 1.2.1 =
+= 1.2.3 =
 
-A versão **1.2.0** auto corrige automaticamente os campos do dados Pix baseado no Banco selecionado.
+A versão **1.2.3** corrige avisos do PHP e permite o ID da transação vazio como `***`.

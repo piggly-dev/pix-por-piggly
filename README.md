@@ -188,6 +188,14 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 # Changelog #
 
+## 1.2.3 ##
+
+* Corrige avisos do PHP e permite o ID da transação vazio como `***`.
+ 
+## 1.2.2 ##
+
+* Correção da ausência do botão em Teste seu Pix.
+
 ## 1.2.1 ##
 
 * Auto corrige automaticamente os campos do dados Pix baseado no Banco selecionado.

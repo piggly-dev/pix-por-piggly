@@ -20,6 +20,6 @@ class Desactivator
 	 * @since 1.2.0
 	 * @return void
 	 */
-	public static function deactivate ()
+	public static function desactivate ()
 	{}
 }

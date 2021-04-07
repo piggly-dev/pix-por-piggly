@@ -33,9 +33,12 @@ class Upgrade
 		$settings = get_option( 'woocommerce_wc_piggly_pix_gateway_settings', [] );
 
 		if ( \version_compare($version, '1.2.0', '<' ) )
-		{
-			if ( $settings['enabled'] === 1 )
-			{ $settings['enabled'] = 'yes'; }
+		{ 
+			if ( !empty($settings['enabled']) )
+			{
+				if ( $settings['enabled'] === 1 )
+				{ $settings['enabled'] = 'yes'; }
+			}
 
 			update_option('woocommerce_wc_piggly_pix_gateway_settings', $settings);
 		}

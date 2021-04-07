@@ -37,25 +37,7 @@ class Debug
 	 * @return void
 	 */
 	protected function __construct ()
-	{ $this->debug = false; }
-
-	/**
-	 * Not allowed to clone object.
-	 * 
-	 * @since 1.2.0
-	 * @return void
-	 */
-	protected function __clone ()
-	{}
-
-	/**
-	 * Not allowed to serialize object.
-	 * 
-	 * @since 1.2.0
-	 * @return void
-	 */
-	protected function __wakeup ()
-	{}
+	{ $this->debug = false; } 
 
 	/**
 	 * Returns a singleton instance of this class.

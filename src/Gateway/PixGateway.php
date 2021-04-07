@@ -574,7 +574,7 @@ class PixGateway extends WC_Payment_Gateway
 		$this->whatsapp_message   = str_replace('{{pedido}}', $order_id, $this->whatsapp_message);
 		$this->telegram_message   = str_replace('{{pedido}}', $order_id, $this->telegram_message);
 
-		if ( !empty($this->identifier) )
+		if ( !empty($this->identifier) || $this->identifier !== '***' )
 		{ $this->identifier = str_replace('{{id}}', $order_id, $this->identifier); }
 
 		// Pix payload
@@ -720,10 +720,8 @@ class PixGateway extends WC_Payment_Gateway
 				->setDescription(sprintf(__('Compra em %s', \WC_PIGGLY_PIX_PLUGIN_NAME), $storeName))
 				->setMerchantName($merchantName)
 				->setMerchantCity($merchantCity)
-				->setAmount((float)$amount);
-
-		if ( !empty($identifier) )
-		{ $payload->setTid($identifier); }
+				->setAmount((float)$amount)
+				->setTid($identifier);
 
 		$pix = intval(get_option('wc_piggly_pix_counter', 0 ));
 		update_option('wc_piggly_pix_counter', $pix++);
