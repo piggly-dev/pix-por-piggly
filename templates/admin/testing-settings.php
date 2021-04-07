@@ -32,12 +32,15 @@ use Piggly\Pix\StaticPayload;
 		$orders = wc_get_orders( array('limit' => 10) );
 		
 		foreach ( $orders as $order )
-		{ echo sprintf('<option value="%s">Pedido #%s</option>', $order->get_order_number(), $order->get_order_number()); }
+		{ 
+			$id = method_exists($order, 'get_order_number') ? $order->get_order_number() : $order->get_id();
+			echo sprintf('<option value="%s">Pedido #%s</option>', $id, $id); 
+		}
 		?>
 	</select>
 	<p class="description">Nenhuma alteração será feita no pedido selecionado.</p>
 
-	<p class="submit force-submit">
+	<p class="submit force-submit" style="display:block">
 	<button name="save" class="button-primary woocommerce-save-button" type="submit" value="Gerar Pix">Gerar Pix</button>
 	</p> 
 	

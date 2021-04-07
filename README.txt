@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -199,6 +199,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 4. Configurações do método de pagamento.
 
 == Changelog ==
+
+= 1.2.2 =
+
+* Correção da ausência do botão em Teste seu Pix.
 
 = 1.2.1 =
 
