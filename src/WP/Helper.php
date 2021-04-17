@@ -13,23 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @author     Piggly Lab <dev@piggly.com.br>
  */
 class Helper 
-{
-	/**
-	 * "Queue" WordPress actions.
-	 * 
-	 * @since 1.2.0
-	 * @var array $actions
-	 */
-	protected static $actions = [];
-	
-	/**
-	 * "Queue" WordPress filters.
-	 * 
-	 * @since 1.2.0
-	 * @var array $filters
-	 */
-	protected static $filters = [];
-	
+{	
 	/**
 	 * "Queue" WordPress admin notices.
 	 * 
@@ -148,25 +132,6 @@ class Helper
 			'class' => $type,
 			'is_dismissible' => (bool) $is_dismissible
 		];
-	}
-
-	public static function getActions ()
-	{ return self::$actions; }
-
-	/**
-	 * Register all filters and actions with WordPress add_filter and add_action
-	 * functions.
-	 * 
-	 * @since 1.2.0
-	 * @return void
-	 */
-	public static function run ()
-	{
-		foreach ( self::$filters as $hook ) 
-		{ add_filter( $hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args'] ); }
-
-		foreach ( self::$actions as $hook ) 
-		{ add_action( $hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args'] ); }
 	}
 
 	/**

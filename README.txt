@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.2.3
+Stable tag: 1.3.0
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -24,6 +24,13 @@ O propósito deste plugin é permitir que você utilize o método de pagamento P
 > Se você apreciar a função deste plugin e quiser apoiar este trabalho, sinta-se livre para fazer qualquer doação para a chave aleatória Pix `aae2196f-5f93-46e4-89e6-73bf4138427b` ❤.
 
 > Não esqueça de deixar a sua avaliação sobre o plugin! Isso nos incentivará a lançar mais atualizações e continuar prestando um suporte de qualidade.
+
+== Novidades da versão 1.3.0 ==
+
+Na versão **1.3.0** do plugin é possível:
+
+1. Utilizar o shortcode `[pix-por-piggly-form]` para receber comprovantes sem precisar de plugins de terceiro. Ao utilizar o shortcode, os dados do pedido são capturados automaticamente. Quando um comprovante é enviado, o arquivo é verificado e salvo. O pedido também será atualizado para "Comprovante Pix Recebido". Veja mais detalhes na página de configuração do plugin;
+2. Utilizar o shortcode `[pix-por-piggly]` sem enviar o parâmetro `order_id`. O ID do Pedido será capturado automaticamente se houver um pedido ativo na página na qual o shortcode foi posicionado.
 
 == Novidades da versão 1.2.0 ==
 
@@ -56,7 +63,8 @@ Se o Pix ainda não foi pago, será gerado novamente somente se você mudar a ch
 * ✅ Com problema na hora de preencher os dados do Pix? Importe os dados Pix de uma chave Pix válida e não tenha mais preocupações;
 * ✅ Utilize **Merge Tags**, em campos disponíveis, para substituir variáveis e customizar ainda mais as funções do plugin.
 * ✅ Use o shortcode `[pix-por-piggly order_id="$id"]` para importar o template do Pix em qualquer lugar;
-* ✅ Selecione o modelo de e-mail onde o Pix será enviado e o status do pedido enquanto aguarda a conferência do pagamento Pix.
+* ✅ Selecione o modelo de e-mail onde o Pix será enviado e o status do pedido enquanto aguarda a conferência do pagamento Pix;
+* ✅ Suporte a API do Woocommerce.
 
 == Como funciona? ==
 
@@ -196,9 +204,28 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 1. Exemplo do método de pagamento durante o Checkout;
 2. Exemplo das instruções com as informações de pagamento;
 3. Método de pagamento nas configurações do Woocommerce;
-4. Configurações do método de pagamento.
+4. Configurações gerais do método de pagamento;
+5. Preencha os dados da sua conta Pix;
+6. Ou, importe os dados Pix de um código Pix Copia & Cola;
+7. Configure pedidos, e-mails e desconto automático para o pagamento Pix;
+8. Controle o envio de comprovantes dos pagamentos via Pix;
+9. Teste o pagamento via Pix antes de habilitar o módulo;
+10. Metabox Pix no pedido realizado via Pix.
 
 == Changelog ==
+
+= 1.3.0 =
+
+* Suporte a formulário nativo para envio dos comprovantes;
+* Melhorias no shortcode [pix-por-piggly];
+* Melhorias e correções em gerais.
+
+= 1.2.4 =
+
+* Atualização dos paineis de configuração;
+* Melhoria na criação dos arquivos de QR Code contra erros de cachê;
+* Suporte a API do Woocommerce;
+* Correção da leitura de telefones internacionais no campo de Telefone do Whatsapp.
 
 = 1.2.3 =
 
@@ -307,6 +334,9 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Upgrade Notice ==
 
-= 1.2.3 =
+= Novidades da versão 1.3.0 =
 
-A versão **1.2.3** corrige avisos do PHP e permite o ID da transação vazio como `***`.
+Na versão **1.3.0** do plugin é possível:
+
+1. Utilizar o shortcode `[pix-por-piggly-form]` para receber comprovantes sem precisar de plugins de terceiro. Ao utilizar o shortcode, os dados do pedido são capturados automaticamente. Quando um comprovante é enviado, o arquivo é verificado e salvo. O pedido também será atualizado para "Comprovante Pix Recebido". Veja mais detalhes na página de configuração do plugin;
+2. Utilizar o shortcode `[pix-por-piggly]` sem enviar o parâmetro `order_id`. O ID do Pedido será capturado automaticamente se houver um pedido ativo na página na qual o shortcode foi posicionado.

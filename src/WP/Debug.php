@@ -148,7 +148,7 @@ class Debug
 		if ( $this->debug ) 
 		{
 			if ( empty( $this->logger ) )
-			{ $this->logger = wc_get_logger(); }
+			{ $this->logger = \wc_get_logger(); }
 			
 			return $this->logger;
 		}

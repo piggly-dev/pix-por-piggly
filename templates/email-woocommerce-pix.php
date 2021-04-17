@@ -28,7 +28,7 @@ use Piggly\Pix\Parser;
 	<?php endif; ?>
 
 	<?php if ( !empty($data->whatsapp) ) : ?>
-		<a href="<?=sprintf('https://wa.me/%s?text=%s',str_replace('+', '', Parser::parsePhone($data->whatsapp)),urlencode($data->whatsapp_message))?>" style="margin: 5px; position: relative; vertical-align: middle; display: inline-table;font-weight: bold;color: #000;padding: 12px 24px;border: 1px solid;background-color: #25D366; border-color: #25D366;text-decoration: none;text-align: center;font-size: 14px;border-radius: 48px;">
+		<a href="<?=sprintf('https://wa.me/%s?text=%s',str_replace('+', '', $data->parse_phone($data->whatsapp)),urlencode($data->whatsapp_message))?>" style="margin: 5px; position: relative; vertical-align: middle; display: inline-table;font-weight: bold;color: #000;padding: 12px 24px;border: 1px solid;background-color: #25D366; border-color: #25D366;text-decoration: none;text-align: center;font-size: 14px;border-radius: 48px;">
 			Comprovante via Whatsapp
 		</a>
 	<?php endif; ?>

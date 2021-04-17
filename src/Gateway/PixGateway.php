@@ -49,10 +49,6 @@ class PixGateway extends WC_Payment_Gateway
 		$this->init_settings();
 		$this->setup_settings();
 
-		// When it is admin...
-		if ( is_admin() ) 
-		{ WP::add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, $this, 'process_admin_options'); }
-
 		// This action hook loads the thank you page
 		WP::add_action( 'woocommerce_thankyou_'.$this->id, $this, 'thankyou_page', 5, 1 );
 		// Add method instructions in order details page 
@@ -60,8 +56,17 @@ class PixGateway extends WC_Payment_Gateway
 		// Customer Emails
 		WP::add_action( 'woocommerce_email_'.$this->email_position.'_order_table', $this, 'email_instructions', 10, 4 );
 	
-		// Create shortcode
-		add_shortcode( 'pix-por-piggly', array($this, 'pix_shortcode') );
+		// When it is admin...
+		if ( WP::is_pure_admin() ) 
+		{ WP::add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, $this, 'process_admin_options'); }
+
+		// Pix authorization code callback
+		WP::add_action('woocommerce_api_wpgly-pix', $this, 'api_callback');
+
+		// Add payment data to order api
+		WP::add_filter('woocommerce_api_order_response', $this, 'add_payment_data', 10, 2);
+		WP::add_filter('woocommerce_rest_prepare_shop_order', $this, 'add_rest_payment_data', 99, 2);
+		WP::add_filter('woocommerce_rest_prepare_shop_order_object', $this, 'add_rest_payment_data', 99, 2);
 	}
 
 	/**
@@ -100,6 +105,7 @@ class PixGateway extends WC_Payment_Gateway
 		$this->discount_label = $this->get_option( 'discount_label', __('Desconto Pix Aplicado', WC_PIGGLY_PIX_PLUGIN_NAME) );	
 		$this->hide_in_order = $this->as_bool($this->get_option('hide_in_order','no'));
 		$this->bank = $this->get_option( 'bank', 0 );	
+		$this->qr_regenerate = $this->as_bool($this->get_option('qr_regenerate',1));
 	}
 
 	/**
@@ -109,35 +115,7 @@ class PixGateway extends WC_Payment_Gateway
 	 * @return void
 	 */
 	public function init_form_fields()
-	{
-		$this->form_fields = array(
-			'enabled' => [],
-			'help_text' => [],
-			'unique_payment' => [],
-			'pix_qrcode' => [],
-			'pix_copypast' => [],
-			'pix_manual' => [],
-			'pix_code' => [],
-			'title' => [],
-			'description' => [],
-			'store_name' => [],
-			'merchant_name' => [],
-			'merchant_city' => [],
-			'key_type' => [],
-			'email_status' => [],
-			'email_position' => [],
-			'order_status' => [],
-			'discount' => [],
-			'key_value' => [],
-			'instructions' => [],
-			'identifier' => [],
-			'receipt_page_value' => [],
-			'whatsapp' => [],
-			'telegram' => [],
-			'whatsapp_message' => [],
-			'telegram_message' => []
-		);
-	}
+	{ return; }
 
 	/**
 	 * Load admin settings page, based in current screen
@@ -148,20 +126,23 @@ class PixGateway extends WC_Payment_Gateway
 	 */
 	public function admin_options () 
 	{
-		$screen = filter_input( INPUT_GET, 'screen', FILTER_SANITIZE_STRING );
-		
-		// Fix screen always to main when not valid...
-		if ( empty($screen) || !in_array( $screen, ['main','pix','import','orders','receipt','testing','support','faq','news','shortcode']) )
-		{ $screen = 'main'; }
+		// Get current screen
+		$screen = $this->get_screen();
 
-		require_once(WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/menu.php');
+		// if ( !wp_style_is ( 'wpgly-wp-admin' ) )
+		// {
+		// 	wp_enqueue_style(
+		// 		'wpgly-wp-admin',
+		// 		\WC_PIGGLY_PIX_PLUGIN_URL.'assets/css/wpgly.wp.admin.css'
+		// 	);
+		// }
 
-		// Data variable to use at required file
-		$data = $this;
 		// Helper text variable to use at required file
-		$helpText = $data->help_text;
+		$helpText = $this->help_text;
+		$baseUrl  = admin_url( 'admin.php?page=wc-settings&tab=checkout&section='.$this->id );
 
-		require_once(WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/'.$screen.'-settings.php');
+		require_once(\WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/settings/header.php');
+		require_once(\WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/settings/'.$screen.'-settings.php');
 	}
 
 	/**
@@ -207,25 +188,17 @@ class PixGateway extends WC_Payment_Gateway
 	public function process_admin_options()
 	{
 		// Get current screen
-		$screen = filter_input( INPUT_GET, 'screen', FILTER_SANITIZE_STRING );
-
-		// Fix screen always to main when not valid...
-		if ( empty($screen) )
-		{ $screen = 'main'; }
+		$screen = $this->get_screen();
 
 		// Not save when screen does not need to be save.
 		if ( in_array( $screen, ['testing','faq','news','shortcode']) )
 		{ return false; }
-
-		// Field prefix
-		$field = 'woocommerce_'.$this->id.'_';
 
 		// If screen is "main"
 		if ( $screen === 'main' )
 		{
 			$fields = [
 				'enabled' => 'no',
-				'debug' => 'no',
 				'help_text' => 'no',
 				'title' => __('Faça um Pix', \WC_PIGGLY_PIX_PLUGIN_NAME),
 				'description' => __('Você não precisa ter uma chave cadastrada. Pague os seus pedidos via Pix.', WC_PIGGLY_PIX_PLUGIN_NAME),
@@ -237,22 +210,22 @@ class PixGateway extends WC_Payment_Gateway
 
 			foreach ( $fields as $_field => $default )
 			{
-				if ( empty($_POST[$field.$_field]) )
-				{ $_POST[$field.$_field] = $default; }
+				if ( empty($_POST[$this->get_field_name($_field)]) )
+				{ $_POST[$this->get_field_name($_field)] = $default; }
 			}
 			
 			if ( $this->auto_fix )
 			{
 				// Fix
-				$_POST[$field.'store_name'] = $this->replace_char($_POST[$field.'store_name']);
+				$_POST[$this->get_field_name('store_name')] = $this->replace_char($_POST[$this->get_field_name('store_name')]);
 			}
 		}
 
 		// If screen is "pix"
 		if ( $screen === 'pix' )
 		{
-			$keyValue = filter_input( INPUT_POST, $field.'key_value', FILTER_SANITIZE_STRING );
-			$keyType  = filter_input( INPUT_POST, $field.'key_type', FILTER_SANITIZE_STRING );
+			$keyValue = filter_input( INPUT_POST, $this->get_field_name('key_value'), FILTER_SANITIZE_STRING );
+			$keyType  = filter_input( INPUT_POST, $this->get_field_name('key_type'), FILTER_SANITIZE_STRING );
 
 			if ( empty($keyValue) || empty( $keyValue ) )
 			{
@@ -270,7 +243,7 @@ class PixGateway extends WC_Payment_Gateway
 
 			foreach ( $required as $key => $value )
 			{
-				$postValue = filter_input( INPUT_POST, $field.$key, FILTER_SANITIZE_STRING );
+				$postValue = filter_input( INPUT_POST, $this->get_field_name($key), FILTER_SANITIZE_STRING );
 
 				if ( empty ( $postValue ) || is_null ( $postValue ) )
 				{ 
@@ -303,25 +276,24 @@ class PixGateway extends WC_Payment_Gateway
 
 			$fields = [
 				'bank' => 0,
+				'auto_fix' => 'no',
+				'qr_regenerate' => 'no',
 				'instructions' => __('Faça o pagamento via PIX. O pedido número {{pedido}} será liberado assim que a confirmação do pagamento for efetuada.', WC_PIGGLY_PIX_PLUGIN_NAME),
 				'identifier' => '***'
 			];
 
 			foreach ( $fields as $_field => $default )
 			{
-				if ( empty($_POST[$field.$_field]) )
-				{ $_POST[$field.$_field] = $default; }
+				if ( empty($_POST[$this->get_field_name($_field)]) )
+				{ $_POST[$this->get_field_name($_field)] = $default; }
 			}
 
-			if ( empty($_POST[$field.'auto_fix']) )
-			{ $_POST[$field.'auto_fix'] = 'no'; }
-
-			if ( $_POST[$field.'auto_fix'] !== 'no' )
+			if ( $_POST[$this->get_field_name('auto_fix')] !== 'no' )
 			{
 				// Fix
-				$_POST[$field.'merchant_name'] = $this->replace_char($_POST[$field.'merchant_name']);
-				$_POST[$field.'merchant_city'] = $this->replace_char($_POST[$field.'merchant_city']);
-				$_POST[$field.'identifier'] = preg_replace('/[^A-Za-z0-9\*\{\}]+/', '', $_POST[$field.'identifier']);
+				$_POST[$this->get_field_name('merchant_name')] = $this->replace_char($_POST[$this->get_field_name('merchant_name')]);
+				$_POST[$this->get_field_name('merchant_city')] = $this->replace_char($_POST[$this->get_field_name('merchant_city')]);
+				$_POST[$this->get_field_name('identifier')] = preg_replace('/[^A-Za-z0-9\*\{\}]+/', '', $_POST[$this->get_field_name('identifier')]);
 			}
 		}
 
@@ -329,7 +301,7 @@ class PixGateway extends WC_Payment_Gateway
 		if ( $screen === 'import' ) 
 		{
 			// Get pix-code
-			$pixCode = filter_input( INPUT_POST, $field.'pix_code', FILTER_SANITIZE_STRING );
+			$pixCode = filter_input( INPUT_POST, $this->get_field_name('pix_code'), FILTER_SANITIZE_STRING );
 			// Error
 			$_POST['error'] = true;
 
@@ -339,29 +311,29 @@ class PixGateway extends WC_Payment_Gateway
 				return false;
 			}
 
-			if ( empty($_POST[$field.'auto_fix']) )
-			{ $_POST[$field.'auto_fix'] = 'no'; }
+			if ( empty($_POST[$this->get_field_name('auto_fix')]) )
+			{ $_POST[$this->get_field_name('auto_fix')] = 'no'; }
 
 			try
 			{
 				// Read pix data and save it...
 				$reader = new Reader($pixCode);
 
-				$_POST[$field.'key_value'] = $reader->getPixKey();
-				$_POST[$field.'key_type']  = Parser::getKeyType($_POST[$field.'key_value']);
+				$_POST[$this->get_field_name('key_value')] = $reader->getPixKey();
+				$_POST[$this->get_field_name('key_type')]  = Parser::getKeyType($_POST[$this->get_field_name('key_value')]);
 
-				if ( $_POST[$field.'auto_fix'] !== 'no' )
+				if ( $_POST[$this->get_field_name('auto_fix')] !== 'no' )
 				{
-					$_POST[$field.'merchant_name'] = $this->replace_char($reader->getMerchantName());
-					$_POST[$field.'merchant_city'] = $this->replace_char($reader->getMerchantCity());
+					$_POST[$this->get_field_name('merchant_name')] = $this->replace_char($reader->getMerchantName());
+					$_POST[$this->get_field_name('merchant_city')] = $this->replace_char($reader->getMerchantCity());
 				}
 				else
 				{
-					$_POST[$field.'merchant_name'] = $reader->getMerchantName();
-					$_POST[$field.'merchant_city'] = $reader->getMerchantCity();
+					$_POST[$this->get_field_name('merchant_name')] = $reader->getMerchantName();
+					$_POST[$this->get_field_name('merchant_city')] = $reader->getMerchantCity();
 				}
 
-				unset($_POST[$field.'pix_code']);
+				unset($_POST[$this->get_field_name('pix_code')]);
 			}
 			catch ( InvalidPixCodeException $e )
 			{ 
@@ -406,8 +378,8 @@ class PixGateway extends WC_Payment_Gateway
 
 			foreach ( $fields as $_field => $default )
 			{
-				if ( empty($_POST[$field.$_field]) )
-				{ $_POST[$field.$_field] = $default; }
+				if ( empty($_POST[$this->get_field_name($_field)]) )
+				{ $_POST[$this->get_field_name($_field)] = $default; }
 			}
 		}
 
@@ -424,8 +396,8 @@ class PixGateway extends WC_Payment_Gateway
 
 			foreach ( $fields as $_field => $default )
 			{
-				if ( empty($_POST[$field.$_field]) )
-				{ $_POST[$field.$_field] = $default; }
+				if ( empty($_POST[$this->get_field_name($_field)]) )
+				{ $_POST[$this->get_field_name($_field)] = $default; }
 			}
 		}
 
@@ -438,8 +410,8 @@ class PixGateway extends WC_Payment_Gateway
 
 			foreach ( $fields as $_field => $default )
 			{
-				if ( empty($_POST[$field.$_field]) )
-				{ $_POST[$field.$_field] = $default; }
+				if ( empty($_POST[$this->get_field_name($_field)]) )
+				{ $_POST[$this->get_field_name($_field)] = $default; }
 			}
 		}
 
@@ -447,9 +419,9 @@ class PixGateway extends WC_Payment_Gateway
 
 		foreach ( $_POST as $key => $value )
 		{
-			if ( strpos($key, $field) !== false )
+			if ( strpos($key, $this->get_field_name()) !== false )
 			{
-				$key = str_replace($field, '', $key);
+				$key = str_replace($this->get_field_name(), '', $key);
 				$currentSettings[$key] = filter_var($value, \FILTER_SANITIZE_STRING);
 			}
 		}
@@ -529,33 +501,6 @@ class PixGateway extends WC_Payment_Gateway
 			WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
 		);
 	}
-
-	/**
-	 * Add pix template when call the shortcode.
-	 * 
-	 * @param array $attrs
-	 * @since 1.2.0
-	 * @return void
-	 */
-	public function pix_shortcode ( $attrs )
-	{
-		$attrs = shortcode_atts( array('order_id' => null), $attrs );
-
-		if ( !$this->enabled || empty($attrs['order_id']) )
-		{ return; }
-
-		// Get order
-		$order = wc_get_order((int)$attrs['order_id']);
-
-		if ( !$order )
-		{ return; }
-
-		// If order is not payment waiting, return...
-		if ( !$this->is_payment_waiting($order) )
-		{ return; }
-
-		$this->thankyou_page($order);
-	}
 	
 	/**
 	 * Get an array with all pix data to use in templates.
@@ -566,16 +511,50 @@ class PixGateway extends WC_Payment_Gateway
 	 */
 	public function get_pix_data ( WC_Order $order ) : array
 	{
-		$order_id = $order->get_order_number();
-		$amount   = $order->get_total();
+		$order_id  = method_exists($order, 'get_order_number') ? $order->get_order_number() : $order->get_id();
+		$order_key = $order->get_order_key();
+		$amount    = $order->get_total();
 		
 		$this->instructions       = str_replace('{{pedido}}', $order_id, $this->instructions);
-		$this->receipt_page_value = str_replace('{{pedido}}', $order_id, $this->receipt_page_value);
+		$this->receipt_page_value = $this->parse_receipt_link($this->receipt_page_value, $order_id, $order_key);
 		$this->whatsapp_message   = str_replace('{{pedido}}', $order_id, $this->whatsapp_message);
 		$this->telegram_message   = str_replace('{{pedido}}', $order_id, $this->telegram_message);
 
 		if ( !empty($this->identifier) || $this->identifier !== '***' )
 		{ $this->identifier = str_replace('{{id}}', $order_id, $this->identifier); }
+
+		// Get order meta data
+		$pixOrder = $order->get_meta('_wc_piggly_pix');
+
+		// Order is paid
+		if ( !$this->is_payment_waiting($order) )
+		{
+			if ( !empty($pixOrder) )
+			{
+				Debug::info(\sprintf('O pedido %s já foi marcado como pago. Preparando os dados Pix em cache...', $order->get_id()));
+
+				if ( $this->can_create_qr() && !$this->has_qr_image($pixOrder['qr_path'] ?? null) )
+				{ $pixOrder = $this->recreate_qr($order, $pixOrder); }
+
+				return $this->use_pix_meta($order_id, $pixOrder);
+			}
+		}
+		// Order is not paid
+		else
+		{
+			if ( !empty($pixOrder) )
+			{
+				if ( !$this->qr_regenerate )
+				{
+					Debug::info(\sprintf('Pix não regenerado para o pedido %s. Preparando os dados em cache...', $order->get_id()));
+
+					if ( $this->can_create_qr() && !$this->has_qr_image($pixOrder['qr_path'] ?? null) )
+					{ $pixOrder = $this->recreate_qr($order, $pixOrder); }
+	
+					return $this->use_pix_meta($order_id, $pixOrder);
+				}
+			}
+		}
 
 		// Pix payload
 		$payload = $this->get_pix_payload(
@@ -589,106 +568,317 @@ class PixGateway extends WC_Payment_Gateway
 		);
 
 		// Current pix code...
-		$pixCode = $payload->getPixCode();
-
-		// Get order meta data...
-		$pixOrder = $order->get_meta('_wc_piggly_pix');
-		// Need to refresh pix code
-		$refresh = true;
+		$oldPixCode = $pixOrder['pix_code'] ?? null;
+		$newPixCode = $payload->getPixCode();
 
 		// Don't refresh pix code
-		if ( !empty($pixOrder) 
-				&& ( 
-					!$this->is_payment_waiting($order) 
-					|| $pixOrder['pix_code'] === $payload->getPixCode() 
-				) 
-			)
-		{ $refresh = false; }
+		if ( $oldPixCode === $newPixCode )
+		{ 
+			Debug::info(\sprintf('Pix não regenerado para o pedido %s. Preparando os dados em cache...', $order->get_id()));
 
-		// If don't need to refresh, get pix data from order meta data...
-		if ( !$refresh )
-		{
-			$amount = $pixOrder['amount'];
-			$this->key_value = $pixOrder['key_value'];
-			$this->key_type = $pixOrder['key_type'];
-			$this->identifier = $pixOrder['identifier'];
-			$this->store_name = $pixOrder['store_name'];
-			$this->merchant_name = $pixOrder['merchant_name'];
-			$this->merchant_city = $pixOrder['merchant_city'];
+			if ( $this->can_create_qr() && !$this->has_qr_image($pixOrder['qr_path'] ?? null) )
+			{ $pixOrder = $this->recreate_qr($order, $pixOrder); }
 
-			// Get alias for pix
-			$this->key_type_alias = Parser::getAlias($this->key_type); 
-
-			return array(
-				'data' => $this,
-				'pix' => $pixOrder['pix_code'],
-				'qrcode' => $pixOrder['pix_qr'],
-				'order_id' => $order_id,
-				'amount' => $amount
-			);
+			return $this->use_pix_meta($order_id, $pixOrder);
 		}
 		
+		Debug::info(\sprintf('Regenerando Pix para o pedido %s.', $order->get_id()));
+
 		// Flush the pix code to the new update
 		// Get alias for pix
 		$this->key_type_alias = Parser::getAlias($this->key_type); 
 
-		// Create a new QR Code
-		$pixQR = $this->pix_qrcode && Payload::supportQrCode() ? $payload->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) : '';
-
-		try
-		{
-			// There is a QR Code to create...
-			if ( !empty($pixQR) )
-			{
-				$upload     = wp_upload_dir();
-				$uploadPath = $upload['basedir'].'/'.\WC_PIGGLY_PIX_DIR_NAME.'/qr-codes/';
-				$uploadUrl  = $upload['baseurl'].'/'.\WC_PIGGLY_PIX_DIR_NAME.'/qr-codes/';
-				$fileName   = 'order-'.$order->get_id().'.png';
-				$file       = $uploadPath.$fileName;
-
-				// Create folder if not exists...
-				if ( ! file_exists( $uploadPath ) ) 
-				{ wp_mkdir_p($uploadPath); }
-
-				// Remove file if already exists...
-				if ( file_exists($file) )
-				{ unlink($file); }
-
-				$img     = str_replace('data:image/png;base64,', '', $pixQR);
-				$img     = str_replace(' ', '+', $img);
-				$data_   = base64_decode($img);
-				$success = file_put_contents($file, $data_);
-
-				// If file was created...
-				if ( $success )
-				{ $pixQR = $uploadUrl.$fileName; }
-			}
-		}
-		catch ( Exception $e )
-		{ Debug::error(sprintf('Erro ao salvar Pix QR Code: %s',$e->getMessage())); }
+		// Create QR Code
+		$qrCode = $this->create_qr($payload, $order, $pixOrder['qr_path'] ?? null);
 
 		// Update order meta...
 		$order->update_meta_data('_wc_piggly_pix', [
-			'pix_code' => $pixCode, 
-			'pix_qr' => $pixQR,
+			'pix_code' => $newPixCode, 
+			'pix_qr' => $qrCode['url'],
+			'qr_path' => $qrCode['path'],
 			'amount' => $amount,
 			'key_value' => $this->key_value,
 			'key_type' => $this->key_type,
 			'identifier' => $this->identifier,
 			'store_name' => $this->store_name,
 			'merchant_name' => $this->merchant_name,
-			'merchant_city' => $this->merchant_city,
+			'merchant_city' => $this->merchant_city
 		]);
 
 		$order->save();
 
 		return array(
 			'data' => $this,
-			'pix' => $pixCode,
-			'qrcode' => $pixQR,
+			'pix' => $newPixCode,
+			'qrcode' => $qrCode['url'],
 			'order_id' => $order_id,
 			'amount' => $amount
 		);
+	}
+
+	/**
+	 * Set current properties with $meta data and return $data
+	 * to export.
+	 * 
+	 * @param int $order_id
+	 * @param array $meta
+	 * @since 1.2.4
+	 * @return array
+	 */
+	protected function use_pix_meta ( int $order_id, array $meta )
+	{
+		$amount              = $meta['amount'];
+		$this->key_value     = $meta['key_value'];
+		$this->key_type      = $meta['key_type'];
+		$this->identifier    = $meta['identifier'];
+		$this->store_name    = $meta['store_name'];
+		$this->merchant_name = $meta['merchant_name'];
+		$this->merchant_city = $meta['merchant_city'];
+
+		// Get alias for pix
+		$this->key_type_alias = Parser::getAlias($this->key_type); 
+
+		return array(
+			'data' => $this,
+			'pix' => $meta['pix_code'],
+			'qrcode' => $meta['pix_qr'],
+			'order_id' => $order_id,
+			'amount' => $amount
+		);
+	}
+
+	/**
+	 * Check if QR Code Image exists.
+	 * 
+	 * @param string $path
+	 * @since 1.2.4
+	 * @return bool TRUE when found, FALSE when not.
+	 */
+	protected function has_qr_image ( ?string $path ) : bool
+	{ 
+		if ( empty($path) )
+		{ return false; }
+
+		return file_exists( $path ); 
+	}
+
+	/**
+	 * Remove QR Code Image if it exists.
+	 * 
+	 * @param string $path
+	 * @since 1.2.4
+	 * @return bool TRUE when success, FALSE when not.
+	 */
+	protected function remove_qr_image ( ?string $path ) : bool
+	{
+		if ( empty($path) )
+		{ return false; }
+
+		if ( file_exists( $path ) ) 
+		{ 
+			Debug::info(\sprintf('Removendo QR Code em %s.', $path));
+			return (bool)unlink($path); 
+		}
+	}
+
+	/**
+	 * Recreate QR Code image by using $pixOrder data.
+	 * 
+	 * @param WC_Order $order
+	 * @param array $pixOrder
+	 * @since 1.2.4
+	 * @return array
+	 */
+	protected function recreate_qr ( $order, $pixOrder )
+	{
+		Debug::info(\sprintf('Recriando QR Code para o pedido %s.', $order->get_id()));
+
+		$payload = (new Reader($pixOrder['pix_code']))->export();
+		
+		// Create QR Code
+		$qrCode = $this->create_qr($payload, $order, $pixOrder['qr_path'] ?? null);
+
+		$newMeta = array_merge($pixOrder,[
+			'pix_qr' => $qrCode['url'],
+			'qr_path' => $qrCode['path']
+		]);
+
+		// Update order meta...
+		$order->update_meta_data('_wc_piggly_pix', $newMeta);
+		$order->save();
+
+		return $newMeta;
+	}
+
+	/**
+	 * Create the QR code if supported...
+	 * 
+	 * @param Payload $payload
+	 * @param WC_Order $order
+	 * @param string $old Old QR Code path...
+	 * @since 1.2.4
+	 * @return array with url and path.
+	 */
+	protected function create_qr ( Payload $payload, WC_Order $order, ?string $old = null  )
+	{
+		Debug::info(\sprintf('Criando QR Code para o pedido %s.', $order->get_id()));
+
+		$pixQR = 
+			$this->can_create_qr() 
+				? $payload->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) 
+				: null;
+
+		if ( empty($pixQR) )
+		{ return ['url' => null, 'path' => null]; }
+
+		try
+		{
+			$this->remove_qr_image($old);
+
+			$pixQR = $this->create_qr_image($pixQR, $order);
+
+			if ( is_array($pixQR) )
+			{ return $pixQR; }
+		}
+		catch ( Exception $e )
+		{ Debug::error(sprintf('Erro ao salvar Pix QR Code: %s',$e->getMessage())); }
+
+		return ['url' => $pixQR, 'path' => null];
+	}
+
+	/**
+	 * Create the QR Code Image at upload path.
+	 * 
+	 * Will return an array with url and path keys
+	 * when saved, or will return a string with the
+	 * original $base64 string.
+	 * 
+	 * @param string $base64
+	 * @param WC_Order $order
+	 * @since 1.2.4
+	 * @return string|array
+	 */
+	protected function create_qr_image ( string $base64, WC_Order $order )
+	{
+		Debug::info(\sprintf('Salvando imagem do QR Code para pedido %s.', $order->get_id()));
+
+		$upload     = wp_upload_dir();
+		$uploadPath = $upload['basedir'].'/'.\WC_PIGGLY_PIX_DIR_NAME.'/qr-codes/';
+		$uploadUrl  = $upload['baseurl'].'/'.\WC_PIGGLY_PIX_DIR_NAME.'/qr-codes/';
+		$fileName   = md5('order-'.$order->get_id().time()).'.png';
+		$file       = $uploadPath.$fileName;
+
+		if ( !file_exists( $uploadPath ) ) 
+		{ wp_mkdir_p($uploadPath); }
+
+		if ( file_exists($file) )
+		{ unlink($file); }
+
+		$img     = str_replace('data:image/png;base64,', '', $base64);
+		$img     = str_replace(' ', '+', $img);
+		$data_   = base64_decode($img);
+		$success = file_put_contents($file, $data_);
+
+		if ( $success )
+		{ return ['url' => $uploadUrl.$fileName, 'path' => $file]; }
+
+		return $base64;
+	}
+
+	/**
+	 * Return if can create QR Code...
+	 * 
+	 * @since 1.2.4
+	 * @return bool
+	 */
+	protected function can_create_qr () : bool
+	{ return $this->pix_qrcode && Payload::supportQrCode(); }
+
+	/**
+	 * Add pix data to order payment_details information...
+	 * 
+	 * @param array $order_data
+	 * @param WC_Order $order
+	 * @since 1.2.4
+	 * @return array
+	 */
+	public function add_payment_data ( $order_data, $order ) 
+	{
+		$order = $order instanceof WC_Order ? $order : new WC_Order($order);
+
+		if ( $order->get_payment_method() !== $this->id )
+		{ return $order_data; }
+
+		// Flush pix data with needed
+		$this->get_pix_data($order);
+
+		$data = $order->get_meta('_wc_piggly_pix');
+
+		if ( empty($order_data['payment_details']) )
+		{ $order_data['payment_details'] = []; }
+
+		$order_data['payment_details'] = array_merge(
+			$order_data['payment_details'], [
+				'pix' => [
+					'code' => $data['pix_code'],
+					'qr' => $data['pix_qr'],
+					'key_value' => $data['key_value'],
+					'key_type' => Parser::getAlias($data['key_type']),
+					'identifier' => $data['identifier'],
+					'store_name' => $data['store_name'],
+					'merchant_name' => $data['merchant_name'],
+					'merchant_city' => $data['merchant_city']
+				]
+			]
+		);
+
+		return $order_data;
+	}
+
+	/**
+	 * Add pix data to order payment_details information...
+	 * 
+	 * @param WP_REST_Response $response
+	 * @param WP_Post $post
+	 * @since 1.2.4
+	 * @return array
+	 */
+	public function add_rest_payment_data ( $response, $post )
+	{
+		$order = new WC_Order($post->ID);
+
+		if ( $order->get_payment_method() !== $this->id )
+		{ return $response; }
+
+		// Flush pix data with needed
+		$this->get_pix_data($order);
+
+		$data = $order->get_meta('_wc_piggly_pix');
+
+		$response->data['pix'] = [
+			'code' => $data['pix_code'],
+			'qr' => $data['pix_qr'],
+			'key_value' => $data['key_value'],
+			'key_type' => Parser::getAlias($data['key_type']),
+			'identifier' => $data['identifier'],
+			'store_name' => $data['store_name'],
+			'merchant_name' => $data['merchant_name'],
+			'merchant_city' => $data['merchant_city']
+		];
+
+		return $response;
+	}
+
+	/**
+	 * Api callback to pix api authorization code when required.
+	 * 
+	 * @since 1.2.4
+	 * @return void
+	 */
+	public function api_callback ()
+	{
+		wp_send_json_error( __('Uso restrito ao administrativo.', \WC_PIGGLY_PIX_PLUGIN_NAME) );
+		die();
 	}
 
 	/**
@@ -736,7 +926,7 @@ class PixGateway extends WC_Payment_Gateway
 	 * @since 1.2.0
 	 * @return bool
 	 */
-	protected function is_payment_waiting ( WC_Order $order ) : bool
+	public function is_payment_waiting ( WC_Order $order ) : bool
 	{ 
 		return 
 			$this->id === $order->get_payment_method() 
@@ -791,5 +981,112 @@ class PixGateway extends WC_Payment_Gateway
 		$str     = preg_replace('/[\s]{2,}/', ' ', $str);
 
 		return $str;
+	}
+
+	/**
+	 * Get current plugin option screen.
+	 * 
+	 * @since 1.2.4
+	 * @return array
+	 */
+	protected function get_screen () : string 
+	{
+		$screen = filter_input( INPUT_GET, 'screen', FILTER_SANITIZE_STRING );
+		
+		// Fix screen always to main when not valid...
+		if ( empty($screen) || !in_array( $screen, [
+			'main',
+			'pix',
+			'api',
+			'import',
+			'orders',
+			'receipt',
+			'testing',
+			'support',
+			'faq',
+			'news',
+			'shortcode'
+		]) )
+		{ $screen = 'main'; }
+
+		return $screen;
+	}
+	
+	/**
+	 * Check if module can be enabled based into 
+	 * fields.
+	 * 
+	 * @since 1.2.4
+	 * @return bool
+	 */
+	protected function can_be_enabled () : bool
+	{
+		if ( empty($this->key_value) )
+		{ 
+			$this->enabled = 'no'; 
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get field name to plugin settings.
+	 * 
+	 * @since 1.2.4
+	 * @return string
+	 */
+	protected function get_field_name ( string $field = '' )
+	{ return 'woocommerce_'.$this->id.'_'.$field; }
+
+	
+	/**
+	 * Parse any phone string to a correct phone format.
+	 * 
+	 * @since 1.2.4
+	 * @param string $phone
+	 * @return string
+	 */
+	public function parse_phone ( string $phone ) : string
+	{
+		if ( strpos($phone, '+') !== false )
+		{
+			if ( strpos($phone, '+55') !== false )
+			{
+				$phone = str_replace('+55', '', $phone);
+				$phone = preg_replace('/[^\d]+/', '', $phone);
+				return '+55'.$phone;
+			}
+			else
+			{
+				$phone = preg_replace('/[^\d]+/', '', $phone);
+				return '+'.$phone;
+			}
+		}
+		else
+		{
+			$phone = str_replace('+55', '', $phone);
+			$phone = preg_replace('/[^\d]+/', '', $phone);
+			return '+55'.$phone;
+		}
+	}
+
+	/**
+	 * Prepare receipt link.
+	 * 
+	 * @since 1.3.0
+	 * @param string $link
+	 * @param string|int $order_id
+	 * @param string $order_key
+	 * @return string
+	 */
+	public function parse_receipt_link ( string $link, $order_id, string $order_key = '' )
+	{
+		$link = str_replace('{{pedido}}', $order_id, $this->receipt_page_value);
+		
+		if ( empty($order_key) )
+		{ return $link; }
+		
+		return strpos($link, '?') !== false ? $link.'&key='.$order_key : $link.'?key='.$order_key; 
 	}
 }
