@@ -20,6 +20,7 @@
 {
 	display: inline-block;
 	margin-right: 12px;
+	margin-bottom: 12px;
 	font-size: 12px;
 	text-transform: uppercase;
 	padding: 12px 24px;
@@ -42,6 +43,7 @@
 .wpgly-button:last-child
 {
 	margin-right: 0;
+	margin-bottom: 0;
 }
 
 .wpgly-button.wpgly-button-extended

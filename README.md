@@ -203,6 +203,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 # Changelog #
 
+## 1.3.2 ##
+
+* Correção para ocultar o botão "Enviar Comprovante".
+
 ## 1.3.1 ##
 
 * Correção do erro fatal no método remove_qr_image.

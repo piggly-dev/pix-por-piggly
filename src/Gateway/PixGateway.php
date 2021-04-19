@@ -1085,6 +1085,9 @@ class PixGateway extends WC_Payment_Gateway
 	public function parse_receipt_link ( string $link, $order_id, string $order_key = '' )
 	{
 		$link = str_replace('{{pedido}}', $order_id, $this->receipt_page_value);
+
+		if ( empty($link) )
+		{ return null; }
 		
 		if ( empty($order_key) )
 		{ return $link; }
