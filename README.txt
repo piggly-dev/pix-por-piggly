@@ -1,14 +1,16 @@
-=== Pix por Piggly ===
+=== Pix por Piggly (para Woocommerce) ===
 
 Contributors: pigglydev, caiquearaujo
 Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+O melhor plugin para pagamentos via Pix no Woocommerce. Aplique desconto automático, personalize o comportamento e muito mais. Em breve, APIs Pix para atualizar o pedido automaticamente.
 
 == Bem-vindo ao Pix por Piggly ==
 
@@ -213,6 +215,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 10. Metabox Pix no pedido realizado via Pix.
 
 == Changelog ==
+
+= 1.3.1 =
+
+* Correção do erro fatal no método remove_qr_image.
 
 = 1.3.0 =
 

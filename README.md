@@ -1,5 +1,7 @@
 # Bem-vindo ao Pix por Piggly #
 
+O melhor plugin para pagamentos via Pix no Woocommerce. Aplique desconto automático, personalize o comportamento e muito mais. Em breve, APIs Pix para atualizar o pedido automaticamente.
+
 **Sempre atualize para continuar aproveitando**
 
 O **Pix** é o mais novo método de pagamento eletrônico criado pelo Banco Central do Brasil.
@@ -200,6 +202,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 10. Metabox Pix no pedido realizado via Pix.
 
 # Changelog #
+
+## 1.3.1 ##
+
+* Correção do erro fatal no método remove_qr_image.
 
 ## 1.3.0 ##
 

@@ -669,7 +669,7 @@ class PixGateway extends WC_Payment_Gateway
 	 * @since 1.2.4
 	 * @return bool TRUE when success, FALSE when not.
 	 */
-	protected function remove_qr_image ( ?string $path ) : bool
+	protected function remove_qr_image ( ?string $path )
 	{
 		if ( empty($path) )
 		{ return false; }
@@ -679,6 +679,8 @@ class PixGateway extends WC_Payment_Gateway
 			Debug::info(\sprintf('Removendo QR Code em %s.', $path));
 			return (bool)unlink($path); 
 		}
+
+		return true;
 	}
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The plugin bootstrap file.
  *
@@ -13,10 +12,10 @@
  * @package           \Piggly\WC\Pix
  *
  * @wordpress-plugin
- * Plugin Name:       Pix por Piggly
+ * Plugin Name:       Pix por Piggly (para Woocommerce)
  * Plugin URI:        https://github.com/piggly-dev/wc-piggly-pix
- * Description:       Possibilite o pagamento com Pix de uma forma simples, rápida e direta. Aplique desconto automático, personalize o comportamento e muito mais.
- * Version:           1.3.0
+ * Description:       O melhor plugin para pagamentos via Pix no Woocommerce. Aplique desconto automático, personalize o comportamento e muito mais.
+ * Version:           1.3.1
  * Author:            Piggly Lab 
  * Author URI:        https://github.com/piggly-dev
  * License:           GPLv2 or later
@@ -39,7 +38,7 @@ define( 'WC_PIGGLY_PIX_PLUGIN_NAME', 'wc-piggly-pix' );
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * @var string 
  */
-define( 'WC_PIGGLY_PIX_PLUGIN_VERSION', '1.3.0' );
+define( 'WC_PIGGLY_PIX_PLUGIN_VERSION', '1.3.1' );
 
 /**
  * Currently plugin database version.
