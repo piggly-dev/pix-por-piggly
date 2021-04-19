@@ -93,14 +93,15 @@ class PixGateway extends WC_Payment_Gateway
 		$this->order_status = $this->get_option( 'order_status', 'wc-on-hold' );
 		$this->instructions = $this->get_option( 'instructions', __('Faça o pagamento via PIX. O pedido número {{pedido}} será liberado assim que a confirmação do pagamento for efetuada.', WC_PIGGLY_PIX_PLUGIN_NAME) );
 		$this->identifier = $this->get_option( 'identifier', '***');
-		$this->receipt_page_value = $this->get_option( 'receipt_page_value' );
-		$this->whatsapp = preg_replace('/^[5]{3,}/', '', $this->get_option( 'whatsapp' ));
-		$this->telegram = $this->get_option( 'telegram' );
+		$this->receipt_page_value = $this->get_option( 'receipt_page_value', '' );
+		$this->whatsapp = preg_replace('/^[5]{3,}/', '', $this->get_option( 'whatsapp', '' ));
+		$this->telegram = $this->get_option( 'telegram', '' );
 		$this->whatsapp_message = $this->get_option( 'whatsapp_message', __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME) );
 		$this->telegram_message = $this->get_option( 'telegram_message', __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME) );
 		$this->help_text = $this->as_bool($this->get_option( 'help_text', 'no' ));
 		$this->debug = $this->as_bool($this->get_option('debug','no'));
 		$this->auto_fix = $this->as_bool($this->get_option('auto_fix','no'));
+		$this->auto_update_receipt = $this->as_bool($this->get_option('auto_update_receipt','yes'));
 		$this->discount = $this->get_option( 'discount', '' );		
 		$this->discount_label = $this->get_option( 'discount_label', __('Desconto Pix Aplicado', WC_PIGGLY_PIX_PLUGIN_NAME) );	
 		$this->hide_in_order = $this->as_bool($this->get_option('hide_in_order','no'));
@@ -387,6 +388,7 @@ class PixGateway extends WC_Payment_Gateway
 		if ( $screen === 'receipt' )
 		{
 			$fields = [
+				'auto_update_receipt' => 'no',
 				'receipt_page_value' => '',
 				'whatsapp' => '',
 				'whatsapp_message' => __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME),
@@ -1082,9 +1084,12 @@ class PixGateway extends WC_Payment_Gateway
 	 * @param string $order_key
 	 * @return string
 	 */
-	public function parse_receipt_link ( string $link, $order_id, string $order_key = '' )
+	public function parse_receipt_link ( ?string $link, $order_id, string $order_key = '' )
 	{
-		$link = str_replace('{{pedido}}', $order_id, $this->receipt_page_value);
+		if ( empty($link) )
+		{ return null; }
+
+		$link = str_replace('{{pedido}}', $order_id, $link);
 
 		if ( empty($link) )
 		{ return null; }

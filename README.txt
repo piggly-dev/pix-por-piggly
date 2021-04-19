@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.3.2
+Stable tag: 1.3.4
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -216,6 +216,14 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Changelog ==
 
+= 1.3.4 =
+
+* Correção do bug para a primeira instalação do plugin, retornando valores vazios.
+
+= 1.3.3 =
+
+* A mudança do status para "Comprovante Pix Recebido" tornou-se opcional.
+
 = 1.3.2 =
 
 * Correção para ocultar o botão "Enviar Comprovante".
@@ -344,9 +352,24 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Upgrade Notice ==
 
-= Novidades da versão 1.3.0 =
+= 1.3.4 =
 
-Na versão **1.3.0** do plugin é possível:
+* Correção do bug para a primeira instalação do plugin, retornando valores vazios.
 
-1. Utilizar o shortcode `[pix-por-piggly-form]` para receber comprovantes sem precisar de plugins de terceiro. Ao utilizar o shortcode, os dados do pedido são capturados automaticamente. Quando um comprovante é enviado, o arquivo é verificado e salvo. O pedido também será atualizado para "Comprovante Pix Recebido". Veja mais detalhes na página de configuração do plugin;
-2. Utilizar o shortcode `[pix-por-piggly]` sem enviar o parâmetro `order_id`. O ID do Pedido será capturado automaticamente se houver um pedido ativo na página na qual o shortcode foi posicionado.
+= 1.3.3 =
+
+* A mudança do status para "Comprovante Pix Recebido" tornou-se opcional.
+
+= 1.3.2 =
+
+* Correção para ocultar o botão "Enviar Comprovante".
+
+= 1.3.1 =
+
+* Correção do erro fatal no método remove_qr_image.
+
+= 1.3.0 =
+
+* Suporte a formulário nativo para envio dos comprovantes;
+* Melhorias no shortcode [pix-por-piggly];
+* Melhorias e correções em gerais.

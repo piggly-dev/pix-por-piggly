@@ -188,7 +188,12 @@ class BaseGateway
 										{ 
 											$order_key = $order->get_id();
 											$order->update_meta_data('_wc_piggly_pix_receipt', $uploadUrl.$filename); 
-											$order->update_status( 'pix-receipt', __('Comprovante Pix Recebido.', \WC_PIGGLY_PIX_PLUGIN_NAME) ); 
+
+											$settings = get_option( 'woocommerce_wc_piggly_pix_gateway_settings', [] );
+											
+											if ( $settings['auto_update_receipt'] === 'yes' )
+											{ $order->update_status( 'pix-receipt', __('Comprovante Pix Recebido.', \WC_PIGGLY_PIX_PLUGIN_NAME) ); }
+
 											$order->save();
 										}
 									}

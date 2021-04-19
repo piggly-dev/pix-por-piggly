@@ -5,10 +5,21 @@ use Piggly\Pix\Parser;
 <h1 class="wpgly-title">Configurações dos Comprovantes</h1>
 
 <div class="wpgly-wrapper">
-	
+
+	<div class="wpgly-field">
+		<span class="wpgly-label">Atualizar Pedido automaticamente para "Comprovante Pix Recebido"</span>
+		<label class="wpgly-label wpgly-checkbox" for="<?=$this->get_field_name('auto_update_receipt')?>">
+			<input type="checkbox" name="<?=$this->get_field_name('auto_update_receipt')?>" id="<?=$this->get_field_name('auto_update_receipt')?>" value="yes" <?=(($this->auto_update_receipt) ? 'checked="checked"' : '');?>> Sim, atualizar automaticamente.
+		</label>
+		<p class="description">Ao utilizar o shortcode <code>[pix-por-piggly-form]</code>, altera o pedido automaticamente para "Comprovante Pix Recebido" quando o comprovante for recebido.</p>
+	</div>
+
+	<a class="wpgly-button wpgly-action woocommerce-save-button" href="<?=admin_url('admin.php?page='.WC_PIGGLY_PIX_PLUGIN_NAME);?>">Visualizar Comprovantes</a>
+
 	<h3 class="wpgly-title">Página para enviar o Comprovante</h3>
 
 	<div class="wpgly-field">
+
 		<label class="wpgly-label" for="<?=$this->get_field_name('receipt_page_value')?>">Link para a Página do Comprovante</label>
 		<input value="<?=$this->receipt_page_value?>" type="text" name="<?=$this->get_field_name('receipt_page_value')?>" id="<?=$this->get_field_name('receipt_page_value')?>">
 		<p class="description"><code class="wpgly-action">Deixe em branco para ocultar</code> Quando preenchido, adiciona um botão para ir até a página.</p>

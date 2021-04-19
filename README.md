@@ -203,6 +203,14 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 # Changelog #
 
+## 1.3.4 ##
+
+* Correção do bug para a primeira instalação do plugin, retornando valores vazios.
+
+## 1.3.3 ##
+
+* A mudança do status para "Comprovante Pix Recebido" tornou-se opcional.
+
 ## 1.3.2 ##
 
 * Correção para ocultar o botão "Enviar Comprovante".
