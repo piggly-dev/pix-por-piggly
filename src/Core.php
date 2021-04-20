@@ -63,6 +63,14 @@ class Core
 	public $assetsUrl;
 
 	/**
+	 * Plugin settings.
+	 * 
+	 * @since 1.3.5
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
 	 * Startup plugin.
 	 * 
 	 * @since 1.2.0
@@ -77,10 +85,10 @@ class Core
 		$this->pluginName    = \WC_PIGGLY_PIX_PLUGIN_NAME;
 		$this->pluginVersion = \WC_PIGGLY_PIX_PLUGIN_VERSION;
 
-		$settings = get_option( 'woocommerce_wc_piggly_pix_gateway_settings', [] );
+		$this->settings = get_option( 'woocommerce_wc_piggly_pix_gateway_settings', [] );
 
-		if ( isset($settings['debug']) )
-		{ Debug::changeState((bool)$settings['debug']); }
+		if ( isset($this->settings['debug']) )
+		{ Debug::changeState((bool)$this->settings['debug']); }
 
 		// Load translations
 		i18n::init();
@@ -101,6 +109,12 @@ class Core
 		WP::add_action( 'admin_init', $this, 'startup_screen' );
 	}
 
+	/**
+	 * Plugin loaded method.
+	 * 
+	 * @since 1.2.0
+	 * @return void
+	 */
 	public function after_load ()
 	{
 		if ( !class_exists('WC_Payment_Gateway') )
@@ -150,7 +164,9 @@ class Core
 	 */
 	public function add_order_statuses ( $order_statuses )
 	{
-		$order_statuses['wc-pix-receipt'] = 'Comprovante Pix Recebido';
+		if ( $this->settings['hide_receipt_status'] !== 'yes' )
+		{ $order_statuses['wc-pix-receipt'] = 'Comprovante Pix Recebido'; }
+
 	  	return $order_statuses;
 	}
 

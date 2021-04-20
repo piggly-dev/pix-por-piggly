@@ -36,7 +36,6 @@ class PixGateway extends WC_Payment_Gateway
 	public function __construct()
 	{
 		$this->id = 'wc_piggly_pix_gateway';
-		$this->icon = apply_filters( 'woocommerce_gateway_icon', WC_PIGGLY_PIX_PLUGIN_URL.'assets/pix-payment-icon.png' );
 		$this->has_fields = false;
 		$this->method_title = __( 'Pix', WC_PIGGLY_PIX_PLUGIN_NAME );
 		$this->method_description = __( 'Habilite o pagamento de pedidos via Pix. Este plugin automaticamente adiciona as instruções Pix na Página de Obrigado e na Página do Pedido.', WC_PIGGLY_PIX_PLUGIN_NAME );
@@ -49,6 +48,8 @@ class PixGateway extends WC_Payment_Gateway
 		$this->init_settings();
 		$this->setup_settings();
 
+		$this->icon = apply_filters( 'woocommerce_gateway_icon', WC_PIGGLY_PIX_PLUGIN_URL.'assets/'.$this->select_icon.'.png' );
+		
 		// This action hook loads the thank you page
 		WP::add_action( 'woocommerce_thankyou_'.$this->id, $this, 'thankyou_page', 5, 1 );
 		// Add method instructions in order details page 
@@ -80,6 +81,7 @@ class PixGateway extends WC_Payment_Gateway
 		// All settings
 		$this->title = $this->get_option( 'title', __('Faça um Pix', WC_PIGGLY_PIX_PLUGIN_NAME) );
 		$this->description = $this->get_option( 'description', __('Você não precisa ter uma chave cadastrada. Pague os seus pedidos via Pix.', WC_PIGGLY_PIX_PLUGIN_NAME) );
+		$this->advanced_description = $this->as_bool($this->get_option( 'advanced_description', 'yes' ));
 		$this->pix_qrcode = $this->as_bool($this->get_option( 'pix_qrcode', 'no' ));
 		$this->pix_copypast = $this->as_bool($this->get_option( 'pix_copypast', 'no' ));
 		$this->pix_manual = $this->as_bool($this->get_option( 'pix_manual', 'no' ));
@@ -102,11 +104,13 @@ class PixGateway extends WC_Payment_Gateway
 		$this->debug = $this->as_bool($this->get_option('debug','no'));
 		$this->auto_fix = $this->as_bool($this->get_option('auto_fix','no'));
 		$this->auto_update_receipt = $this->as_bool($this->get_option('auto_update_receipt','yes'));
+		$this->hide_receipt_status = $this->as_bool($this->get_option('hide_receipt_status','no'));
 		$this->discount = $this->get_option( 'discount', '' );		
 		$this->discount_label = $this->get_option( 'discount_label', __('Desconto Pix Aplicado', WC_PIGGLY_PIX_PLUGIN_NAME) );	
 		$this->hide_in_order = $this->as_bool($this->get_option('hide_in_order','no'));
 		$this->bank = $this->get_option( 'bank', 0 );	
 		$this->qr_regenerate = $this->as_bool($this->get_option('qr_regenerate',1));
+		$this->select_icon = $this->get_option( 'select_icon', 'pix-payment-icon' );	
 	}
 
 	/**
@@ -144,6 +148,37 @@ class PixGateway extends WC_Payment_Gateway
 
 		require_once(\WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/settings/header.php');
 		require_once(\WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/settings/'.$screen.'-settings.php');
+	}
+	
+	/**
+	 * Show an advanced description when enabled.
+	 * 
+	 * @since 1.3.6
+	 * @return void
+	 */
+	public function payment_fields() {
+
+		if ( !$this->advanced_description )
+		{ 
+			$description = $this->get_description();
+
+			if ( $description ) 
+			{ echo wpautop( wptexturize( $description ) ); }
+
+			return;
+		}
+
+		wp_enqueue_style(
+			'wpgly-pix-public',
+			\WC_PIGGLY_PIX_PLUGIN_URL.'assets/css/wpgly.pix.public.min.css'
+		);
+
+		wc_get_template(
+			'html-woocommerce-instructions.php',
+			['description' => $this->get_description(),'banner'=>WC_PIGGLY_PIX_PLUGIN_URL.'assets/banner-'.$this->select_icon.'.png'],
+			WC()->template_path().\WC_PIGGLY_PIX_DIR_NAME.'/',
+			WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
+		);
 	}
 
 	/**
@@ -203,6 +238,7 @@ class PixGateway extends WC_Payment_Gateway
 				'help_text' => 'no',
 				'title' => __('Faça um Pix', \WC_PIGGLY_PIX_PLUGIN_NAME),
 				'description' => __('Você não precisa ter uma chave cadastrada. Pague os seus pedidos via Pix.', WC_PIGGLY_PIX_PLUGIN_NAME),
+				'advanced_description' => 'no',
 				'store_name' => '',
 				'pix_qrcode' => 'no',
 				'pix_copypast' => 'no',
@@ -389,6 +425,7 @@ class PixGateway extends WC_Payment_Gateway
 		{
 			$fields = [
 				'auto_update_receipt' => 'no',
+				'hide_receipt_status' => 'no',
 				'receipt_page_value' => '',
 				'whatsapp' => '',
 				'whatsapp_message' => __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME),
@@ -1079,7 +1116,7 @@ class PixGateway extends WC_Payment_Gateway
 	 * Prepare receipt link.
 	 * 
 	 * @since 1.3.0
-	 * @param string $link
+	 * @param string|null $link
 	 * @param string|int $order_id
 	 * @param string $order_key
 	 * @return string

@@ -1,0 +1,64 @@
+.wpgly-pix-wrapper
+{
+	display: table;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.wpgly-pix-step
+{
+	display: inline-table;
+	position: relative;
+	padding: 24px;
+	text-align: center;
+	font-size: 15px;
+	max-width: 200px;
+	margin-bottom: 24px;
+}
+
+.wpgly-pix-step:last-child
+{ margin-bottom: 0; }
+
+.wpgly-pix-step::before
+{
+	content: attr(data-step);
+	position: absolute;
+	width: 24px;
+	height: 24px;
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: bold;
+	color: #000;
+	background-color: #3cf18d;
+	top: -12px;
+	left: 50%;
+	margin-left: -12px;
+	-o-border-radius: 100%;
+	-moz-border-radius: 100%;
+	-webkit-border-radius: 100%;
+	border-radius: 100%;
+}
+
+.wpgly-pix-img
+{
+	height: auto !important;
+	width: 279px !important;
+	max-height: inherit !important;
+	margin: 24px auto 36px !important;
+	float: none !important;
+}
+
+.wpgly-pix-description
+{
+	font-size: 14px;
+	text-align: center;
+	font-style: italic;
+}
+
+.wpgly-pix-featured
+{
+	margin-left: 5px;
+	font-weight: bold;
+	color: #000;
+	background-color: #3cf18d;
+}

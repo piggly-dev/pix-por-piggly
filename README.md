@@ -22,6 +22,13 @@ Na versão **1.3.0** do plugin é possível:
 1. Utilizar o shortcode `[pix-por-piggly-form]` para receber comprovantes sem precisar de plugins de terceiro. Ao utilizar o shortcode, os dados do pedido são capturados automaticamente. Quando um comprovante é enviado, o arquivo é verificado e salvo. O pedido também será atualizado para "Comprovante Pix Recebido". Veja mais detalhes na página de configuração do plugin;
 2. Utilizar o shortcode `[pix-por-piggly]` sem enviar o parâmetro `order_id`. O ID do Pedido será capturado automaticamente se houver um pedido ativo na página na qual o shortcode foi posicionado.
 
+## Principais melhorias ##
+
+* ✅ Alteração da cor do ícone do Pix;
+* ✅ Formulário integrado para envio de comprovante;
+* ✅ (Opcional) Atualização automática do pedido com comprovante recebido;
+* ✅ Desconto automático para pagamento via Pix.
+* 
 # Novidades da versão 1.2.0 #
 
 A versão **1.2.0** mudou completamente o núcleo do plugin, para torná-lo mais eficiente e poderoso. Se você fez mudanças na estrutura do plugin esteja ciente que elas serão perdidas. Os templates de e-mail e do pagamento Pix foram atualizados para atender as melhorias.
@@ -43,17 +50,19 @@ Dessa forma, se o pedido já foi pago, os meta dados serão mantidos e você sem
 
 Se o Pix ainda não foi pago, será gerado novamente somente se você mudar a chave Pix por qualquer razão. Do contrário, os meta dados gravado no pedido serão utilizados.
 
-# Recursos #
+## Recursos que só o Pix por Piggly tem ##
 
 * ✅ Tratamento automático de dados, não se preocupe com o que você digita. O plugin automaticamente detecta melhorias;
 * ✅ Permita que o cliente envie o comprovante por uma página, pelo Whatsapp e/ou Telegram;
 * ✅ Teste o seu Pix a qualquer hora, antes mesmo de habilitar o plugin;
 * ✅ Aplique desconto automático, sem criação de cupons, ao realizar o pagamento via Pix;
 * ✅ Visualize os dados do Pix gerado na página do pedido;
-* ✅ Com problema na hora de preencher os dados do Pix? Importe os dados Pix de uma chave Pix válida e não tenha mais preocupações;
+* ✅ Importe os dados Pix de uma chave Pix válida e preencha os dados da Conta Pix automaticamente;
 * ✅ Utilize **Merge Tags**, em campos disponíveis, para substituir variáveis e customizar ainda mais as funções do plugin.
-* ✅ Use o shortcode `[pix-por-piggly order_id="$id"]` para importar o template do Pix em qualquer lugar;
-* ✅ Selecione o modelo de e-mail onde o Pix será enviado e o status do pedido enquanto aguarda a conferência do pagamento Pix.
+* ✅ Use o shortcode [pix-por-piggly] para importar o template do Pix em qualquer lugar. Veja mais em Shortcodes nas configurações do plugin;
+* ✅ Use o shortcode [pix-por-piggly-form] para criar automaticamente o formulário para envio do comprovante Pix. Veja mais em Shortcodes nas configurações do plugin;
+* ✅ Selecione o modelo de e-mail onde o Pix será enviado e o status do pedido enquanto aguarda a conferência do pagamento Pix;
+* ✅ Suporte a API do Woocommerce.
 
 # Como funciona? #
 
@@ -73,31 +82,33 @@ Nosso plugin gera de forma automática o código Pix com base nas informações 
 
 > Não importa como você digita a chave Pix, ela será automaticamente convertida para os formatos apropriados, okay? Caso ela esteja inválida, de acordo com o formato escolhido, você será notificado.
 
-# Funcionalidades #
+## Recebimento de Comprovantes Pix ##
 
-Nas configurações do plugin você é capaz de manipular as seguintes funções:
+> Em breve, será disponibilizado no plugin a API Pix que atualizará automaticamente os pedidos, sem necessidade do envio de comprovantes.
 
-1. Importar configurações de um código Pix pré-existente;
-2. Habilitar/Desabilitar o método de pagamento;
-3. Alterar o título e descrição do pagamento;
-4. Exibir os métodos QR Code, Pix Copia & Cola e Pagamento Manual;
-5. Informar o nome da loja para a descrição do Pix;
-6. Inserir o nome e a cidade do titular da conta Pix;
-7. Escolher o tipo de chave e informar o valor da chave Pix;
-8. Escrever as instruções para envio do comprovante de pagamento;
-9. Alterar o formato do identificador do Pix;
-10. Incluir uma página para enviar o comprovante;
-11. Testar o pix com qualquer valor.
+A partir da versão **1.3.0** é possível utilizar o shortcode `[pix-por-piggly-form]` para receber automaticamente o comprovante de pagamento do Pix. Ao utilizar o shortcode você conta com algumas vantagens únicas:
 
-## Quer receber comprovantes? O que sugerimos: ##
+* ✅ O pedido e o e-mail do consumidor são capturados automaticamente;
+* ✅ Caso não seja possível identificar o pedido, será solicitado o e-mail e o número do pedido ao consumidor;
+* ✅ O consumidor poderá anexar imagens em JPG ou PNG, além de documento em PDF;
+* ✅ O arquivo enviado será analisado pelo plugin para determinar se é um arquivo seguro e válido;
+* ✅ Após enviar o comprovante, o comprovante será imediatamente anexado ao pedido *(quando identificado)*;
+* ✅ Quando o pedido receber um comprovante Pix, o status será alterado para **Comprovante Pix Recebido** *(opcionalmente)*;
 
-> **Cuidado com o envio de comprovantes**. O upload de arquivos no Wordpress é delicado. É necessário tomar certas precauções e por isso utilize alguns plugins que já fazem isso muito bem como o **Gravity Forms** ou **WP Forms**.
+### Tutorial Básico ###
 
-Crie uma nova página no Wordpress com um formulário para envio de arquivos, permitindo apenas as extensões jpg, png e pdf. Isso pode ser feito utilizando os plugins citados acima. Posteriormente, nas configurações do Pix em **Página para Comprovante** insira a URL da página para enviar o comprovante. 
+* Crie uma nova página para receber os comprovantes Pix;
+* Insira na página o shortcode [pix-por-piggly-form];
+* Em "Comprovante Pix" nas configurações do plugin, insira o link permanente da página criada em "Link para a Página do Comprovante";
+* Pronto! Agora, os comprovantes Pix já podem ser recebidos na página.
 
-Você pode utilizar `{{pedido}}` na URL pois esse termo será substituído pelo número do pedido. Assim, caso seu formulário permita o auto preenchimento via URL conseguirá preencher automaticamente o número do pedido para o cliente.
+### Jeito Tradicional ###
 
-Por exemplo, com o número do pedido `1234` defina a URL em **Página para Comprovante** como, por exemplo, `https://minhaloja.com.br/comprovante-pix/?order_id={{pedido}}`. Nosso plugin traduzirá essa URL para `https://minhaloja.com.br/comprovante-pix/?order_id=1234`, basta então ler o campo `order_id` da URL com o seu formulário no campo apropriado.
+Você ainda pode receber os comprovantes como era antes da versão **1.3.0**, utilizando plugins de terceiros para criação de formulários e, então, obtendo o número do pedido a partir da URL configurada em "Link para a Página do Comprovante".
+
+Você pode utilizar `{{pedido}}` na URL para obter o número do pedido, esse termo será substituído adequadamente. Assim, caso seu formulário permita o auto preenchimento via URL conseguirá preencher automaticamente o número do pedido para o cliente.
+
+Por exemplo, com o número do pedido `1234` defina a URL em **Link para a Página do Comprovante** como, por exemplo, `https://minhaloja.com.br/comprovante-pix/?order_id={{pedido}}`. Nosso plugin traduzirá essa URL para `https://minhaloja.com.br/comprovante-pix/?order_id=1234`, basta então ler o campo `order_id` da URL com o seu formulário no campo apropriado.
 
 Você também pode inserir seu número do Whatsapp e/ou usuário do Telegram para que seu cliente envie o comprovante de pagamento Pix por esses canais.
 
@@ -202,6 +213,16 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 10. Metabox Pix no pedido realizado via Pix.
 
 # Changelog #
+
+## 1.3.6 ##
+
+* Descrição avançada com Pix com passos para pagamento.
+
+## 1.3.5 ##
+
+* Escolher cor do ícone para o Pix;
+* Ocultar o status "Comprovante Pix Recebido" no painel de pedidos;
+* Correções e melhorias indicadas no suporte.
 
 ## 1.3.4 ##
 

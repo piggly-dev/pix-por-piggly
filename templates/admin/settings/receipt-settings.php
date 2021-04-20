@@ -7,11 +7,19 @@ use Piggly\Pix\Parser;
 <div class="wpgly-wrapper">
 
 	<div class="wpgly-field">
-		<span class="wpgly-label">Atualizar Pedido automaticamente para "Comprovante Pix Recebido"</span>
+		<span class="wpgly-label">Atualizar Pedido automaticamente para o status "Comprovante Pix Recebido"</span>
 		<label class="wpgly-label wpgly-checkbox" for="<?=$this->get_field_name('auto_update_receipt')?>">
 			<input type="checkbox" name="<?=$this->get_field_name('auto_update_receipt')?>" id="<?=$this->get_field_name('auto_update_receipt')?>" value="yes" <?=(($this->auto_update_receipt) ? 'checked="checked"' : '');?>> Sim, atualizar automaticamente.
 		</label>
 		<p class="description">Ao utilizar o shortcode <code>[pix-por-piggly-form]</code>, altera o pedido automaticamente para "Comprovante Pix Recebido" quando o comprovante for recebido.</p>
+	</div>
+
+	<div class="wpgly-field">
+		<span class="wpgly-label">Ocultar status "Comprovante Pix Recebido" do Woocommerce</span>
+		<label class="wpgly-label wpgly-checkbox" for="<?=$this->get_field_name('hide_receipt_status')?>">
+			<input type="checkbox" name="<?=$this->get_field_name('hide_receipt_status')?>" id="<?=$this->get_field_name('hide_receipt_status')?>" value="yes" <?=(($this->hide_receipt_status) ? 'checked="checked"' : '');?>> Sim, ocultar do painel de pedidos.
+		</label>
+		<p class="description">Ao ocultar o status do painel de pedidos, pedidos marcado com o status precisarão ser atualizados para outro status.</p>
 	</div>
 
 	<a class="wpgly-button wpgly-action woocommerce-save-button" href="<?=admin_url('admin.php?page='.WC_PIGGLY_PIX_PLUGIN_NAME);?>">Visualizar Comprovantes</a>

@@ -68,7 +68,7 @@ class ApplyDiscount
 		else 
 		{ $value = wc_price( floatval( wc_format_decimal( $amount ) ) ); }
 
-		$title .= ' <small>(' . sprintf( __( '%s off', \WC_PIGGLY_PIX_PLUGIN_NAME ), $value ) . ')</small>';
+		$title .= ' <small class="wpgly-pix-featured">(' . sprintf( __( '%s de desconto', \WC_PIGGLY_PIX_PLUGIN_NAME ), $value ) . ')</small>';
 
 		return $title;
 	}

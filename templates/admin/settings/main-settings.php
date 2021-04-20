@@ -55,10 +55,43 @@
 
 	<div class="wpgly-field">
 		<span class="wpgly-label">Textos de Ajuda</span>
-		<label class="wpgly-label wpgly-checkbox" for="<?=$this->get_field_name('debug')?>">
-			<input type="checkbox" name="<?=$this->get_field_name('debug')?>" id="<?=$this->get_field_name('debug')?>" value="1" <?=(($this->help_text == 1 || $this->help_text == 'yes') ? 'checked="checked"' : '');?>> Ocultar os textos de ajuda
+		<label class="wpgly-label wpgly-checkbox" for="<?=$this->get_field_name('help_text')?>">
+			<input type="checkbox" name="<?=$this->get_field_name('help_text')?>" id="<?=$this->get_field_name('help_text')?>" value="1" <?=(($this->help_text == 1 || $this->help_text == 'yes') ? 'checked="checked"' : '');?>> Ocultar os textos de ajuda
 		</label>
 		<p class="description">Desabilite que você deseja ocultar os textos de ajuda do plugin.</p>
+	</div>
+	
+	<div class="wpgly-field">
+		<span class="wpgly-label">Ícone do Pix</span>
+		<?php
+		$selected = $this->select_icon;
+		$select = [ 
+			'pix-payment-icon' => 'Escuro',
+			'pix-payment-icon-green' => 'Tradicional',
+			'pix-payment-icon-white' => 'Claro'
+		];
+
+		foreach ( $select as $key => $label ) 
+		{
+			printf(
+				'<label class="wpgly-label wpgly-radio" for="%s">', 
+				$this->get_field_name('select_icon_'.$key)
+			);
+
+			printf(
+				'<input style="vertical-align: middle;" type="radio" name="%s" id="%s" value="%s" %s/>  <code style="vertical-align: middle;">%s</code> <img style="vertical-align: middle;" src="%s"/>', 
+				$this->get_field_name('select_icon'),
+				$this->get_field_name('select_icon_'.$key),
+				$key,
+				$selected === $key ? 'checked="checked"' : '',
+				$label,
+				WC_PIGGLY_PIX_PLUGIN_URL.'assets/'.$key.'.png'
+			);
+
+			printf('</label>');
+		}
+
+		?>
 	</div>
 
 	<div class="wpgly-field">
@@ -71,6 +104,14 @@
 		<label class="wpgly-label" for="<?=$this->get_field_name('description')?>">Descrição do Método de Pagamento</label>
 		<input value="<?=$this->description?>" type="text" name="<?=$this->get_field_name('description')?>" id="<?=$this->get_field_name('description')?>">
 		<p class="description">A descrição que o cliente visualizará para identificar o pagamento.</p>
+	</div>
+
+	<div class="wpgly-field">
+		<span class="wpgly-label">Descrição Avançada</span>
+		<label class="wpgly-label wpgly-checkbox" for="<?=$this->get_field_name('advanced_description')?>">
+			<input type="checkbox" name="<?=$this->get_field_name('advanced_description')?>" id="<?=$this->get_field_name('advanced_description')?>" value="yes" <?=(($this->advanced_description) ? 'checked="checked"' : '');?>> Exibir descrição avançada do Pix.
+		</label>
+		<p class="description">A descrição avançada apresenta os três passos para pagamento via Pix.</p>
 	</div>
 	
 	<div class="wpgly-field">

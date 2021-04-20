@@ -11,9 +11,6 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-
-use Piggly\Pix\Parser;
-
 ?>
  
 <style>
