@@ -214,6 +214,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 # Changelog #
 
+## 1.3.7 ##
+
+* Correção no arquivo `.htaccess` que gera um erro 403 ao acessar os comprovantes.
+
 ## 1.3.6 ##
 
 * Descrição avançada com Pix com passos para pagamento.

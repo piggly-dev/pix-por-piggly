@@ -55,6 +55,26 @@ class Upgrade
 			self::setup_upgraded();
 		}
 
+		// Fix to .htaccess created as a folder...
+		if ( \version_compare($version, '1.3.7', '<') )
+		{ 
+			// Prevent users which don't protected upload dir
+			$upload = wp_upload_dir();
+
+			// Check for .htaccess file
+			$PATH = sprintf('%s/%s/receipts/.htaccess', $upload['basedir'], \WC_PIGGLY_PIX_DIR_NAME);
+
+			if ( is_dir( $PATH ) )
+			{ 
+				rmdir($PATH);
+				file_put_contents( $PATH, 'Options -Indexes' ); 
+			}
+
+			WP::add_admin_notice(self::upgrade_notice());
+			self::protect_access(); 
+			self::setup_upgraded();
+		}
+
 		// New version
 		update_option('wc_piggly_pix_version', WC_PIGGLY_PIX_PLUGIN_VERSION);
 	}
@@ -76,6 +96,12 @@ class Upgrade
 		if ( !\file_exists( $PATH ) ) 
 		{ wp_mkdir_p($PATH); }
 
+		$PATH = sprintf('%s/%s/receipts/', $upload['basedir'], \WC_PIGGLY_PIX_DIR_NAME);
+
+		// Create folder if not exists...
+		if ( !\file_exists( $PATH ) ) 
+		{ wp_mkdir_p($PATH); }
+
 		// Check for .htaccess file
 		$PATH = sprintf('%s/%s/.htaccess', $upload['basedir'], \WC_PIGGLY_PIX_DIR_NAME);
 
@@ -90,9 +116,6 @@ class Upgrade
 
 		// Check for .htaccess file
 		$PATH = sprintf('%s/%s/receipts/.htaccess', $upload['basedir'], \WC_PIGGLY_PIX_DIR_NAME);
-
-		if ( !\file_exists( $PATH ) ) 
-		{ wp_mkdir_p($PATH); }
 
 		if ( !\file_exists( $PATH ) )
 		{ file_put_contents( $PATH, 'Options -Indexes' ); }
