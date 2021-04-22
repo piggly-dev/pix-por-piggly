@@ -24,7 +24,74 @@ $table->prepare_items();
 	<div id="icon-users" class="icon32"></div>
 	<h2 class="wpgly-title">Comprovantes Pix</h2>
 	<?php
+	$saved = false;
+
+	if ( $_SERVER['REQUEST_METHOD'] === 'POST' )
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix.'wpgly_pix_receipts';
+
+		try
+		{
+			// Nonce
+			if ( !wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING ), 'bulk-wpgly_pix_table_links' ) )
+			{ throw new Exception(__('Erro ao realizar a verificação de segurança.', WC_PIGGLY_PIX_PLUGIN_NAME) ); }
+
+			// HTTP Referer
+			if ( wp_unslash( $_SERVER['REQUEST_URI'] ) !== filter_input( INPUT_POST, '_wp_http_referer', FILTER_SANITIZE_STRING ) )
+			{ throw new Exception(__('A referência HTTP é incompatível com a esperada.', WC_PIGGLY_PIX_PLUGIN_NAME) ); }
+		
+			$action = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_STRING );
+
+			if ( $action === 'delete' )
+			{
+				$items = filter_input( INPUT_POST, 'items', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY );
+
+				foreach ( $items as $item )
+				{ $this->delete_receipt((int)$item); }
+
+				$saved = true;
+			}
+		}
+		catch ( Exception $e )
+		{ $saved = $e->getMessage(); }
+	}
+	else if ( $_SERVER['REQUEST_METHOD'] === 'GET' )
+	{
+		try
+		{
+			$action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+
+			if ( $action === 'delete' )
+			{
+				$item = filter_input( INPUT_GET, 'item_id', FILTER_SANITIZE_STRING );
+
+				if ( !empty($item) )
+				{ 
+					$this->delete_receipt((int)$item);
+					$saved = true;
+				}
+			}
+		}
+		catch ( Exception $e )
+		{ $saved = $e->getMessage(); }
+	}
+	?>
+
+	<?php if ( $saved === true ) : ?>
+	<p class="wpgly-notice-box wpgly-success">
+	Ações realizadas com sucesso.
+	</p>
+	<?php elseif ( $saved !== false ) : ?>
+	<p class="wpgly-notice-box wpgly-error">
+		<strong>Não foi possível realizar as ações:</strong> <?=$saved;?>
+	</p>
+	<?php endif; ?>
+
+	<form method="POST">
+	<?php
 		$table->prepare_items();
 		$table->display();
 	?>
+	</form>
 </div>

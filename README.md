@@ -214,6 +214,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 # Changelog #
 
+## 1.3.8 ##
+
+* Gestão eficiente e otimizada dos comprovantes Pix para exclusão e busca de comprovantes.
+
 ## 1.3.7 ##
 
 * Correção no arquivo `.htaccess` que gera um erro 403 ao acessar os comprovantes.

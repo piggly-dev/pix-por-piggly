@@ -33,17 +33,22 @@ class ReceiptTable extends WP_List_Table
 			'screen' => 'wpgly_pix_receipt_screen'
 	  	]);
 	}
+
 	/**
 	 * Add extra markup in the toolbars before or after the list.
 	 * 
 	 * @since 1.3.0
+	 * @since 1.3.8 Added search box
 	 * @param string $which, helps you decide if you add the markup after (bottom) or before (top) the list.
 	 * @return void
 	 */
 	function extra_tablenav ( $which ) 
 	{
 		if ( $which == "top" )
-		{ echo 'Confira abaixo todos os comprovantes Pix enviados.'; }
+		{ 
+			echo 'Confira abaixo todos os comprovantes Pix enviados.'; 
+			$this->search_box('Pesquisar Pedido', 'order-number');
+		}
 
 		if ( $which == 'bottom' )
 		{ echo 'Os comprovantes também serão exibidos na metabox Pix na página do Pedido e o pedido será atualizado para "Comprovante Pix Recebido".'; }
@@ -53,15 +58,17 @@ class ReceiptTable extends WP_List_Table
 	 * Get table columns.
 	 * 
 	 * @since 1.3.0
+	 * @since 1.3.8 Added checkboxes.
 	 * @return array
 	 */
 	public function get_columns () 
 	{
 		return [
+			'cb' => '<input type="checkbox" />',
 			'order_number' => __('Pedido', \WC_PIGGLY_PIX_PLUGIN_NAME),
 			'customer_email' => __('E-mail', \WC_PIGGLY_PIX_PLUGIN_NAME),
 			'pix_receipt' => __('Comprovante Pix', \WC_PIGGLY_PIX_PLUGIN_NAME),
-			'send_at' => __('Data do Envio', \WC_PIGGLY_PIX_PLUGIN_NAME),
+			'send_at' => __('Data do Envio', \WC_PIGGLY_PIX_PLUGIN_NAME)
 		];
 	}
 
@@ -102,6 +109,7 @@ class ReceiptTable extends WP_List_Table
 	 * Prepare items from database.
 	 * 
 	 * @since 1.3.0
+	 * @since 1.3.8 Implemented search
 	 * @return void
 	 */
 	public function prepare_items () 
@@ -111,6 +119,10 @@ class ReceiptTable extends WP_List_Table
 		$screen     = get_current_screen();
 		$table_name = $wpdb->prefix . 'wpgly_pix_receipts';
 		$query      = "SELECT * FROM $table_name";
+		$search     = filter_input( INPUT_POST, 's', \FILTER_SANITIZE_STRING );
+
+		if ( !empty($search) )
+		{ $query .= $wpdb->prepare(" WHERE order_number LIKE '%%%s%%' ", $search ); }
 
 		//Parameters that are going to be used to order the result
 		$orderby = filter_input ( INPUT_GET, 'orderby', \FILTER_SANITIZE_STRING );
@@ -159,6 +171,7 @@ class ReceiptTable extends WP_List_Table
 	 * Display rows.
 	 * 
 	 * @since 1.3.0
+	 * @since 1.3.8 Added checkboxes and actions.
 	 * @return void
 	 */
 	public function display_rows ()
@@ -173,9 +186,16 @@ class ReceiptTable extends WP_List_Table
 			{
 				printf('<tr id="item_%s">', $rec->id);
 				$link  = null;
+				$actions = [
+					'view' => sprintf('<a href="%s" target="_blank">%s</a>', stripslashes($rec->pix_receipt), __('Ver Comprovante', \WC_PIGGLY_PIX_PLUGIN_NAME)),
+					'delete' => sprintf('<a href="%s">%s</a>', admin_url( sprintf('admin.php?page=%s&action=delete&item_id=%s', \WC_PIGGLY_PIX_PLUGIN_NAME, $rec->id ) ), __('Deletar Comprovante', \WC_PIGGLY_PIX_PLUGIN_NAME)),
+				];
 
 				if ( $rec->auto_fill !== 0 )
-				{ $link = get_edit_post_link($rec->order_number); } 
+				{ 
+					$link = get_edit_post_link($rec->order_number); 
+					$actions['edit'] = sprintf('<a href="%s">%s</a>', stripslashes($link), __('Editar Pedido', \WC_PIGGLY_PIX_PLUGIN_NAME));
+				} 
 
 				foreach ( $columns as $column_name => $column_display )
 				{
@@ -187,11 +207,14 @@ class ReceiptTable extends WP_List_Table
 
 					switch ( $column_name )
 					{
+						case 'cb': 
+							printf('<th scope="row" class="check-column"><input type="checkbox" name="items[]" value="%s" id="cb-select-%s" /></th>', $rec->id, $rec->id);
+							break;
 						case 'order_number':
 							if ( empty($link) ) :
 								printf('<td %s>%s <code class="wpgly-action">Preenchimento Manual</code></td>', implode(' ', $attrs), stripslashes($rec->order_number));
 							else :
-								printf('<td %s><a href="%s">Pedido #%s</a></td>', implode(' ', $attrs), stripslashes($link), stripslashes($rec->order_number));
+								printf('<td %s><a href="%s">Pedido #%s</a> %s</td>', implode(' ', $attrs), stripslashes($link), stripslashes($rec->order_number), $this->row_actions($actions));
 							endif;
 							break;
 						case 'customer_email':
@@ -210,5 +233,17 @@ class ReceiptTable extends WP_List_Table
 				echo '</tr>';
 			}
 		}
+	}
+
+	/**
+	 * Added bulk actions.
+	 * 
+	 * @since 1.3.8
+	 * @return array
+	 */
+	public function get_bulk_actions () 
+	{
+		$actions = array('delete' => __('Deletar Comprovante', \WC_PIGGLY_PIX_PLUGIN_NAME));
+		return $actions;
 	}
 }

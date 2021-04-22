@@ -2,6 +2,13 @@
 
 <div class="wpgly-wrapper">
 
+	<div class="wpgly-notice-box wpgly-action">
+		<h4 class="wpgly-title">Você Sabia?</h4>
+		Você pode, opcionalmente, limpar a pasta com as imagens dos QR Codes
+		sempre que desejar. Se o plugin não encontrar um QR Code, ele criará
+		novamente.
+	</div>
+
 	<h1 class="wpgly-title">Recursos que só o <strong>Pix por Piggly</strong> tem:</h1>
 
 	<ul>

@@ -11,7 +11,8 @@ $data    = [];
 $receipt = $order->get_meta('_wc_piggly_pix_receipt');
 
 if ( !empty($receipt) ) :
-	printf('<a href="%s" target="_blank" style="display: block; text-align: center; margin: 0 0 6px;" class="wpgly-button wpgly-success">%s</a>', $receipt, __('Ver Comprovante', WC_PIGGLY_PIX_PLUGIN_NAME));
+	printf('<a href="%s" target="_blank" style="display: block; text-align: center; margin: 0 0 6px;" class="wpgly-button wpgly-success">%s</a>', $receipt, __('Último Comprovante Recebido', WC_PIGGLY_PIX_PLUGIN_NAME));
+	echo '<p>Para ver todos os comprovantes do pedido, vá para Woocommerce > Comprovantes.</p>';
 endif;
 
 if ( $gateway->enabled === 'no' )

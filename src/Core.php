@@ -1,6 +1,7 @@
 <?php
 namespace Piggly\WC\Pix;
 
+use Exception;
 use Piggly\WC\Pix\Discount\ApplyDiscount;
 use Piggly\WC\Pix\Gateway\BaseGateway;
 use Piggly\WC\Pix\Order\Metabox;
@@ -225,6 +226,38 @@ class Core
 		$baseUrl = admin_url( 'admin.php?page='.\WC_PIGGLY_PIX_PLUGIN_NAME );
 		require_once(\WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/pages/header.php');
 		require_once(\WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/pages/'.$screen.'.php');
+	}
+
+	/**
+	 * Delete receipt from database and file path.
+	 * 
+	 * @param int $id
+	 * @since 1.3.8
+	 * @return void
+	 */
+	protected function delete_receipt ( int $id )
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix.'wpgly_pix_receipts';
+		$item = $wpdb->get_row("SELECT * FROM {$table_name} WHERE id = {$id}");
+
+		if ( $item )
+		{
+			$upload      = wp_upload_dir();
+			$pix_receipt = str_replace( $upload['baseurl'], $upload['basedir'], $item->pix_receipt);
+			$order       = wc_get_order($item->order_number);
+			
+			$wpdb->delete( $wpdb->prefix.'wpgly_pix_receipts', array( 'id' => $item->id ) );
+
+			if ( file_exists($pix_receipt) )
+			{ unlink($pix_receipt); }
+
+			if ( $order !== false )
+			{
+				$order->delete_meta_data('_wc_piggly_pix_receipt'); 
+				$order->save();
+			}
+		}
 	}
 
 	/**
