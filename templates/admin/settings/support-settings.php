@@ -70,7 +70,7 @@ $test_link = admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_pigg
 		Copie os templates originais, disponíveis em 
 		<code><?='wp-content/plugins/'.\WC_PIGGLY_PIX_DIR_NAME.'/templates/html-woocommerce-thank-you-page.php'?></code>
 		e <code><?='wp-content/plugins/'.\WC_PIGGLY_PIX_DIR_NAME.'/templates/email-woocommerce-thank-you-page.php'?></code>
-		para o diretório do seu tema ativo em <code><?=get_template_directory().WC()->template_path().\WC_PIGGLY_PIX_DIR_NAME.'/'?></code>.	
+		para o diretório do seu tema ativo em <code><?=get_template_directory().'/'.WC()->template_path().\WC_PIGGLY_PIX_DIR_NAME.'/'?></code>.	
 	</p>
 
 	<div class="wpgly-notice-box wpgly-warning">

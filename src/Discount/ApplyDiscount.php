@@ -53,7 +53,8 @@ class ApplyDiscount
 	 * @since 1.2.0
 	 * @return string
 	 */
-	public function payment_method_title( $title, $id ) {
+	public function payment_method_title ( $title, $id ) 
+	{
 		if ( !is_checkout() && !WP::is_doing_ajax() ) 
 		{ return $title; }
 
@@ -112,13 +113,13 @@ class ApplyDiscount
 	 * Remove the discount in the payment method title.
 	 *
 	 * @param int $order_id Order ID.
-	 * @since 1.2.0
+	 * @since 1.3.9
 	 * @return void
 	 */
 	public function update_order_data( $order_id ) 
 	{
 		$payment_method_title     = get_post_meta( $order_id, '_payment_method_title', true );
-		$new_payment_method_title = preg_replace( '/<small>.*<\/small>/', '', $payment_method_title );
+		$new_payment_method_title = preg_replace( '/<small class=\"wpgly-pix-featured\">.*<\/small>/', '', $payment_method_title );
 
 		// Save the new payment method title.
 		update_post_meta( $order_id, '_payment_method_title', $new_payment_method_title );

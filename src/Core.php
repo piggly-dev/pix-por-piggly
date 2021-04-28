@@ -165,7 +165,7 @@ class Core
 	 */
 	public function add_order_statuses ( $order_statuses )
 	{
-		if ( $this->settings['hide_receipt_status'] !== 'yes' )
+		if ( !isset($this->settings['hide_receipt_status']) || $this->settings['hide_receipt_status'] !== 'yes' )
 		{ $order_statuses['wc-pix-receipt'] = 'Comprovante Pix Recebido'; }
 
 	  	return $order_statuses;

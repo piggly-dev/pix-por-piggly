@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.6
-Stable tag: 1.3.8
+Stable tag: 1.3.9
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -228,6 +228,11 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Changelog ==
 
+= 1.3.9 =
+
+* Bug na exibição do desconto no HTML;
+* Formato numérico corrigido na página de pagamento via Pix.
+
 = 1.3.8 =
 
 * Gestão eficiente e otimizada dos comprovantes Pix para exclusão e busca de comprovantes.
@@ -381,6 +386,11 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 * Versão inicial do plugin.
 
 == Upgrade Notice ==
+
+= 1.3.9 =
+
+* Bug na exibição do desconto no HTML;
+* Formato numérico corrigido na página de pagamento via Pix.
 
 = 1.3.8 =
 
