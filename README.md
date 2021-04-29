@@ -214,6 +214,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 # Changelog #
 
+## 1.3.10 ##
+
+* Correção de problemas com valores Pix.
+
 ## 1.3.9 ##
 
 * Bug na exibição do desconto no HTML;

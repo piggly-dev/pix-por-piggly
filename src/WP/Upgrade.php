@@ -51,7 +51,6 @@ class Upgrade
 		if ( \version_compare($version, '1.3.0', '<') )
 		{ 
 			WP::add_admin_notice(self::upgrade_notice());
-			self::protect_access(); 
 			self::setup_upgraded();
 		}
 
@@ -71,10 +70,11 @@ class Upgrade
 			}
 
 			WP::add_admin_notice(self::upgrade_notice());
-			self::protect_access(); 
 			self::setup_upgraded();
 		}
 
+		// Revalidate .htaccess files
+		self::protect_access();
 		// New version
 		update_option('wc_piggly_pix_version', WC_PIGGLY_PIX_PLUGIN_VERSION);
 	}

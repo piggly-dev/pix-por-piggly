@@ -552,7 +552,7 @@ class PixGateway extends WC_Payment_Gateway
 	{
 		$order_id  = method_exists($order, 'get_order_number') ? $order->get_order_number() : $order->get_id();
 		$order_key = $order->get_order_key();
-		$amount    = number_format($order->get_total(), 2, ',', '');
+		$amount    = $order->get_total();
 		
 		$this->instructions       = str_replace('{{pedido}}', $order_id, $this->instructions);
 		$this->receipt_page_value = $this->parse_receipt_link($this->receipt_page_value, $order_id, $order_key);
@@ -651,7 +651,7 @@ class PixGateway extends WC_Payment_Gateway
 			'pix' => $newPixCode,
 			'qrcode' => $qrCode['url'],
 			'order_id' => $order_id,
-			'amount' => $amount
+			'amount' => number_format($amount, 2, ',', '')
 		);
 	}
 
