@@ -192,7 +192,10 @@ class Core
 		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) return;
 
 		if ( $welcome || $upgraded )
-		{ wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway&screen=news' ) ); }
+		{ 
+			if ( wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway&screen=news' ) ) )
+			{ exit; }
+		}
 	}
 
 	/**

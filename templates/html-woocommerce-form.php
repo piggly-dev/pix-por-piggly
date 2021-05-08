@@ -24,6 +24,10 @@
 	<div class="woocommerce-message" role="alert">
 		<p>Recebemos o seu comprovante, em breve você receberá a confirmação do seu pagamento.</p>
 	</div>
+
+	<?php if ( $permalink !== false ) : ?>
+		<script>location.href="<?=$permalink?>";</script>
+	<?php endif; ?>
 <?php else : ?>
 	<?php if ( $error !== false ) : ?>
 	<div class="woocommerce-error" role="alert">

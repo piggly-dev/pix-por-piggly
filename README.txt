@@ -4,8 +4,8 @@ Contributors: pigglydev, caiquearaujo
 Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
-Tested up to: 5.6
-Stable tag: 1.3.10
+Tested up to: 5.7.1
+Stable tag: 1.3.12
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -26,6 +26,12 @@ O propósito deste plugin é permitir que você utilize o método de pagamento P
 > Se você apreciar a função deste plugin e quiser apoiar este trabalho, sinta-se livre para fazer qualquer doação para a chave aleatória Pix `aae2196f-5f93-46e4-89e6-73bf4138427b` ❤.
 
 > Não esqueça de deixar a sua avaliação sobre o plugin! Isso nos incentivará a lançar mais atualizações e continuar prestando um suporte de qualidade.
+
+== Novidades sobre a API Pix e atualização automática dos Pedidos ==
+
+Estamos preparando para vocês uma novidade única e imperdível. Até o final deste mês lançaremos a versão 1.4 para suporte as API Pix. Dessa forma, os Pix poderão ser verificados e processados automaticamente. Atualizando os pedidos no Woocommerce de forma automatizada. 
+
+**Fique ligado nas próximas atualizações**.
 
 == Novidades da versão 1.3.0 ==
 
@@ -228,6 +234,17 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Changelog ==
 
+= 1.3.12 =
+
+* Pequenas correções e melhorias.
+
+= 1.3.11 =
+
+* Correção de exibição duplicada dos shortcodes;
+* Melhorias no sistema de upload dos comprovantes;
+* Redirecionamento após comprovante recebido com sucesso;
+* Outras correções e melhorias.
+
 = 1.3.10 =
 
 * Validação dos arquivos .htaccess;
@@ -391,6 +408,17 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 * Versão inicial do plugin.
 
 == Upgrade Notice ==
+
+= 1.3.12 =
+
+* Pequenas correções e melhorias.
+
+= 1.3.11 =
+
+* Correção de exibição duplicada dos shortcodes;
+* Melhorias no sistema de upload dos comprovantes;
+* Redirecionamento após comprovante recebido com sucesso;
+* Outras correções e melhorias.
 
 = 1.3.10 =
 

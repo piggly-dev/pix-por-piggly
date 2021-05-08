@@ -2,12 +2,14 @@
 
 <div class="wpgly-wrapper">
 
-	<div class="wpgly-notice-box wpgly-action">
-		<h4 class="wpgly-title">Você Sabia?</h4>
-		Você pode, opcionalmente, limpar a pasta com as imagens dos QR Codes
-		sempre que desejar. Se o plugin não encontrar um QR Code, ele criará
-		novamente.
-	</div>
+	<h1 class="wpgly-title">Novidades sobre as API Pix</h1>
+
+	<p>
+		Estamos preparando para vocês uma novidade única e imperdível. Até o final
+		deste mês lançaremos a versão 1.4 para suporte as API Pix. Dessa forma, os
+		Pix poderão ser verificados e processados automaticamente. Atualizando os
+		pedidos no Woocommerce de forma automatizada. Fique ligado nas próximas atualizações.
+	</p>
 
 	<h1 class="wpgly-title">Recursos que só o <strong>Pix por Piggly</strong> tem:</h1>
 
@@ -24,6 +26,13 @@
 		<li>✅ Selecione o modelo de e-mail onde o Pix será enviado e o status do pedido enquanto aguarda a conferência do pagamento Pix.</li>
 		<li>✅ Utilize o Pix na API do Woocommerce.</li>
 	</ul>
+
+	<div class="wpgly-notice-box wpgly-action">
+		<h4 class="wpgly-title">Você Sabia?</h4>
+		Você pode, opcionalmente, limpar as images na pasta com os QR Codes
+		sempre que desejar. Se o plugin não encontrar um QR Code, ele criará
+		novamente.
+	</div>
 
 	<h1 class="wpgly-title">Novidades da versão 1.3.0</h1>
 

@@ -111,6 +111,7 @@ class PixGateway extends WC_Payment_Gateway
 		$this->bank = $this->get_option( 'bank', 0 );	
 		$this->qr_regenerate = $this->as_bool($this->get_option('qr_regenerate',1));
 		$this->select_icon = $this->get_option( 'select_icon', 'pix-payment-icon' );	
+		$this->redirect_after_receipt = $this->get_option( 'redirect_after_receipt', null );
 	}
 
 	/**
@@ -426,6 +427,7 @@ class PixGateway extends WC_Payment_Gateway
 			$fields = [
 				'auto_update_receipt' => 'no',
 				'hide_receipt_status' => 'no',
+				'redirect_after_receipt' => null,
 				'receipt_page_value' => '',
 				'whatsapp' => '',
 				'whatsapp_message' => __('Segue o comprovante para o pedido {{pedido}}:', WC_PIGGLY_PIX_PLUGIN_NAME),
@@ -515,10 +517,12 @@ class PixGateway extends WC_Payment_Gateway
 	 * Add pix template to thank you page.
 	 * 
 	 * @param WC_Order|int $order_id
+	 * @param bool $return_html
 	 * @since 1.2.0
+	 * @since 1.3.11 Option to return html instead echo it.
 	 * @return void
 	 */
-	public function thankyou_page ( $order_id ) 
+	public function thankyou_page ( $order_id, $return_html = false ) 
 	{
 		// Getting order object
 		$order = $order_id instanceof WC_Order ? $order_id : wc_get_order($order_id);
@@ -533,12 +537,24 @@ class PixGateway extends WC_Payment_Gateway
 		
 		$pixData = $this->get_pix_data( $order );
 
-		wc_get_template(
-			'html-woocommerce-thank-you-page.php',
-			$pixData,
-			WC()->template_path().\WC_PIGGLY_PIX_DIR_NAME.'/',
-			WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
-		);
+		if ( !$return_html )
+		{
+			wc_get_template(
+				'html-woocommerce-thank-you-page.php',
+				$pixData,
+				WC()->template_path().\WC_PIGGLY_PIX_DIR_NAME.'/',
+				WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
+			);
+		}
+		else
+		{
+			wc_get_template_html(
+				'html-woocommerce-thank-you-page.php',
+				$pixData,
+				WC()->template_path().\WC_PIGGLY_PIX_DIR_NAME.'/',
+				WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
+			);
+		}
 	}
 	
 	/**
@@ -659,12 +675,12 @@ class PixGateway extends WC_Payment_Gateway
 	 * Set current properties with $meta data and return $data
 	 * to export.
 	 * 
-	 * @param int $order_id
+	 * @param int|string $order_id
 	 * @param array $meta
 	 * @since 1.2.4
 	 * @return array
 	 */
-	protected function use_pix_meta ( int $order_id, array $meta )
+	protected function use_pix_meta ( $order_id, array $meta )
 	{
 		$amount              = $meta['amount'];
 		$this->key_value     = $meta['key_value'];

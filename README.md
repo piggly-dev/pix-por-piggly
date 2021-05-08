@@ -15,6 +15,12 @@ O propósito deste plugin é permitir que você utilize o método de pagamento P
 
 > Não esqueça de deixar a sua avaliação sobre o plugin! Isso nos incentivará a lançar mais atualizações e continuar prestando um suporte de qualidade.
 
+# Novidades sobre a API Pix e atualização automática dos Pedidos #
+
+Estamos preparando para vocês uma novidade única e imperdível. Até o final deste mês lançaremos a versão 1.4 para suporte as API Pix. Dessa forma, os Pix poderão ser verificados e processados automaticamente. Atualizando os pedidos no Woocommerce de forma automatizada. 
+
+**Fique ligado nas próximas atualizações**.
+
 # Novidades da versão 1.3.0 #
 
 Na versão **1.3.0** do plugin é possível:
@@ -214,8 +220,16 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 # Changelog #
 
+## 1.3.11 ##
+
+* Correção de exibição duplicada dos shortcodes;
+* Melhorias no sistema de upload dos comprovantes;
+* Redirecionamento após comprovante recebido com sucesso;
+* Outras correções e melhorias.
+
 ## 1.3.10 ##
 
+* Validação dos arquivos .htaccess;
 * Correção de problemas com valores Pix.
 
 ## 1.3.9 ##

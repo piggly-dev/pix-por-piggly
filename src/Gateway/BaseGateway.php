@@ -1,6 +1,8 @@
 <?php
 namespace Piggly\WC\Pix\Gateway;
 
+use Exception;
+use Piggly\WC\Pix\WP\Debug;
 use Piggly\WC\Pix\WP\Helper as WP;
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -109,7 +111,7 @@ class BaseGateway
 		if ( !$gateway->is_payment_waiting($order) )
 		{ return; }
 
-		$gateway->thankyou_page($order);
+		return $gateway->thankyou_page($order, true);
 	}
 
 
@@ -119,101 +121,31 @@ class BaseGateway
 	 * 
 	 * @param array $attrs
 	 * @since 1.3.0
+	 * @since 1.3.11 Melhorias e redirecionamento
 	 * @return void
 	 */
 	public function pix_form_shortcode ( $attrs )
 	{
-		global $wpdb;
 		$data = [];
 
 		$data['sent'] = $_SERVER['REQUEST_METHOD'] === 'POST';
 		$data['link'] = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";		
 		$data['error'] = false;
 		$data['auto_fill'] = true;
+		$data['permalink'] = false;
 
 		if ( $data['sent'] )
-		{
-			// processing data
-			$email = filter_input( INPUT_POST, 'wpgly_pix_email', \FILTER_SANITIZE_STRING );
-			$order_key = filter_input( INPUT_POST, 'wpgly_pix_order_key', \FILTER_SANITIZE_STRING );
-			$nonce = filter_input( INPUT_POST, 'wpgly_pix_nonce', \FILTER_SANITIZE_STRING );
-			$auto_fill = filter_input( INPUT_POST, 'wpgly_pix_auto_fill', \FILTER_SANITIZE_STRING ) == 'true' ? true : false;
+		{ 
+			try
+			{ $this->validateReceiptForm(); }
+			catch ( Exception $e )
+			{ $data['error'] = $e->getMessage(); }
 
-			if ( !wp_verify_nonce( $nonce, 'wpgly-pix-receipt' ) )
-			{ $data['error'] = 'Não foi possível validar o formulário no momento.'; }
-			else
-			{
-				if ( empty($email) || empty($order_key) )
-				{ $data['error'] = 'Nem todos os campos foram preenchidos.'; }
-				else
-				{
-					if ( empty($_FILES['wpgly_pix_receipt']))
-					{ $data['error'] = 'O comprovante não foi enviado.'; }
-					else
-					{
-						$upload     = wp_upload_dir();
-						$uploadPath = $upload['basedir'].'/'.\WC_PIGGLY_PIX_DIR_NAME.'/receipts/';
-						$uploadUrl  = $upload['baseurl'].'/'.\WC_PIGGLY_PIX_DIR_NAME.'/receipts/';
-						$extension  = pathinfo(basename($_FILES['wpgly_pix_receipt']['name']),PATHINFO_EXTENSION);
+			$settings = get_option( 'woocommerce_wc_piggly_pix_gateway_settings', [] );
 
-						// Check file size
-						if ($_FILES['wpgly_pix_receipt']['size'] > 2000000) 
-						{ $data['error'] = 'O tamanho máximo permitido para o arquivo é 2MB, envie um arquivo menor.'; }
-						else if ( !\in_array($extension, ['jpg','jpeg','png','pdf']) )
-						{ $data['error'] = 'O comprovante foi enviado em um tipo de arquivo não compatível. Envie uma imagem ou um PDF.'; }
-						else
-						{
-							$finfo = finfo_open(FILEINFO_MIME_TYPE);
-							$mime = finfo_file($finfo, $_FILES['wpgly_pix_receipt']['tmp_name']);
-							finfo_close($finfo);
-
-							if ( !in_array($mime, ['image/jpg','image/jpeg','image/png','application/pdf']))
-							{ $data['error'] = 'O comprovante foi enviado em um tipo de arquivo não compatível. Envie uma imagem ou um PDF.'; }
-							else
-							{
-								$filename = md5($order_key.time()).'.'.$extension;
-
-								if ( !\file_exists( $uploadPath ) ) 
-								{ wp_mkdir_p($uploadPath); }
-
-								if ( !\move_uploaded_file($_FILES['wpgly_pix_receipt']['tmp_name'], $uploadPath.$filename) )
-								{ $data['error'] = 'Não foi possível enviar o comprovante agora.'; }
-								else
-								{									
-									if ( $auto_fill )
-									{
-										$order = wc_get_order((int)wc_get_order_id_by_order_key($order_key));
-
-										if ( $order !== false )
-										{ 
-											$order_key = $order->get_id();
-											$order->update_meta_data('_wc_piggly_pix_receipt', $uploadUrl.$filename); 
-
-											$settings = get_option( 'woocommerce_wc_piggly_pix_gateway_settings', [] );
-											
-											if ( $settings['auto_update_receipt'] === 'yes' )
-											{ $order->update_status( 'pix-receipt', __('Comprovante Pix Recebido.', \WC_PIGGLY_PIX_PLUGIN_NAME) ); }
-
-											$order->save();
-										}
-									}
-
-									$wpdb->insert(
-										$wpdb->prefix . 'wpgly_pix_receipts',
-										[
-											'order_number' => $order_key,
-											'customer_email' => $email,
-											'pix_receipt' => $uploadUrl.$filename,
-											'auto_fill' => (int)$auto_fill,
-										]
-									);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+			if ( isset($settings['redirect_after_receipt']) && !empty($settings['redirect_after_receipt']) )
+			{ $data['permalink'] = get_permalink((int)$settings['redirect_after_receipt']); }
+		} 
 		
 		if ( !$data['sent'] || $data['error'] !== false )
 		{
@@ -238,11 +170,117 @@ class BaseGateway
 		
 		$data['_nonce'] = wp_create_nonce('wpgly-pix-receipt');
 		
-		wc_get_template(
+		return wc_get_template_html(
 			'html-woocommerce-form.php',
 			$data,
 			WC()->template_path().\WC_PIGGLY_PIX_DIR_NAME.'/',
 			\WC_PIGGLY_PIX_PLUGIN_PATH.'templates/'
 		);		
+	}
+
+	/**
+	 * Validate and process receipt form data.
+	 *
+	 * @since 1.3.11
+	 * @return void
+	 * @throws Exception
+	 */
+	protected function validateReceiptForm ()
+	{
+		global $wpdb;
+
+		// processing data
+		$email = filter_input( INPUT_POST, 'wpgly_pix_email', \FILTER_SANITIZE_STRING );
+		$order_key = filter_input( INPUT_POST, 'wpgly_pix_order_key', \FILTER_SANITIZE_STRING );
+		$nonce = filter_input( INPUT_POST, 'wpgly_pix_nonce', \FILTER_SANITIZE_STRING );
+		$auto_fill = filter_input( INPUT_POST, 'wpgly_pix_auto_fill', \FILTER_SANITIZE_STRING ) == 'true' ? true : false;
+
+		if ( !wp_verify_nonce( $nonce, 'wpgly-pix-receipt' ) )
+		{ throw new Exception('Não foi possível validar o formulário no momento.'); }
+
+		if ( empty($email) || empty($order_key) )
+		{ throw new Exception('Nem todos os campos foram preenchidos.'); }
+
+		if ( empty($_FILES['wpgly_pix_receipt']))
+		{ throw new Exception('O comprovante não foi enviado.'); }
+
+		$expName    = \explode('.', $_FILES['wpgly_pix_receipt']['name']);
+
+		// Extension
+		$pathExt = pathinfo(basename($_FILES['wpgly_pix_receipt']['name']),PATHINFO_EXTENSION);
+		$nameExt = is_array( $expName ) ? $expName[count($expName)-1] : 'unknown';
+
+		try
+		{
+			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+			$mime = finfo_file($finfo, $_FILES['wpgly_pix_receipt']['tmp_name']);
+			finfo_close($finfo);
+		}
+		catch ( Exception $e )
+		{ 
+			Debug::error(\sprintf('O usuário tentou realizar o upload, mas o arquivo não foi encontrado em `%s`. Verifique as configurações do PHP e as permissões da pasta.', $_FILES['wpgly_pix_receipt']['tmp_name']));
+			throw new Exception('O arquivo não pode ser enviado no momento. Tente novamente mais tarde.'); 
+		}
+
+		// Validate extension
+		$validateExt = \in_array($pathExt, ['jpg','jpeg','png','pdf']) || \in_array($nameExt, ['jpg','jpeg','png','pdf']);
+		// Validate mime type
+		$mimeValidation = \in_array($mime, ['image/jpg','image/jpeg','image/png','application/pdf']);
+
+		if ( !$validateExt && !$mimeValidation )
+		{ throw new Exception('O nome do arquivo não indica uma imagem ou um PDF compatível.'); }
+
+		if ( !$mimeValidation )
+		{ throw new Exception('O comprovante foi enviado em um tipo de arquivo não compatível. Envie uma imagem ou um PDF.'); }
+		
+		// Check file size
+		if ($_FILES['wpgly_pix_receipt']['size'] > 2000000) 
+		{ throw new Exception('O tamanho máximo permitido para o arquivo é 2MB, envie um arquivo menor.'); }
+
+		$mapExt = ['image/jpg'=>'jpg','image/jpeg'=>'jpeg','image/png'=>'png','application/pdf'=>'pdf'];
+		// Fix extension
+		$extension = $validateExt ? $pathExt ?? $nameExt : $mapExt[$mime];
+		$filename = md5($order_key.time()).'.'.$extension;
+		
+		$upload     = wp_upload_dir();
+		$uploadPath = $upload['basedir'].'/'.\WC_PIGGLY_PIX_DIR_NAME.'/receipts/';
+		$uploadUrl  = $upload['baseurl'].'/'.\WC_PIGGLY_PIX_DIR_NAME.'/receipts/';
+
+		if ( !\file_exists( $uploadPath ) ) 
+		{ wp_mkdir_p($uploadPath); }
+
+		if ( !\move_uploaded_file($_FILES['wpgly_pix_receipt']['tmp_name'], $uploadPath.$filename) )
+		{ 
+			Debug::error(\sprintf('Não foi mover o arquivo de upload de `%s` para `%s`.', $_FILES['wpgly_pix_receipt']['tmp_name'], $uploadPath.$filename));
+			throw new Exception('Não foi possível enviar o comprovante agora.'); 
+		}
+										
+		if ( $auto_fill )
+		{
+			$order = wc_get_order((int)wc_get_order_id_by_order_key($order_key));
+
+			if ( $order !== false )
+			{ 
+				$order_key = $order->get_id();
+				$order->update_meta_data('_wc_piggly_pix_receipt', $uploadUrl.$filename); 
+
+				$settings = get_option( 'woocommerce_wc_piggly_pix_gateway_settings', [] );
+				
+				if ( $settings['auto_update_receipt'] === 'yes' )
+				{ $order->update_status( 'pix-receipt', __('Comprovante Pix Recebido.', \WC_PIGGLY_PIX_PLUGIN_NAME) ); }
+
+				$order->save();
+			}
+		}
+
+		$wpdb->insert(
+			$wpdb->prefix . 'wpgly_pix_receipts',
+			[
+				'order_number' => $order_key,
+				'customer_email' => $email,
+				'pix_receipt' => $uploadUrl.$filename,
+				'auto_fill' => (int)$auto_fill,
+			]
+		);
 	}
 }

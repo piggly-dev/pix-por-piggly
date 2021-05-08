@@ -49,10 +49,7 @@ class Upgrade
 		}
 
 		if ( \version_compare($version, '1.3.0', '<') )
-		{ 
-			WP::add_admin_notice(self::upgrade_notice());
-			self::setup_upgraded();
-		}
+		{ WP::add_admin_notice(self::upgrade_notice()); }
 
 		// Fix to .htaccess created as a folder...
 		if ( \version_compare($version, '1.3.7', '<') )
@@ -68,13 +65,11 @@ class Upgrade
 				rmdir($PATH);
 				file_put_contents( $PATH, 'Options -Indexes' ); 
 			}
-
-			WP::add_admin_notice(self::upgrade_notice());
-			self::setup_upgraded();
 		}
 
 		// Revalidate .htaccess files
 		self::protect_access();
+		self::setup_upgraded();
 		// New version
 		update_option('wc_piggly_pix_version', WC_PIGGLY_PIX_PLUGIN_VERSION);
 	}
@@ -119,6 +114,26 @@ class Upgrade
 
 		if ( !\file_exists( $PATH ) )
 		{ file_put_contents( $PATH, 'Options -Indexes' ); }
+
+		
+
+		// Check for index.php file
+		$PATH = sprintf('%s/%s/index.php', $upload['basedir'], \WC_PIGGLY_PIX_DIR_NAME);
+
+		if ( !\file_exists( $PATH ) )
+		{ file_put_contents( $PATH, '<?php // Silence is golden' ); }
+
+		// Check for index.php file
+		$PATH = sprintf('%s/%s/qr-codes/index.php', $upload['basedir'], \WC_PIGGLY_PIX_DIR_NAME);
+
+		if ( !\file_exists( $PATH ) )
+		{ file_put_contents( $PATH, '<?php // Silence is golden' ); }
+
+		// Check for index.php file
+		$PATH = sprintf('%s/%s/receipts/index.php', $upload['basedir'], \WC_PIGGLY_PIX_DIR_NAME);
+
+		if ( !\file_exists( $PATH ) )
+		{ file_put_contents( $PATH, '<?php // Silence is golden' ); }
 	}
 
 	/**

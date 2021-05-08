@@ -6,6 +6,8 @@ use Piggly\Pix\Parser;
 
 <div class="wpgly-wrapper">
 
+	<h3 class="wpgly-title">Formulário de Comprovantes</h3>
+
 	<div class="wpgly-field">
 		<span class="wpgly-label">Atualizar Pedido automaticamente para o status "Comprovante Pix Recebido"</span>
 		<label class="wpgly-label wpgly-checkbox" for="<?=$this->get_field_name('auto_update_receipt')?>">
@@ -20,6 +22,27 @@ use Piggly\Pix\Parser;
 			<input type="checkbox" name="<?=$this->get_field_name('hide_receipt_status')?>" id="<?=$this->get_field_name('hide_receipt_status')?>" value="yes" <?=(($this->hide_receipt_status) ? 'checked="checked"' : '');?>> Sim, ocultar do painel de pedidos.
 		</label>
 		<p class="description">Ao ocultar o status do painel de pedidos, pedidos marcado com o status precisarão ser atualizados para outro status.</p>
+	</div>
+
+	<div class="wpgly-field">
+		<label class="wpgly-label" for="<?=$this->get_field_name('redirect_after_receipt')?>">Redirecionar para a página após o envio do comprovante:</label>
+		<select required class="wc-enhanced-select" name="<?=$this->get_field_name('redirect_after_receipt')?>" id="<?=$this->get_field_name('redirect_after_receipt')?>">
+			<option>Selecione uma página...</option>
+			<?php
+			$selected = $this->redirect_after_receipt ?? null;
+			$options  = get_pages('post_status=publish');
+
+			foreach ( $options as $page )
+			{ 
+				if ( $page->ID === (int)$selected )
+				{ echo sprintf('<option value="%s" selected="selected">%s</option>', $page->ID, $page->post_title); }
+				else
+				{ echo sprintf('<option value="%s">%s</option>', $page->ID, $page->post_title); }
+			}
+
+			?>
+		</select>
+		<p class="description">O usuário será redirecionado para a página acima após sucesso no envio do comprovante.</p>
 	</div>
 
 	<a class="wpgly-button wpgly-action woocommerce-save-button" href="<?=admin_url('admin.php?page='.WC_PIGGLY_PIX_PLUGIN_NAME);?>">Visualizar Comprovantes</a>
