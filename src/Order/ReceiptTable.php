@@ -139,7 +139,7 @@ class ReceiptTable extends WP_List_Table
 		//How many to display per page?
 		$perpage = 10;
 		//Which page is this?
-		$paged = !empty($_GET["paged"]) ? mysql_real_escape_string($_GET["paged"]) : '';
+		$paged = !empty($_GET["paged"]) ? filter_input ( INPUT_GET, 'paged', \FILTER_VALIDATE_INT ) : '';
 
 		//Page Number
 		if( empty($paged) || !is_numeric($paged) || $paged<=0 )
@@ -197,6 +197,9 @@ class ReceiptTable extends WP_List_Table
 					$actions['edit'] = sprintf('<a href="%s">%s</a>', stripslashes($link), __('Editar Pedido', \WC_PIGGLY_PIX_PLUGIN_NAME));
 				} 
 
+				// Mark receipt as trusted
+				$trusted = isset($rec->trusted) ? \boolval($rec->trusted) : null;
+
 				foreach ( $columns as $column_name => $column_display )
 				{
 					$attrs = [];
@@ -221,7 +224,13 @@ class ReceiptTable extends WP_List_Table
 							printf('<td %s>%s</td>', implode(' ', $attrs), $rec->customer_email);
 							break;
 						case 'pix_receipt':
-							printf('<td %s><a href="%s" target="_blank">%s</a></td>', implode(' ', $attrs), stripslashes($rec->pix_receipt), __('Ver Comprovante', \WC_PIGGLY_PIX_PLUGIN_NAME));
+							printf(
+								'<td %s><a href="%s" target="_blank">%s</a>%s</td>', 
+								implode(' ', $attrs), 
+								stripslashes($rec->pix_receipt), 
+								__('Ver Comprovante', \WC_PIGGLY_PIX_PLUGIN_NAME),
+								$trusted === true ? ' - <small>(Arquivo seguro)</small>' : ($trusted === false ? ' - <small>(Arquivo aceito, mas sem validação de segurança)</small>' : '')
+							);
 							break;
 						case 'send_at':
 							$date = date_create($rec->send_at);

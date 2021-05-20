@@ -1,6 +1,7 @@
 <?php
 namespace Piggly\WC\Pix\WP;
 
+use Exception;
 use Piggly\WC\Pix\WP\Helper as WP;
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -68,6 +69,7 @@ class Upgrade
 		}
 
 		// Revalidate .htaccess files
+		self::update_database();
 		self::protect_access();
 		self::setup_upgraded();
 		// New version
@@ -115,8 +117,6 @@ class Upgrade
 		if ( !\file_exists( $PATH ) )
 		{ file_put_contents( $PATH, 'Options -Indexes' ); }
 
-		
-
 		// Check for index.php file
 		$PATH = sprintf('%s/%s/index.php', $upload['basedir'], \WC_PIGGLY_PIX_DIR_NAME);
 
@@ -134,6 +134,39 @@ class Upgrade
 
 		if ( !\file_exists( $PATH ) )
 		{ file_put_contents( $PATH, '<?php // Silence is golden' ); }
+	}
+
+	/**
+	 * Upgrade database when needed.
+	 * 
+	 * @since 1.3.0
+	 * @return void
+	 */
+	public static function update_database ()
+	{
+		global $wpdb;
+
+		$ivl_db_version = \WC_PIGGLY_PIX_DB_VERSION;
+		$ins_db_version = get_option('wc_piggly_pix_dbversion', '0' );
+
+		if ( \version_compare($ins_db_version, $ivl_db_version, '>=' ) )
+		{ return; }
+
+		$prefix = $wpdb->prefix;
+		$table_name = $prefix . 'wpgly_pix_receipts';
+
+		if ( \version_compare($ins_db_version, '1.0.1', '<' ) )
+		{
+			if ( empty($wpdb->get_var("SHOW COLUMNS FROM `$table_name` LIKE 'trusted'")) )
+			{ 
+				try
+				{ $wpdb->query("ALTER TABLE $table_name ADD trusted tinyint(1) NOT NULL DEFAULT 1"); }
+				catch ( Exception $e )
+				{ print_r($e); die(); }
+			}
+		}
+
+		update_option('wc_piggly_pix_dbversion', $ivl_db_version);
 	}
 
 	/**

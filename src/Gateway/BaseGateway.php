@@ -210,23 +210,41 @@ class BaseGateway
 		$pathExt = pathinfo(basename($_FILES['wpgly_pix_receipt']['name']),PATHINFO_EXTENSION);
 		$nameExt = is_array( $expName ) ? $expName[count($expName)-1] : 'unknown';
 
+		// Cannot validate mime type
+		$mimeValidation = false;
+		// If file should be trusted
+		$trusted = true;
+
 		try
 		{
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$mime = finfo_file($finfo, $_FILES['wpgly_pix_receipt']['tmp_name']);
 			finfo_close($finfo);
+			
+			// Validate mime type
+			$mimeValidation = \in_array($mime, ['image/jpg','image/jpeg','image/png','application/pdf']);
+			$trusted = $mimeValidation;
 		}
 		catch ( Exception $e )
 		{ 
-			Debug::error(\sprintf('O usuário tentou realizar o upload, mas o arquivo não foi encontrado em `%s`. Verifique as configurações do PHP e as permissões da pasta.', $_FILES['wpgly_pix_receipt']['tmp_name']));
+			Debug::error(\sprintf('O usuário tentou realizar o upload, mas o arquivo não foi encontrado em `%s`. Verifique as configurações do PHP e as permissões da pasta. Verifique, ainda, a biblioteca MAGIC e a extensão file do PHP.', $_FILES['wpgly_pix_receipt']['tmp_name']));
 			throw new Exception('O arquivo não pode ser enviado no momento. Tente novamente mais tarde.'); 
+		}
+		finally
+		{
+			if ( !$mimeValidation )
+			{
+				$mime = $_FILES['wpgly_pix_receipt']['type'];
+				// Trust in browser, but do a system alert...
+				Debug::info(\sprintf('O arquivo `%s` enviado não é confiável...', $_FILES['wpgly_pix_receipt']['tmp_name']));
+				$mimeValidation = \in_array($mime, ['image/jpg','image/jpeg','image/png','application/pdf']);
+				$trusted = false;
+			}
 		}
 
 		// Validate extension
 		$validateExt = \in_array($pathExt, ['jpg','jpeg','png','pdf']) || \in_array($nameExt, ['jpg','jpeg','png','pdf']);
-		// Validate mime type
-		$mimeValidation = \in_array($mime, ['image/jpg','image/jpeg','image/png','application/pdf']);
-
+		
 		if ( !$validateExt && !$mimeValidation )
 		{ throw new Exception('O nome do arquivo não indica uma imagem ou um PDF compatível.'); }
 
@@ -273,14 +291,28 @@ class BaseGateway
 			}
 		}
 
+		$table_name = $wpdb->prefix . 'wpgly_pix_receipts';
+
+		$insert_data = [
+			'order_number' => $order_key,
+			'customer_email' => $email,
+			'pix_receipt' => $uploadUrl.$filename,
+			'auto_fill' => (int)$auto_fill
+		];
+
+		$trusted = $wpdb->get_results(
+			"SELECT COLUMN_NAME "
+			. "FROM INFORMATION_SCHEMA.COLUMNS WHERE "
+			. "table_name = '$table_name' "
+			. "AND column_name = 'trusted'"
+		);
+
+		if ( !empty($trusted) )
+		{ $insert_data['trusted'] = (int)$trusted; }
+
 		$wpdb->insert(
-			$wpdb->prefix . 'wpgly_pix_receipts',
-			[
-				'order_number' => $order_key,
-				'customer_email' => $email,
-				'pix_receipt' => $uploadUrl.$filename,
-				'auto_fill' => (int)$auto_fill,
-			]
+			$table_name,
+			$insert_data
 		);
 	}
 }

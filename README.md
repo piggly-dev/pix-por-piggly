@@ -220,6 +220,16 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 # Changelog #
 
+## 1.3.13 ##
+
+* Aumento de segurança na validação dos arquivos enviados como comprovantes;
+* Correção de bug na página de "Comprovantes Pix";
+* Outras melhorias e correções.
+
+## 1.3.12 ##
+
+* Pequenas correções e melhorias.
+
 ## 1.3.11 ##
 
 * Correção de exibição duplicada dos shortcodes;

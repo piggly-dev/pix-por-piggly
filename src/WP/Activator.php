@@ -75,10 +75,6 @@ class Activator
 			@dbDelta( $SQL );
 			update_option('wc_piggly_pix_dbversion', $ivl_db_version);
 		}
-		else
-		{
-			// Version upgrade
-		}
 	}
 
 	/**

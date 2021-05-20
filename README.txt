@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.7.1
-Stable tag: 1.3.12
+Stable tag: 1.3.13
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -234,6 +234,12 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Changelog ==
 
+= 1.3.13 =
+
+* Aumento de segurança na validação dos arquivos enviados como comprovantes;
+* Correção de bug na página de "Comprovantes Pix";
+* Outras melhorias e correções.
+
 = 1.3.12 =
 
 * Pequenas correções e melhorias.
@@ -409,63 +415,8 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Upgrade Notice ==
 
-= 1.3.12 =
+= 1.3.13 =
 
-* Pequenas correções e melhorias.
-
-= 1.3.11 =
-
-* Correção de exibição duplicada dos shortcodes;
-* Melhorias no sistema de upload dos comprovantes;
-* Redirecionamento após comprovante recebido com sucesso;
-* Outras correções e melhorias.
-
-= 1.3.10 =
-
-* Validação dos arquivos .htaccess;
-* Correção de problemas com valores Pix.
-
-= 1.3.9 =
-
-* Bug na exibição do desconto no HTML;
-* Formato numérico corrigido na página de pagamento via Pix.
-
-= 1.3.8 =
-
-* Gestão eficiente e otimizada dos comprovantes Pix para exclusão e busca de comprovantes.
-
-= 1.3.7 =
-
-* Correção no arquivo `.htaccess` que gera um erro 403 ao acessar os comprovantes.
-
-= 1.3.6 =
-
-* Descrição avançada com Pix com passos para pagamento.
-
-= 1.3.5 =
-
-* Escolher cor do ícone para o Pix;
-* Ocultar o status "Comprovante Pix Recebido" no painel de pedidos;
-* Correções e melhorias indicadas no suporte.
-
-= 1.3.4 =
-
-* Correção do bug para a primeira instalação do plugin, retornando valores vazios.
-
-= 1.3.3 =
-
-* A mudança do status para "Comprovante Pix Recebido" tornou-se opcional.
-
-= 1.3.2 =
-
-* Correção para ocultar o botão "Enviar Comprovante".
-
-= 1.3.1 =
-
-* Correção do erro fatal no método remove_qr_image.
-
-= 1.3.0 =
-
-* Suporte a formulário nativo para envio dos comprovantes;
-* Melhorias no shortcode [pix-por-piggly];
-* Melhorias e correções em gerais.
+* Aumento de segurança na validação dos arquivos enviados como comprovantes;
+* Correção de bug na página de "Comprovantes Pix";
+* Outras melhorias e correções.
