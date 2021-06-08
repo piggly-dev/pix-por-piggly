@@ -4,6 +4,7 @@ namespace Piggly\WC\Pix\Gateway;
 use Exception;
 use Piggly\WC\Pix\WP\Debug;
 use Piggly\WC\Pix\WP\Helper as WP;
+use RuntimeException;
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
@@ -182,6 +183,7 @@ class BaseGateway
 	 * Validate and process receipt form data.
 	 *
 	 * @since 1.3.11
+	 * @since 1.3.14 Added actions
 	 * @return void
 	 * @throws Exception
 	 */
@@ -230,6 +232,7 @@ class BaseGateway
 			Debug::error(\sprintf('O usuário tentou realizar o upload, mas o arquivo não foi encontrado em `%s`. Verifique as configurações do PHP e as permissões da pasta. Verifique, ainda, a biblioteca MAGIC e a extensão file do PHP.', $_FILES['wpgly_pix_receipt']['tmp_name']));
 			throw new Exception('O arquivo não pode ser enviado no momento. Tente novamente mais tarde.'); 
 		}
+
 		finally
 		{
 			if ( !$mimeValidation )
@@ -288,6 +291,9 @@ class BaseGateway
 				{ $order->update_status( 'pix-receipt', __('Comprovante Pix Recebido.', \WC_PIGGLY_PIX_PLUGIN_NAME) ); }
 
 				$order->save();
+
+				// Do after save order
+				do_action('wpgly_pix_after_save_receipt_to_order', $order->get_id(), $order);
 			}
 		}
 

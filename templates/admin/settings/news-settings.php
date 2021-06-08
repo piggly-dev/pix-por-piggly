@@ -2,14 +2,30 @@
 
 <div class="wpgly-wrapper">
 
-	<h1 class="wpgly-title">Novidades sobre as API Pix</h1>
+	<h1 class="wpgly-title">Novidades da versão 1.3.14</h1>
 
 	<p>
-		Estamos preparando para vocês uma novidade única e imperdível. Até o final
-		deste mês lançaremos a versão 1.4 para suporte as API Pix. Dessa forma, os
-		Pix poderão ser verificados e processados automaticamente. Atualizando os
-		pedidos no Woocommerce de forma automatizada. Fique ligado nas próximas atualizações.
+		O plugin agora suporta filtros e adota ações para personalizar
+		ainda mais o comportamento do mesmo. Alguns filtros, entretanto,
+		requerem conhecimento para ter certeza do que está sendo feito.
 	</p>
+
+	<h2>Filtros</h2>
+
+	<ul class="wpgly-ul">
+		<li><code>wpgly_pix_discount</code> Personaliza o valor calculado para o desconto antes de aplicar.</li>
+		<li><code>wpgly_pix_before_create_pix_code</code> Personaliza ou altera o objeto Payload do Pix antes de gerar o código.</li>
+		<li><code>wpgly_pix_before_save_pix_metadata</code> Personaliza os metadados do Pix que serão salvos ao pedido antes de salvar o pedido.</li>
+		<li><code>wpgly_pix_after_create_api_response</code> Personaliza a <code>array</code> que é retornada para a API do Woocomerce.</li>
+	</ul>
+
+	<h2>Ações</h2>
+
+	<ul class="wpgly-ul">
+		<li><code>wpgly_pix_after_save_receipt_to_order</code> É executado após salvar um comprovante Pix nos metadados do pedido.</li>
+		<li><code>wpgly_pix_after_delete_receipt_from_order</code> É executado após deletar um comprovante Pix de um pedido.</li>
+		<li><code>wpgly_pix_after_process_payment</code> É executado durante o processamento do pagamento.</li>
+	</ul>
 
 	<h1 class="wpgly-title">Recursos que só o <strong>Pix por Piggly</strong> tem:</h1>
 

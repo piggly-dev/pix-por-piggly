@@ -3,7 +3,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-use Piggly\Pix\Payload;
+use Piggly\Pix\StaticPayload;
 
 $actualLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
@@ -11,7 +11,7 @@ $items = [
 	'news' => ['label'=>'Sobre o Plugin','url'=>$baseUrl.'&screen=news'],
 	'main' => ['label'=>'Configurações Gerais','url'=>$baseUrl],
 	'pix' => ['label'=>'Dados do Pix','url'=>$baseUrl.'&screen=pix'],
-	//'api' => ['label'=>'Automação & API Pix','url'=>$baseUrl.'&screen=api'],
+	'api' => ['label'=>'Automação & API Pix','url'=>$baseUrl.'&screen=api'],
 	'import' => ['label'=>'Importar Pix','url'=>$baseUrl.'&screen=import'],
 	'shortcode' => ['label'=>'Shortcodes','url'=>$baseUrl.'&screen=shortcode'],
 	'orders' => ['label'=>'Pedidos, Desconto & E-mails','url'=>$baseUrl.'&screen=orders'],
@@ -40,7 +40,7 @@ echo '</ul>';
 </div>
 <?php endif; ?>
 
-<?php if ( !Payload::supportQrCode() ) : ?>
+<?php if ( !StaticPayload::supportQrCode() ) : ?>
 <div class="error">
 	<p>Você precisa da extensão <strong>GD</strong> do PHP para gerar os <strong>QR Codes</strong>. Instale e habilite a extensão no seu servidor web.</p>
 </div>

@@ -1,7 +1,8 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <?php
+
+use Piggly\Pix\Enums\QrCode;
 use Piggly\Pix\Parser;
-use Piggly\Pix\Payload;
 use Piggly\Pix\StaticPayload;
 ?>
 
@@ -119,7 +120,18 @@ use Piggly\Pix\StaticPayload;
 
 	$amount    = str_replace(',', '.', filter_input( INPUT_POST, 'amount', FILTER_SANITIZE_STRING ) );
 	$order_id  = filter_input( INPUT_POST, 'order_id', FILTER_SANITIZE_STRING );
-	$order     = new WC_Order($order_id);
+
+	try
+	{ $order = new WC_Order($order_id); }
+	catch ( Exception $e )
+	{
+		?>
+		<div class="wpgly-notice-box wpgly-alert">
+			<strong>Nenhum pedido foi carregado: <code><?=$e->getMessage();?></code>
+		</div>
+		<?php
+	}
+	
 	$order_key = !$order ? '' : $order->get_order_key();
 
 	if ( !empty($amount) ) :
@@ -133,12 +145,12 @@ use Piggly\Pix\StaticPayload;
 
 			$pix = 
 				(new StaticPayload())
+					->setAmount((float)$amount)
+					->setTid($this->identifier)
 					->setPixKey($this->key_type, $this->key_value)
 					->setDescription(sprintf('Compra em %s', $this->store_name))
 					->setMerchantName($this->merchant_name)
-					->setMerchantCity($this->merchant_city)
-					->setAmount((float)$amount)
-					->setTid($this->identifier);
+					->setMerchantCity($this->merchant_city);
 			
 			// Get alias for pix
 			$this->key_type_alias = Parser::getAlias($this->key_type); 
@@ -202,7 +214,7 @@ use Piggly\Pix\StaticPayload;
 				array(
 					'data' => $this,
 					'pix' => $pix->getPixCode(),
-					'qrcode' => $this->pix_qrcode && Payload::supportQrCode() ? $pix->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) : '',
+					'qrcode' => $this->pix_qrcode && StaticPayload::supportQrCode() ? $pix->getQRCode(QrCode::OUTPUT_PNG, QrCode::ECC_L) : '',
 					'order_id' => $order_id,
 					'amount' => $amount
 				),
@@ -218,7 +230,7 @@ use Piggly\Pix\StaticPayload;
 			?>
 			<div class="wpgly-notice-box wpgly-error">
 				<strong>Um erro foi capturado, informe ao suporte: <code><?=$e->getMessage();?></code>
-		</div>
+			</div>
 			<?php
 		}
 	endif;

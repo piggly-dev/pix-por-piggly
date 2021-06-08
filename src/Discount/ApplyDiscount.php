@@ -41,7 +41,7 @@ class ApplyDiscount
 		if ( is_checkout() ) 
 		{
 			$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-			wp_enqueue_script( \WC_PIGGLY_PIX_PLUGIN_NAME, WC_PIGGLY_PIX_PLUGIN_URL.'assets/js/public/update-checkout' . $suffix . '.js', array( 'wc-checkout' ), \WC_PIGGLY_PIX_PLUGIN_VERSION );
+			wp_enqueue_script( \WC_PIGGLY_PIX_PLUGIN_NAME, \WC_PIGGLY_PIX_PLUGIN_URL.'assets/js/public/update-checkout' . $suffix . '.js', array( 'wc-checkout' ), \WC_PIGGLY_PIX_PLUGIN_VERSION );
 		}
 	}
 
@@ -79,6 +79,7 @@ class ApplyDiscount
 	 *
 	 * @param WC_Cart $cart Cart object.
 	 * @since 1.2.0
+	 * @since 1.3.14 Fix discount value
 	 * @return void
 	 */
 	public function add_discount( $cart ) 
@@ -92,15 +93,18 @@ class ApplyDiscount
 		$applies        = !empty($amount) && $payment_method === 'wc_piggly_pix_gateway';
 
 		if ( !$applies ) return;
-  
+
 		if ( strstr( $amount, '%' ) ) 
 		{ 
-			$discount = str_replace('%', '', $amount);
-			$discount = floatval( wc_format_decimal( $discount ) );
-			$discount = number_format($cart->subtotal_ex_tax * ($discount / 100), 2); 
+			$discount = \str_replace('%', '', $amount);
+			$discount = \floatval( wc_format_decimal( $discount ) );
+			$discount = \floatval( wc_format_decimal(($cart->subtotal_ex_tax - $cart->discount_cart) * ($discount / 100)) ); 
 		} 
 		else 
-		{ $discount = floatval( wc_format_decimal( $amount ) ); }
+		{ $discount = \floatval( wc_format_decimal( $amount ) ); }
+
+		// Apply filter to pix discount
+		$discount = apply_filters( 'wpgly_pix_discount', $discount );
   
 		$cart->add_fee( 
 			empty( $settings['discount_label'] ) ? __('Desconto Pix Aplicado', \WC_PIGGLY_PIX_PLUGIN_NAME) : $settings['discount_label'], 
@@ -119,7 +123,7 @@ class ApplyDiscount
 	public function update_order_data( $order_id ) 
 	{
 		$payment_method_title     = get_post_meta( $order_id, '_payment_method_title', true );
-		$new_payment_method_title = preg_replace( '/<small class=\"wpgly-pix-featured\">.*<\/small>/', '', $payment_method_title );
+		$new_payment_method_title = \preg_replace( '/<small class=\"wpgly-pix-featured\">.*<\/small>/', '', $payment_method_title );
 
 		// Save the new payment method title.
 		update_post_meta( $order_id, '_payment_method_title', $new_payment_method_title );

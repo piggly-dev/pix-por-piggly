@@ -2,11 +2,11 @@
 namespace Piggly\WC\Pix\Gateway;
 
 use Exception;
+use Piggly\Pix\Enums\QrCode;
 use Piggly\Pix\Exceptions\InvalidPixCodeException;
 use Piggly\Pix\Exceptions\InvalidPixKeyException;
 use Piggly\Pix\Exceptions\InvalidPixKeyTypeException;
 use Piggly\Pix\Parser;
-use Piggly\Pix\Payload;
 use Piggly\Pix\Reader;
 use Piggly\Pix\StaticPayload;
 use Piggly\WC\Pix\WP\Debug;
@@ -135,14 +135,6 @@ class PixGateway extends WC_Payment_Gateway
 		// Get current screen
 		$screen = $this->get_screen();
 
-		// if ( !wp_style_is ( 'wpgly-wp-admin' ) )
-		// {
-		// 	wp_enqueue_style(
-		// 		'wpgly-wp-admin',
-		// 		\WC_PIGGLY_PIX_PLUGIN_URL.'assets/css/wpgly.wp.admin.css'
-		// 	);
-		// }
-
 		// Helper text variable to use at required file
 		$helpText = $this->help_text;
 		$baseUrl  = admin_url( 'admin.php?page=wc-settings&tab=checkout&section='.$this->id );
@@ -187,6 +179,7 @@ class PixGateway extends WC_Payment_Gateway
 	 * 
 	 * @param int $order_id Order ID.
 	 * @since 1.2.0
+	 * @since 1.3.14
 	 * @return array
 	 */
 	public function process_payment ( $order_id ) 
@@ -206,7 +199,8 @@ class PixGateway extends WC_Payment_Gateway
 		$woocommerce->cart->empty_cart();
 
 		Debug::info(sprintf('Pagamento realizado via Pix para o pedido %s.', $order_id));
-		
+
+		do_action('wpgly_pix_after_process_payment', $order->get_id(), $order);		
 		// Return thank-you redirect
 		return array(
 			'result' 	=> 'success',
@@ -520,6 +514,7 @@ class PixGateway extends WC_Payment_Gateway
 	 * @param bool $return_html
 	 * @since 1.2.0
 	 * @since 1.3.11 Option to return html instead echo it.
+	 * @since 1.3.14 Return data when requested.
 	 * @return void
 	 */
 	public function thankyou_page ( $order_id, $return_html = false ) 
@@ -548,7 +543,7 @@ class PixGateway extends WC_Payment_Gateway
 		}
 		else
 		{
-			wc_get_template_html(
+			return wc_get_template_html(
 				'html-woocommerce-thank-you-page.php',
 				$pixData,
 				WC()->template_path().\WC_PIGGLY_PIX_DIR_NAME.'/',
@@ -562,6 +557,7 @@ class PixGateway extends WC_Payment_Gateway
 	 * 
 	 * @param WC_Order $order
 	 * @since 1.2.0
+	 * @since 1.3.14 Added actions
 	 * @return array
 	 */
 	public function get_pix_data ( WC_Order $order ) : array
@@ -622,6 +618,8 @@ class PixGateway extends WC_Payment_Gateway
 			$this->identifier
 		);
 
+		$payload = apply_filters('wpgly_pix_before_create_pix_code', $payload, $order->get_id(), $order);
+
 		// Current pix code...
 		$oldPixCode = $pixOrder['pix_code'] ?? null;
 		$newPixCode = $payload->getPixCode();
@@ -647,18 +645,24 @@ class PixGateway extends WC_Payment_Gateway
 		$qrCode = $this->create_qr($payload, $order, $pixOrder['qr_path'] ?? null);
 
 		// Update order meta...
-		$order->update_meta_data('_wc_piggly_pix', [
-			'pix_code' => $newPixCode, 
-			'pix_qr' => $qrCode['url'],
-			'qr_path' => $qrCode['path'],
-			'amount' => $amount,
-			'key_value' => $this->key_value,
-			'key_type' => $this->key_type,
-			'identifier' => $this->identifier,
-			'store_name' => $this->store_name,
-			'merchant_name' => $this->merchant_name,
-			'merchant_city' => $this->merchant_city
-		]);
+		$order->update_meta_data('_wc_piggly_pix', 
+			apply_filters( 
+				'wpgly_pix_before_save_pix_metadata', [
+					'pix_code' => $newPixCode, 
+					'pix_qr' => $qrCode['url'],
+					'qr_path' => $qrCode['path'],
+					'amount' => $amount,
+					'key_value' => $this->key_value,
+					'key_type' => $this->key_type,
+					'identifier' => $this->identifier,
+					'store_name' => $this->store_name,
+					'merchant_name' => $this->merchant_name,
+					'merchant_city' => $this->merchant_city
+				], 
+				$order->get_id(), 
+				$order
+			)
+		);
 
 		$order->save();
 
@@ -770,19 +774,19 @@ class PixGateway extends WC_Payment_Gateway
 	/**
 	 * Create the QR code if supported...
 	 * 
-	 * @param Payload $payload
+	 * @param StaticPayload $payload
 	 * @param WC_Order $order
 	 * @param string $old Old QR Code path...
 	 * @since 1.2.4
 	 * @return array with url and path.
 	 */
-	protected function create_qr ( Payload $payload, WC_Order $order, ?string $old = null  )
+	protected function create_qr ( StaticPayload $payload, WC_Order $order, ?string $old = null  )
 	{
 		Debug::info(\sprintf('Criando QR Code para o pedido %s.', $order->get_id()));
 
 		$pixQR = 
 			$this->can_create_qr() 
-				? $payload->getQRCode(Payload::OUTPUT_PNG, Payload::ECC_L) 
+				? $payload->getQRCode(QrCode::OUTPUT_PNG, QrCode::ECC_L) 
 				: null;
 
 		if ( empty($pixQR) )
@@ -849,7 +853,7 @@ class PixGateway extends WC_Payment_Gateway
 	 * @return bool
 	 */
 	protected function can_create_qr () : bool
-	{ return $this->pix_qrcode && Payload::supportQrCode(); }
+	{ return $this->pix_qrcode && StaticPayload::supportQrCode(); }
 
 	/**
 	 * Add pix data to order payment_details information...
@@ -898,6 +902,7 @@ class PixGateway extends WC_Payment_Gateway
 	 * @param WP_REST_Response $response
 	 * @param WP_Post $post
 	 * @since 1.2.4
+	 * @since 1.3.14 Added filters
 	 * @return array
 	 */
 	public function add_rest_payment_data ( $response, $post )
@@ -923,7 +928,7 @@ class PixGateway extends WC_Payment_Gateway
 			'merchant_city' => $data['merchant_city']
 		];
 
-		return $response;
+		return apply_filters( 'wpgly_pix_after_create_api_response', $response, $order->get_id(), $order );
 	}
 
 	/**

@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.7.1
-Stable tag: 1.3.13
+Stable tag: 1.3.14
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -32,6 +32,23 @@ O propósito deste plugin é permitir que você utilize o método de pagamento P
 Estamos preparando para vocês uma novidade única e imperdível. Até o final deste mês lançaremos a versão 1.4 para suporte as API Pix. Dessa forma, os Pix poderão ser verificados e processados automaticamente. Atualizando os pedidos no Woocommerce de forma automatizada. 
 
 **Fique ligado nas próximas atualizações**.
+
+== Filtros e Ações ==
+
+A partir da versão 1.3.14 é possível utilizar os filtros e as ações abaixo:
+
+= Filtros =
+
+* `wpgly_pix_discount` Personaliza o valor calculado para o desconto antes de aplicar.
+* `wpgly_pix_before_create_pix_code` Personaliza ou altera o objeto Payload do Pix antes de gerar o código.
+* `wpgly_pix_before_save_pix_metadata` Personaliza os metadados do Pix que serão salvos ao pedido antes de salvar o pedido.
+* `wpgly_pix_after_create_api_response` Personaliza a `array` que é retornada para a API do Woocomerce.
+
+= Ações =
+
+* `wpgly_pix_after_save_receipt_to_order` É executado após salvar um comprovante Pix nos metadados do pedido.
+* `wpgly_pix_after_delete_receipt_from_order` É executado após deletar um comprovante Pix de um pedido.
+* `wpgly_pix_after_process_payment` É executado durante o processamento do pagamento.
 
 == Novidades da versão 1.3.0 ==
 
@@ -234,6 +251,13 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Changelog ==
 
+= 1.3.14 =
+
+* Bug no shortcode `[pix-por-piggly]` que não retorna o template;
+* Bug no desconto de pagamento e valor corrigido quando há cupom de desconto aplicado;
+* Liberação da tela para APIs;
+* Acionamento de actions e filters.
+
 = 1.3.13 =
 
 * Aumento de segurança na validação dos arquivos enviados como comprovantes;
@@ -415,8 +439,9 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Upgrade Notice ==
 
-= 1.3.13 =
+= 1.3.14 =
 
-* Aumento de segurança na validação dos arquivos enviados como comprovantes;
-* Correção de bug na página de "Comprovantes Pix";
-* Outras melhorias e correções.
+* Bug no shortcode `[pix-por-piggly]` que não retorna o template;
+* Bug no desconto de pagamento e valor corrigido quando há cupom de desconto aplicado;
+* Liberação da tela para APIs;
+* Acionamento de actions e filters.

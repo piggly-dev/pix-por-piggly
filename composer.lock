@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc1e7114d0d09db6ec7787a0b6a98c9c",
+    "content-hash": "3bd44f797c4dc21208befed721f09dd0",
     "packages": [
         {
             "name": "chillerlan/php-qrcode",
@@ -137,25 +137,30 @@
         },
         {
             "name": "piggly/php-pix",
-            "version": "1.2.5",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/piggly-dev/php-pix.git",
-                "reference": "71a37ba89119a64f80e2c724316bfc2aa9f842fb"
+                "reference": "56f16ba081c23dd2a52998e35231265b681e73d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/71a37ba89119a64f80e2c724316bfc2aa9f842fb",
-                "reference": "71a37ba89119a64f80e2c724316bfc2aa9f842fb",
+                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/56f16ba081c23dd2a52998e35231265b681e73d7",
+                "reference": "56f16ba081c23dd2a52998e35231265b681e73d7",
                 "shasum": ""
             },
             "require": {
                 "chillerlan/php-qrcode": "^3.3",
                 "ext-gd": "*",
-                "php": "^7.2"
+                "php": "^7.2 || ^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4"
+                "fakerphp/faker": "^1.14",
+                "php": "^7.3 || ^8.0",
+                "phpunit/phpunit": "^9.5"
+            },
+            "suggest": {
+                "piggly/php-api-client": "Recomentado para criar requisições HTTP seguras e dinâmicas para as API Pix junto com os Payloads padrões."
             },
             "type": "library",
             "autoload": {
@@ -187,9 +192,9 @@
             ],
             "support": {
                 "issues": "https://github.com/piggly-dev/php-pix/issues",
-                "source": "https://github.com/piggly-dev/php-pix/tree/1.2.5"
+                "source": "https://github.com/piggly-dev/php-pix/tree/2.0.0"
             },
-            "time": "2021-03-23T11:39:19+00:00"
+            "time": "2021-06-06T21:06:45+00:00"
         }
     ],
     "packages-dev": [],

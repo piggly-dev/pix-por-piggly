@@ -1,7 +1,6 @@
 <?php
 namespace Piggly\WC\Pix;
 
-use Exception;
 use Piggly\WC\Pix\Discount\ApplyDiscount;
 use Piggly\WC\Pix\Gateway\BaseGateway;
 use Piggly\WC\Pix\Order\Metabox;
@@ -202,6 +201,7 @@ class Core
 	 * Create submenu to pix receipts at Woocommerce menu.
 	 * 
 	 * @since 1.3.0
+	 * @since 1.3.14 Capabilities to who managers woocommerce.
 	 * @return string
 	 */
 	public function create_menu ()
@@ -210,7 +210,7 @@ class Core
 			'woocommerce',
 			__('Comprovantes Pix - Pix por Piggly', \WC_PIGGLY_PIX_PLUGIN_NAME),
 			__('Comprovantes Pix', \WC_PIGGLY_PIX_PLUGIN_NAME),
-			'manage_options',
+			'manage_woocommerce',
 			\WC_PIGGLY_PIX_PLUGIN_NAME,
 			[$this, 'page']
 		);
@@ -236,6 +236,7 @@ class Core
 	 * 
 	 * @param int $id
 	 * @since 1.3.8
+	 * @since 1.3.14 Actions.
 	 * @return void
 	 */
 	protected function delete_receipt ( int $id )
@@ -259,6 +260,9 @@ class Core
 			{
 				$order->delete_meta_data('_wc_piggly_pix_receipt'); 
 				$order->save();
+
+				// Do after save order
+				do_action('wpgly_pix_after_delete_receipt_from_order', $order->get_id(), $order);
 			}
 		}
 	}
