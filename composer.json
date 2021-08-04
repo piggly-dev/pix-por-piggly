@@ -1,26 +1,29 @@
 {
-    "name": "piggly-dev/woocommerce-pix",
-    "description": "Implemente o Pix de uma forma simples e rápida em sua loja Woocommerce.",
-    "type": "wordpress-plugin",
-    "require": {
-        "piggly/php-pix": "^2.0.0"
-    },
-    "license": "GPL-2.0+",
-    "authors": [
-        {
-            "name": "Caique Araujo",
-            "email": "caique@piggly.com.br"
-        },
-        {
-            "name": "Piggly Lab",
-            "email": "dev@piggly.com.br"
-        }
-    ],
+	"name": "piggly-dev/wc-piggly-pix",
+	"description": "Implemente o Pix de uma forma simples e rápida em sua loja Woocommerce.",
+	"type": "wordpress-plugin",
+	"require": {
+		"php": "^7.2",
+		"piggly/php-pix": "^2.0.0",
+		"piggly/wordpress-starter-kit": "^1.0",
+		"psr/log": "^1.1"
+	},
+	"license": "GPL-2.0+",
+	"authors": [
+		{
+			"name": "Caique Araujo",
+			"email": "caique@piggly.com.br"
+		},
+		{
+			"name": "Piggly Lab",
+			"email": "dev@piggly.com.br"
+		}
+	],
 	"autoload": {
-        "psr-4": {
-            "Piggly\\WC\\Pix\\": "src/"
-        }
+		"psr-4": {
+			"Piggly\\WooPixGateway\\": "src/"
+		}
 	},
 	"minimum-stability": "stable",
-	"version": "1.2.0"
+	"version": "2.0.0"
 }

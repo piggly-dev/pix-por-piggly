@@ -10,6 +10,7 @@
 *.zip
 *~
 *.sass-cache
+*.phpunit*
 
 # OS or Editor folders
 .DS_Store
@@ -46,6 +47,7 @@ coverage
 dist
 node_modules
 rules
+old-src
 
 # Files
 *.zip

@@ -1,286 +1,159 @@
 <?php
-namespace Piggly\WC\Pix;
+namespace Piggly\WooPixGateway;
 
-use Piggly\WC\Pix\Discount\ApplyDiscount;
-use Piggly\WC\Pix\Gateway\BaseGateway;
-use Piggly\WC\Pix\Order\Metabox;
-use Piggly\WC\Pix\WP\Debug;
-use Piggly\WC\Pix\WP\i18n;
-use Piggly\WC\Pix\WP\Upgrade;
-use Piggly\WC\Pix\WP\Helper as WP;
+use DateTime;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Piggly\BdmApiClient\BdmApi;
+use Piggly\Wordpress\Core as WordpressCore;
+use Piggly\Wordpress\Core\WP;
+use Piggly\WooPixGateway\Core\Admin;
+use Piggly\WooPixGateway\Core\Ajax;
+use Piggly\WooPixGateway\Core\Emails;
+use Piggly\WooPixGateway\Core\Front;
+use Piggly\WooPixGateway\Core\Metabox;
+use Piggly\WooPixGateway\WP\Cron;
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-/**
- * Plugin startup core.
- *
- * @since      1.2.0 
- * @package    Piggly\WC\Pix
- * @subpackage Piggly\WC\Pix
- * @author     Caique <caique@piggly.com.br>
- * @author     Piggly Lab <dev@piggly.com.br>
- */
-class Core 
+class Core extends WordpressCore
 {
 	/**
-	 * The unique identifier of this plugin.
+	 * Startup method with all actions and
+	 * filter to run.
 	 *
-	 * @since 1.2.0
-	 * @var string $pluginName
-	 */
-	public $pluginName;
-
-	/**
-	 * The current version of the plugin.
-	 *
-	 * @since 1.2.0
-	 * @var string $pluginVersion
-	 */
-	public $pluginVersion;
-
-	/**
-	 * Path to plugin directory.
-	 * 
-	 * @since 1.2.0
-	 * @var string $pluginPath Without trailing slash.
-	 */
-	public $pluginPath;
-
-	/**
-	 * URL to plugin directory.
-	 * 
-	 * @since 1.2.0
-	 * @var string $pluginUrl Without trailing slash.
-	 */
-	public $pluginUrl;
-
-	/**
-	 * URL to plugin assets directory.
-	 * 
-	 * @since 1.2.0
-	 * @var string $assetsUrl Without trailing slash.
-	 */
-	public $assetsUrl;
-
-	/**
-	 * Plugin settings.
-	 * 
-	 * @since 1.3.5
-	 * @var array
-	 */
-	protected $settings;
-
-	/**
-	 * Startup plugin.
-	 * 
-	 * @since 1.2.0
+	 * @since 1.0.0
 	 * @return void
 	 */
-	public function __construct ()
+	public function startup ()
 	{
-		$this->pluginUrl  = \WC_PIGGLY_PIX_PLUGIN_URL;
-		$this->pluginPath = \WC_PIGGLY_PIX_PLUGIN_PATH;
-		$this->assetsUrl  = $this->pluginUrl . '/assets';
+		// Create logger
+		$this->logger();
 
-		$this->pluginName    = \WC_PIGGLY_PIX_PLUGIN_NAME;
-		$this->pluginVersion = \WC_PIGGLY_PIX_PLUGIN_VERSION;
+		// Admin global menu settings
+		$this->initiable(Admin::class);
+		$this->initiable(Cron::class);
+		$this->initiable(Emails::class);
+		$this->initiable(Front::class);
+		$this->initiable(Ajax::class);
 
-		$this->settings = get_option( 'woocommerce_wc_piggly_pix_gateway_settings', [] );
-
-		if ( isset($this->settings['debug']) )
-		{ Debug::changeState((bool)$this->settings['debug']); }
-
-		// Load translations
-		i18n::init();
-
-		// Upgrade plugin version
-		Upgrade::upgrade();
-
-		// Add gateways to woocommerce
+		// After plugins loaded
 		WP::add_action('plugins_loaded', $this, 'after_load' );
-		
-		// Add admin menu
-		WP::add_action( 'admin_menu', $this, 'create_menu' );
-		// Action to change status behavior
-		WP::add_action( 'init', $this, 'register_order_statuses' );
-		// Action to change status behavior
-		WP::add_filter( 'wc_order_statuses', $this, 'add_order_statuses' );
-		// Action to change status behavior
-		WP::add_action( 'admin_init', $this, 'startup_screen' );
 	}
 
 	/**
-	 * Plugin loaded method.
+	 * Run after plugin loaded...
 	 * 
-	 * @since 1.2.0
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function after_load ()
 	{
-		if ( !class_exists('WC_Payment_Gateway') )
+		// Display an admin notice when WooCommerce is not enabled.
+		if ( !class_exists('WC_Order') )
 		{
-			// Cannot start plugin
-			add_action( 'admin_notices', 'wc_piggly_pix_missing_notice' );
+			WP::add_action('admin_notices', $this, 'missing_woocommerce');
 			return;
 		}
-
-		// Startup gateway
-		BaseGateway::init();
-
-		// Discount system
-		ApplyDiscount::init();
-
-		// Metabox init
-		Metabox::init();
-
-		// Display all notices...
-		WP::add_action('admin_notices', WP::class, 'display_notices' );
-	}
-
-	/**
-	 * Register wc-pix-receipt order status.
-	 * 
-	 * @since 1.3.0
-	 * @return void
-	 */
-	public function register_order_statuses ()
-	{
-		register_post_status( 'wc-pix-receipt', array(
-			'label' => 'Comprovante Pix Recebido',
-			'public' => true,
-			'show_in_admin_status_list' => true,
-			'show_in_admin_all_list' => true,
-			'exclude_from_search' => false,
-			'label_count' => _n_noop( '<span class="count">(%s)</span> Comprovante Pix Recebido', '<span class="count">(%s)</span> Comprovantes Pix Recebidos' )
-		) );
-	}
-
-	/**
-	 * Add wc-pix-receipt to order status.
-	 * 
-	 * @since 1.3.0
-	 * @param array $order_statuses
-	 * @return array
-	 */
-	public function add_order_statuses ( $order_statuses )
-	{
-		if ( !isset($this->settings['hide_receipt_status']) || $this->settings['hide_receipt_status'] !== 'yes' )
-		{ $order_statuses['wc-pix-receipt'] = 'Comprovante Pix Recebido'; }
-
-	  	return $order_statuses;
-	}
-
-	/**
-	 * Redirect to plugin news when active plugin or update.
-	 * 
-	 * @since 1.3.0
-	 * @return void
-	 */
-	public function startup_screen ()
-	{
-		$welcome = get_transient( \WC_PIGGLY_PIX_PLUGIN_NAME.'-welcome-screen' ) !== false;
-		$upgraded = get_transient( \WC_PIGGLY_PIX_PLUGIN_NAME.'-upgraded-screen' ) !== false;
-
-		if ( !$welcome && !$upgraded )
-		{ return; }
-
-		delete_transient( \WC_PIGGLY_PIX_PLUGIN_NAME.'-welcome-screen' );
-		delete_transient( \WC_PIGGLY_PIX_PLUGIN_NAME.'-upgraded-screen' );
-
-		// Return if activating from network, or bulk
-		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) return;
-
-		if ( $welcome || $upgraded )
-		{ 
-			if ( wp_safe_redirect( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway&screen=news' ) ) )
-			{ exit; }
-		}
-	}
-
-	/**
-	 * Create submenu to pix receipts at Woocommerce menu.
-	 * 
-	 * @since 1.3.0
-	 * @since 1.3.14 Capabilities to who managers woocommerce.
-	 * @return string
-	 */
-	public function create_menu ()
-	{
-		add_submenu_page(
-			'woocommerce',
-			__('Comprovantes Pix - Pix por Piggly', \WC_PIGGLY_PIX_PLUGIN_NAME),
-			__('Comprovantes Pix', \WC_PIGGLY_PIX_PLUGIN_NAME),
-			'manage_woocommerce',
-			\WC_PIGGLY_PIX_PLUGIN_NAME,
-			[$this, 'page']
-		);
-	}
-
-	/**
-	 * Get plugin pages.
-	 * 
-	 * @since 1.3.0
-	 * @return string
-	 */
-	public function page ()
-	{
-		// Get current screen
-		$screen  = $this->get_screen();
-		$baseUrl = admin_url( 'admin.php?page='.\WC_PIGGLY_PIX_PLUGIN_NAME );
-		require_once(\WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/pages/header.php');
-		require_once(\WC_PIGGLY_PIX_PLUGIN_PATH.'templates/admin/pages/'.$screen.'.php');
-	}
-
-	/**
-	 * Delete receipt from database and file path.
-	 * 
-	 * @param int $id
-	 * @since 1.3.8
-	 * @since 1.3.14 Actions.
-	 * @return void
-	 */
-	protected function delete_receipt ( int $id )
-	{
-		global $wpdb;
-		$table_name = $wpdb->prefix.'wpgly_pix_receipts';
-		$item = $wpdb->get_row("SELECT * FROM {$table_name} WHERE id = {$id}");
-
-		if ( $item )
-		{
-			$upload      = wp_upload_dir();
-			$pix_receipt = str_replace( $upload['baseurl'], $upload['basedir'], $item->pix_receipt);
-			$order       = wc_get_order($item->order_number);
-			
-			$wpdb->delete( $wpdb->prefix.'wpgly_pix_receipts', array( 'id' => $item->id ) );
-
-			if ( file_exists($pix_receipt) )
-			{ unlink($pix_receipt); }
-
-			if ( $order !== false )
-			{
-				$order->delete_meta_data('_wc_piggly_pix_receipt'); 
-				$order->save();
-
-				// Do after save order
-				do_action('wpgly_pix_after_delete_receipt_from_order', $order->get_id(), $order);
-			}
-		}
-	}
-
-	/**
-	 * Get current plugin option screen.
-	 * 
-	 * @since 1.3.0
-	 * @return string
-	 */
-	protected function get_screen () : string 
-	{
-		$screen = filter_input( INPUT_GET, 'screen', FILTER_SANITIZE_STRING );
 		
-		// Fix screen always to main when not valid...
-		if ( empty($screen) || !in_array( $screen, ['support']) )
-		{ $screen = 'main'; }
+		// Allow float value to quantity
+		remove_filter('woocommerce_stock_amount', 'intval');
+		add_filter('woocommerce_stock_amount', 'floatval');
 
-		return $screen;
+		$this->initiable(Metabox::class);
+	}
+	
+	/**
+	 * Display a notice warning Woocommerce is not activated or installed,
+	 * and it's required.
+	 * 
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function missing_woocommerce () 
+	{
+		$is_installed = false; 
+		if ( !class_exists ( 'woocommerce' ) ) { $is_installed = true; }
+		
+		?>
+		<div class="error">
+			<p><?php $this->_etranslate('O plugin <strong>BDM Commerce</strong> necessita da última versão do Woocommerce para funcionar.'); ?></p>
+		
+			<?php if ( $is_installed && current_user_can( 'install_plugins' ) ) : ?>
+				<p><a href="<?php echo esc_url( wp_nonce_url( self_admin_url( 'plugins.php?action=activate&plugin=woocommerce/woocommerce.php&plugin_status=active' ), 'activate-plugin_woocommerce/woocommerce.php' ) ); ?>" class="button button-primary"><?php $this->_etranslate( 'Ativar WooCommerce' ); ?></a></p>
+			<?php else : ?>
+				<?php if ( current_user_can( 'install_plugins' ) ) : ?>
+					<p><a href="<?php echo esc_url( wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=woocommerce' ), 'install-plugin_woocommerce' ) ); ?>" class="button button-primary"><?php $this->_etranslate( 'Instalar WooCommerce' ); ?></a></p>
+				<?php else : ?>
+					<p><a href="http://wordpress.org/plugins/woocommerce/" class="button button-primary"><?php $this->_etranslate( 'Instalar WooCommerce' ); ?></a></p>
+				<?php endif; ?>
+			<?php endif; ?>
+		</div> 
+		<?php
+	}
+
+	/**
+	 * Display a notice warning PHP version is obsolete.
+	 * 
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function insecure_php ()
+	{
+		?>
+		<div class="notice notice-error">
+			<p>
+				<?php $this->_etranslate( 'Seu website está utilizando uma <strong>versão não recomendada</strong> do PHP que não é mais suportada. Por favor, comunique seu servidor de hospedagem para realizar a atualização ou faça a migração de servidor.' );?>
+				<br>
+				<br>
+				<?php $this->_etranslate( 'Para não gerar problemas de incompatibilidade, o plugin <strong>BDM Commerce</strong> não será ativado' );?>
+			</p>
+		</div>
+		<?php
+
+		// In case this is on plugin activation.
+		if ( isset( $_GET['activate'] ) ) unset( $_GET['activate'] );
+	}
+
+	/**
+	 * Prepare and create logger.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	protected function logger ()
+	{
+		$path = ABSPATH.'wp-content/bdm-commerce/';
+
+		if ( !\is_dir($path) )
+		{ wp_mkdir_p($path); }
+
+		if ( !\file_exists($path.'.htaccess') )
+		{ \file_put_contents($path.'.htaccess', 'Options -Indexes'); }
+
+		$now = (new DateTime('now', wp_timezone()))->format('Y-m-d');
+
+		$hash = \sprintf(
+			'bdm-commerce-%s-%s.log', 
+			$now,
+			\md5($now.\get_option('wpgly_bdm_commerce_key', 'null'))
+		);
+
+		if ( !\file_exists($path.$hash) ) 
+		{ touch($path.$hash); }
+
+		// create a log channel
+		$log = new Logger('bdm-commerce');
+		$log->pushHandler(new StreamHandler($path.$hash, Logger::DEBUG));
+
+		$this->debug()->setLogger($log);
+
+		/** @var BdmApi $bdmApi */
+		$bdmApi = $this->_plugin->bucket()->get('api');
+
+		if ( $this->settings()->bucket()->get('log_api', false) )
+		{ $bdmApi->setLog($log); }
+
+		$bdmApi->setDebug($this->debug()->isDebugging());
 	}
 }

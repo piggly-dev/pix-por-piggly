@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3bd44f797c4dc21208befed721f09dd0",
+    "content-hash": "5471991c9ae91ce6aa8ec0f75ee820ec",
     "packages": [
         {
             "name": "chillerlan/php-qrcode",
@@ -137,16 +137,16 @@
         },
         {
             "name": "piggly/php-pix",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/piggly-dev/php-pix.git",
-                "reference": "56f16ba081c23dd2a52998e35231265b681e73d7"
+                "reference": "8b4823969ea095ef13c607f7773633792bad969d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/56f16ba081c23dd2a52998e35231265b681e73d7",
-                "reference": "56f16ba081c23dd2a52998e35231265b681e73d7",
+                "url": "https://api.github.com/repos/piggly-dev/php-pix/zipball/8b4823969ea095ef13c607f7773633792bad969d",
+                "reference": "8b4823969ea095ef13c607f7773633792bad969d",
                 "shasum": ""
             },
             "require": {
@@ -192,9 +192,119 @@
             ],
             "support": {
                 "issues": "https://github.com/piggly-dev/php-pix/issues",
-                "source": "https://github.com/piggly-dev/php-pix/tree/2.0.0"
+                "source": "https://github.com/piggly-dev/php-pix/tree/2.0.1"
             },
-            "time": "2021-06-06T21:06:45+00:00"
+            "time": "2021-06-18T20:54:16+00:00"
+        },
+        {
+            "name": "piggly/wordpress-starter-kit",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/piggly-dev/wordpress-starter-kit.git",
+                "reference": "ede415213219af2ac0247fc7051202e17c7c2b62"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/piggly-dev/wordpress-starter-kit/zipball/ede415213219af2ac0247fc7051202e17c7c2b62",
+                "reference": "ede415213219af2ac0247fc7051202e17c7c2b62",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0",
+                "psr/log": "^1.1"
+            },
+            "require-dev": {
+                "php": "^7.3 || ^8.0",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Piggly\\Wordpress\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Caique Araujo",
+                    "email": "caique@piggly.com.br",
+                    "homepage": "https://github.com/caiquearaujo",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Piggly Lab",
+                    "email": "dev@piggly.com.br",
+                    "homepage": "https://github.com/piggly-dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A smart Wordpress Starter Kit to plugins development.",
+            "homepage": "https://github.com/piggly-dev/wordpress-starter-kit",
+            "keywords": [
+                "plugins",
+                "plugins development",
+                "wordpress",
+                "wordpress development"
+            ],
+            "support": {
+                "issues": "https://github.com/piggly-dev/wordpress-starter-kit/issues",
+                "source": "https://github.com/piggly-dev/wordpress-starter-kit/tree/1.0.4"
+            },
+            "time": "2021-07-30T21:34:02+00:00"
+        },
+        {
+            "name": "psr/log",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/d49695b909c3b7628b6289db5479a1c204601f11",
+                "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/log/tree/1.1.4"
+            },
+            "time": "2021-05-03T11:20:27+00:00"
         }
     ],
     "packages-dev": [],
@@ -203,7 +313,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^7.2"
+    },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
