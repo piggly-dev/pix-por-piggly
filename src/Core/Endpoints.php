@@ -95,18 +95,20 @@ class Endpoints extends Initiable
 	 *
 	 * @param WC_Order $order
 	 * @since 2.0.0
+	 * @since 2.0.2 Fixed endpoint to my-account
 	 * @return string
 	 */
 	public static function getPaymentUrl ( WC_Order $order ) : string
-	{ return \wc_get_endpoint_url('pgly-pix-payment', $order->get_id()); }
+	{ return \wc_get_endpoint_url('pgly-pix-payment', $order->get_id(), \wc_get_page_permalink('myaccount')); }
 
 	/**
 	 * Get the endpoint to send receipt.
 	 *
 	 * @param WC_Order $order
 	 * @since 2.0.0
+	 * @since 2.0.2 Fixed endpoint to my-account
 	 * @return string
 	 */
 	public static function getReceiptUrl ( WC_Order $order ) : string
-	{ return \wc_get_endpoint_url('pgly-pix-receipt', $order->get_id()); }
+	{ return \wc_get_endpoint_url('pgly-pix-receipt', $order->get_id(), \wc_get_page_permalink('myaccount')); }
 }
