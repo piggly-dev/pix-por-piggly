@@ -43,7 +43,7 @@ if ( ! defined( 'WPINC' ) ) exit;
 if (!defined('PGLY_PIX_GATEWAY_VERSION')) define( 'PGLY_PIX_GATEWAY_VERSION', '2.0.0' );
 
 /** @var string Currently plugin version. Start at version 1.0.0 and use SemVer - https://semver.org */
-if (!defined('PGLY_PIX_GATEWAY_DBVERSION')) define( 'PGLY_PIX_GATEWAY_DBVERSION', '1.0.1' );
+if (!defined('PGLY_PIX_GATEWAY_DBVERSION')) define( 'PGLY_PIX_GATEWAY_DBVERSION', '2.0.0' );
 
 /** @var string Minimum php version required. */
 if (!defined('PGLY_PIX_GATEWAY_PHPVERSION')) define( 'PGLY_PIX_GATEWAY_PHPVERSION', '7.2' );
