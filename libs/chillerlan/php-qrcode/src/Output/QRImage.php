@@ -19,22 +19,28 @@ use Piggly\WooPixGateway\Vendor\chillerlan\QRCode\QRCode;
 use Piggly\WooPixGateway\Vendor\chillerlan\QRCode\QRCodeException;
 use Piggly\WooPixGateway\Vendor\chillerlan\Settings\SettingsContainerInterface;
 use Exception;
-use function array_values, base64_encode, call_user_func, count, imagecolorallocate, imagecolortransparent, imagecreatetruecolor, imagedestroy, imagefilledrectangle, imagegif, imagejpeg, imagepng, in_array, is_array, ob_end_clean, ob_get_contents, ob_start, range, sprintf;
+use function array_values, base64_encode, call_user_func, count, extension_loaded, imagecolorallocate, imagecolortransparent, imagecreatetruecolor, imagedestroy, imagefilledrectangle, imagegif, imagejpeg, imagepng, in_array, is_array, ob_end_clean, ob_get_contents, ob_start, range, sprintf;
 /**
- * Converts the matrix into GD images, raw or base64 output
- * requires ext-gd
- * @link http://php.net/manual/book.image.php
+ * Converts the matrix into GD images, raw or base64 output (requires ext-gd)
+ *
+ * @see http://php.net/manual/book.image.php
  */
 class QRImage extends QROutputAbstract
 {
-    protected const TRANSPARENCY_TYPES = [QRCode::OUTPUT_IMAGE_PNG, QRCode::OUTPUT_IMAGE_GIF];
     /**
-     * @var string
+     * GD image types that support transparency
+     *
+     * @var string[]
      */
-    protected $defaultMode = QRCode::OUTPUT_IMAGE_PNG;
+    protected const TRANSPARENCY_TYPES = [QRCode::OUTPUT_IMAGE_PNG, QRCode::OUTPUT_IMAGE_GIF];
+    protected string $defaultMode = QRCode::OUTPUT_IMAGE_PNG;
     /**
+     * The GD image resource
+     *
      * @see imagecreatetruecolor()
-     * @var resource
+     * @var resource|\GdImage
+     *
+     * @phan-suppress PhanUndeclaredTypeProperty
      */
     protected $image;
     /**
@@ -44,7 +50,7 @@ class QRImage extends QROutputAbstract
      */
     public function __construct(SettingsContainerInterface $options, QRMatrix $matrix)
     {
-        if (!\extension_loaded('gd')) {
+        if (!extension_loaded('gd')) {
             throw new QRCodeException('ext-gd not loaded');
             // @codeCoverageIgnore
         }
@@ -67,10 +73,13 @@ class QRImage extends QROutputAbstract
     /**
      * @inheritDoc
      *
-     * @return string|resource
+     * @return string|resource|\GdImage
+     *
+     * @phan-suppress PhanUndeclaredTypeReturnType, PhanTypeMismatchReturn
      */
     public function dump(string $file = null)
     {
+        $file ??= $this->options->cachefile;
         $this->image = imagecreatetruecolor($this->length, $this->length);
         // avoid: Indirect modification of overloaded property $imageTransparencyBG has no effect
         // https://stackoverflow.com/a/10455217
@@ -88,32 +97,29 @@ class QRImage extends QROutputAbstract
         if ($this->options->returnResource) {
             return $this->image;
         }
-        $imageData = $this->dumpImage($file);
+        $imageData = $this->dumpImage();
+        if ($file !== null) {
+            $this->saveToFile($imageData, $file);
+        }
         if ($this->options->imageBase64) {
             $imageData = sprintf('data:image/%s;base64,%s', $this->options->outputType, base64_encode($imageData));
         }
         return $imageData;
     }
     /**
-     * @param int   $x
-     * @param int   $y
-     * @param array $rgb
-     *
-     * @return void
+     * Creates a single QR pixel with the given settings
      */
     protected function setPixel(int $x, int $y, array $rgb) : void
     {
         imagefilledrectangle($this->image, $x * $this->scale, $y * $this->scale, ($x + 1) * $this->scale, ($y + 1) * $this->scale, imagecolorallocate($this->image, ...$rgb));
     }
     /**
-     * @param string|null $file
+     * Creates the final image by calling the desired GD output function
      *
-     * @return string
      * @throws \chillerlan\QRCode\Output\QRCodeOutputException
      */
-    protected function dumpImage(string $file = null) : string
+    protected function dumpImage() : string
     {
-        $file = $file ?? $this->options->cachefile;
         ob_start();
         try {
             call_user_func([$this, $this->outputMode ?? $this->defaultMode]);
@@ -124,12 +130,11 @@ class QRImage extends QROutputAbstract
         $imageData = ob_get_contents();
         imagedestroy($this->image);
         ob_end_clean();
-        if ($file !== null) {
-            $this->saveToFile($imageData, $file);
-        }
         return $imageData;
     }
     /**
+     * PNG output
+     *
      * @return void
      */
     protected function png() : void
@@ -138,6 +143,7 @@ class QRImage extends QROutputAbstract
     }
     /**
      * Jiff - like... JitHub!
+     *
      * @return void
      */
     protected function gif() : void
@@ -145,6 +151,8 @@ class QRImage extends QROutputAbstract
         imagegif($this->image);
     }
     /**
+     * JPG output
+     *
      * @return void
      */
     protected function jpg() : void

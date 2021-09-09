@@ -18,26 +18,22 @@ use Piggly\WooPixGateway\Vendor\chillerlan\QRCode\Data\QRMatrix;
 use Piggly\WooPixGateway\Vendor\chillerlan\QRCode\QRCodeException;
 use Piggly\WooPixGateway\Vendor\chillerlan\Settings\SettingsContainerInterface;
 use Imagick, ImagickDraw, ImagickPixel;
-use function is_string;
+use function extension_loaded, is_string;
 /**
- * ImageMagick output module
- * requires ext-imagick
- * @link http://php.net/manual/book.imagick.php
- * @link http://phpimagick.com
+ * ImageMagick output module (requires ext-imagick)
+ *
+ * @see http://php.net/manual/book.imagick.php
+ * @see http://phpimagick.com
  */
 class QRImagick extends QROutputAbstract
 {
-    /**
-     * @var \Imagick
-     */
-    protected $imagick;
+    protected Imagick $imagick;
     /**
      * @inheritDoc
-     * @throws \chillerlan\QRCode\QRCodeException
      */
     public function __construct(SettingsContainerInterface $options, QRMatrix $matrix)
     {
-        if (!\extension_loaded('imagick')) {
+        if (!extension_loaded('imagick')) {
             throw new QRCodeException('ext-imagick not loaded');
             // @codeCoverageIgnore
         }
@@ -64,7 +60,7 @@ class QRImagick extends QROutputAbstract
      */
     public function dump(string $file = null)
     {
-        $file = $file ?? $this->options->cachefile;
+        $file ??= $this->options->cachefile;
         $this->imagick = new Imagick();
         $this->imagick->newImage($this->length, $this->length, new ImagickPixel($this->options->imagickBG ?? 'transparent'), $this->options->imagickFormat);
         $this->drawImage();
@@ -78,7 +74,7 @@ class QRImagick extends QROutputAbstract
         return $imageData;
     }
     /**
-     * @return void
+     * Creates the QR image via ImagickDraw
      */
     protected function drawImage() : void
     {

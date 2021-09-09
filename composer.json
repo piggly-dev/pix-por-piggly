@@ -59,7 +59,7 @@
 		],
 		"build": [
 			"npm run gulp composer:delete_lock_and_vendor",
-			"composer update --root-reqs --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-scripts --optimize-autoloader",
+			"composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-scripts --optimize-autoloader",
 			"@prefix-dependencies"
 		]
 	},
