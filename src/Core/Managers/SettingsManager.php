@@ -310,7 +310,7 @@ class SettingsManager
 	protected function saveDiscount ( array $data )
 	{
 		/** @var KeyingBucket $settings */
-		$settings = CoreConnector::settings()->getAndCreate('users', new KeyingBucket());
+		$settings = CoreConnector::settings()->getAndCreate('discount', new KeyingBucket());
 		
 		$this->prepare(
 			$settings,

@@ -239,6 +239,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.6 ###
+
+* Correção para salvar informações de desconto Pix.
+
 ### 2.0.4/2.0.5 ###
 
 * Correção no banco de dados.
