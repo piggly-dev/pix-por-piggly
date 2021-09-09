@@ -239,6 +239,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.3 ###
+
+* Correção para aceitar a ausência de banco no Pix.
+
 ### 2.0.2 ###
 
 * Notifica sobre atualização dos endpoints.
