@@ -181,9 +181,9 @@ class VersionUpgrader extends Internationalizable implements Runnable
 				'advanced_description' => ($settings['advanced_description'] ?? 'no') === 'yes',
 				'instructions' => \str_replace('{{pedido}}', '{{order_number}}', $settings['instructions'] ?? $this->__translate('Faça o pagamento via PIX. O pedido número {{order_number}} será liberado assim que a confirmação do pagamento for efetuada.')),
 				
-				'shows_qrcode' => ($settings['qrcode'] ?? 'no') === 'yes',
-				'shows_copypast' => ($settings['copypast'] ?? 'no') === 'yes',
-				'shows_manual' => ($settings['manual'] ?? 'no') === 'yes',
+				'shows_qrcode' => ($settings['qrcode'] ?? 'no') === 'yes' || $settings['qrcode'] === true,
+				'shows_copypast' => ($settings['copypast'] ?? 'no') === 'yes' || $settings['copypast'] === true,
+				'shows_manual' => ($settings['manual'] ?? 'no') === 'yes' || $settings['manual'] === true,
 			],
 			'orders' => [
 				'receipt_status' => ($settings['auto_update_receipt'] ?? 'no') === 'yes' ? 'pix-receipt' : 'on-hold',

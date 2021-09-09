@@ -155,7 +155,7 @@ class SettingsManager
 			$settings,
 			$data,
 			[
-				'debug' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOL ]
+				'debug' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ]
 			]
 		);
 	}
@@ -177,14 +177,14 @@ class SettingsManager
 			$settings,
 			$data,
 			[
-				'enabled' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOL ],
+				'enabled' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 				'title' => [ 'default' => CoreConnector::__translate('Faça um Pix'), 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'description' => [ 'default' => CoreConnector::__translate('Você não precisa ter uma chave cadastrada. Pague os seus pedidos via Pix.'), 'sanitize' => \FILTER_SANITIZE_STRING ],
-				'advanced_description' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOL ],
+				'advanced_description' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 				'instructions' => [ 'default' => CoreConnector::__translate('Faça o pagamento via PIX. O pedido número {{order_number}} será liberado assim que a confirmação do pagamento for efetuada.'), 'sanitize' => \FILTER_SANITIZE_STRING ],
-				'shows_qrcode' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOL ],				
-				'shows_copypast' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOL ],				
-				'shows_manual' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOL ],
+				'shows_qrcode' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],				
+				'shows_copypast' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],				
+				'shows_manual' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 			]
 		);	
 		
@@ -241,7 +241,7 @@ class SettingsManager
 				'receipt_status' => [ 'default' => 'on-hold', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => $allowedStatus ],
 				'paid_status' => [ 'default' => 'processing', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => $allowedStatus ],
 				'after_receipt' => [ 'default' => 0, 'sanitize' => \FILTER_VALIDATE_INT ],
-				'hide_in_order' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOL ],
+				'hide_in_order' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 				'expires_after' => [ 'default' => 24, 'sanitize' => \FILTER_VALIDATE_INT ],
 				'closest_lifetime' => [ 'default' => 60, 'sanitize' => \FILTER_VALIDATE_INT ],
 				'cron_frequency' => [ 'default' => 'everyfifteen', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => Cron::AVAILABLE_FREQUENCIES ],
@@ -275,7 +275,7 @@ class SettingsManager
 				'key_type' => [ 'default' => '', 'required' => true, 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'key_value' => [ 'default' => '', 'required' => true, 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'description' => [ 'default' => 'Compra em {{store_name}}', 'sanitize' => \FILTER_SANITIZE_STRING ],
-				'fix' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOL ]
+				'fix' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ]
 			]
 		);
 
@@ -344,7 +344,7 @@ class SettingsManager
 				'whatsapp_message' => [ 'default' => 'Segue o comprovante para o pedido {{order_number}}:', 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'telegram_number' => [ 'default' => '', 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'telegram_message' => [ 'default' => 'Segue o comprovante para o pedido {{order_number}}:', 'sanitize' => \FILTER_SANITIZE_STRING ],
-				'receipt_page' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOL ],
+				'receipt_page' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 			]
 		);
 	}
