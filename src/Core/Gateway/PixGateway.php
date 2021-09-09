@@ -1,46 +1,46 @@
 <?php
 namespace Piggly\WooPixGateway\Core\Gateway;
 
-use Piggly\WooPixGateway\Core\Entities\PixPayload;
+use Piggly\WooPixGateway\Core\Entities\PixEntity;
 use Piggly\WooPixGateway\Core\Processors\PixProcessor;
-use Piggly\WooPixGateway\CoreHelper;
-use Piggly\Wordpress\Core\WP;
-use Piggly\Wordpress\Plugin;
-use Piggly\Wordpress\Settings\KeyingBucket;
-use Piggly\Wordpress\Settings\Manager;
+use Piggly\WooPixGateway\CoreConnector;
+
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Settings\KeyingBucket;
 
 use WC_Order;
+use WC_Payment_Gateway;
 
+/**
+ * The main gateway woocommerce behavior.
+ * 
+ * @package \Piggly\WooPixGateway
+ * @subpackage \Piggly\WooPixGateway\Core\Gateway
+ * @version 2.0.0
+ * @since 2.0.0
+ * @category Gateway
+ * @author Caique Araujo <caique@piggly.com.br>
+ * @author Piggly Lab <dev@piggly.com.br>
+ * @license GPLv3 or later
+ * @copyright 2021 Piggly Lab <dev@piggly.com.br>
+ */
 class PixGateway extends WC_Payment_Gateway
 {
 	/**
-	 * Plugin data.
+	 * Startup payment gateway method.
 	 * 
-	 * @var Plugin
 	 * @since 2.0.0
+	 * @return void
 	 */
-	protected $_plugin;
-
-	/**
-	 * Settings.
-	 * 
-	 * @var Manager
-	 * @since 2.0.0
-	 */
-	protected $_settings;
-
 	public function __construct ()
 	{
-		$this->_plugin   = CoreHelper::getInstance()->getPlugin();
-		$this->_settings = $this->_plugin->settings();
-
-		$this->id = $this->_plugin->getName();
-		$this->method_title = CoreHelper::__translate('Pix');
-		$this->method_description = CoreHelper::__translate('Habilite o pagamento de pedidos via Pix. Este plugin automaticamente adiciona as instruções Pix na Página de Obrigado e na Página do Pedido.');
-		$this->supports = ['products'];
+		// Gateway settings
+		$this->id                 = CoreConnector::plugin()->getName();
+		$this->method_title       = CoreConnector::__translate('Pix');
+		$this->method_description = CoreConnector::__translate('Habilite o pagamento de pedidos via Pix. Este plugin automaticamente adiciona as instruções Pix na Página de Obrigado e na Página do Pedido.');
+		$this->supports           = ['products'];
+		$this->has_fields         = false;
 
 		$this->init_settings();
-		$this->init_form_fields();
 	}
 
 	/**
@@ -63,14 +63,14 @@ class PixGateway extends WC_Payment_Gateway
 	public function init_settings() 
 	{
 		/** @var KeyingBucket $gatewaySettings */
-		$gatewaySettings = $this->_settings->bucket()->get('gateway', new KeyingBucket());
+		$gatewaySettings = CoreConnector::settings()->get('gateway', new KeyingBucket());
 		/** @var KeyingBucket $gatewaySettings */
-		$accountSettings = $this->_settings->bucket()->get('account', new KeyingBucket());
+		$accountSettings = CoreConnector::settings()->get('account', new KeyingBucket());
 
 		$this->enabled = empty($accountSettings->get('key_value')) ? 'no' : ($gatewaySettings->get('enabled', false) ? 'yes' : 'no');
 		$this->title = $gatewaySettings->get('title');
 		$this->description = $gatewaySettings->get('description');
-		$this->icon = apply_filters('woocommerce_gateway_icon', $this->_plugin->getUrl().'assets/icons/'.$gatewaySettings->get('icon').'.png');
+		$this->icon = apply_filters('woocommerce_gateway_icon', CoreConnector::plugin()->getUrl().'assets/images/'.$gatewaySettings->get('icon').'.png');
 	}
 
 	/**
@@ -80,42 +80,43 @@ class PixGateway extends WC_Payment_Gateway
 	 * @return void
 	 */
 	public function admin_options ()
-	{ 
-		wp_enqueue_script(
-			'wpgly-woo-pix-gateway-admin-app-js',
-			$this->_plugin->getUrl().'assets/dist/js/wpgly-woo-pix-gateway-admin.app.js',
-			[],
-			'0.0.1',
-			true
-		);
+	{ require_once(CoreConnector::plugin()->getTemplatePath().'/admin/redirection.php'); }
 
-		wp_localize_script(
-			'wpgly-woo-pix-gateway-admin-app-js',
-			'bdmCommerce',
-			[
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'x_security' => wp_create_nonce('wpgly_bdm_commerce_admin'),
-				'plugin_url' => admin_url('admin.php?page='.$this->_plugin->getDomain()),
-				'debug' => true
-			]
-		);
+	/**
+	 * Recreate pix to order.
+	 *
+	 * @param WC_Order|integer $order_id
+	 * @since 2.0.0
+	 * @return PixEntity
+	 */
+	public function recreate_pix ( $order_id ) : PixEntity
+	{
+		/** @var KeyingBucket $settings */
+		$settings = CoreConnector::settings()->get('orders', new KeyingBucket());
 
-		if ( !wp_style_is('wpgly-wps-admin') )
-		{
-			wp_enqueue_style(
-				'wpgly-wps-admin',
-				$this->_plugin->getUrl().'assets/css/wpgly-wps-admin.css'
-			);
-		}
+		$order = $order_id instanceof WC_Order ? $order_id : new WC_Order($order_id);
+		$pix   = PixEntity::mount($order);
 
-		require_once($this->_plugin->getTemplatePath().'/admin/settings.php'); 
+		// Save as last order transaction
+		$order->update_meta_data('_pgly_wc_piggly_pix_latest_pix', $pix->getTxid());
+		$order->save();
+
+		// Order was cancelled
+		if ( $order->has_status(['cancelled']) )
+		{ $pix->updateStatus(PixEntity::STATUS_CANCELLED); }
+		else if ( static::order_not_waiting_payment($order) )
+		{ $pix->setStatus(PixEntity::STATUS_PAID)->save(); }
+		else if ( $order->has_status([$settings->get('receipt_status', 'on-hold')]) )
+		{ $pix->updateStatus(PixEntity::STATUS_WAITING); }
+
+		return $pix;
 	}
 
 	/**
 	 * Process Payment.
 	 *
 	 * @param int $order_id Order ID.
-	 * @since 2.0.0 Removed wpgly_pix_after_process_payment action
+	 * @since 2.0.0 Removed pgly_pix_after_process_payment action
 	 * @return array
 	 */
 	public function process_payment ( $order_id )
@@ -123,24 +124,115 @@ class PixGateway extends WC_Payment_Gateway
 		global $woocommerce;
 
 		$order = new WC_Order($order_id);
+		$pix   = PixEntity::mount($order);
 
-		// Create pix data
-		(new PixProcessor($this->_plugin))->get($order);
+		// Save as last order transaction
+		$order->update_meta_data('_pgly_wc_piggly_pix_latest_pix', $pix->getTxid());
 		
-		// Mark as on-hold (we're awaiting the payment)
+		// Mark as pending we're awaiting the payment)
 		$order->update_status( 
-			str_replace('wc-', '', $this->order_status), 
-			__( 'Aguardando pagamento via Pix', \WC_PIGGLY_PIX_PLUGIN_NAME ) 
+			apply_filters( 
+				'pgly_wc_piggly_pix_pending_status',
+				'pending', 
+				$order->get_id(), 
+				$order 
+			), 
+			\sprintf(
+				CoreConnector::__translate('Processo de pagamento via Pix iniciado. ID da transação %s criado.'),
+				$pix->getTxid()
+			)
 		);
- 
+
 		// Remove cart
 		$woocommerce->cart->empty_cart();
-		
-		// Return thank-you redirect
+
+		// Pix created
+		\do_action('pgly_wc_piggly_pix_to_pay', $pix);
+
+		// Return checkout payment url
 		return array(
 			'result' 	=> 'success',
-			'redirect'	=> $this->get_return_url($order)
+			'redirect'	=> $order->get_checkout_payment_url(true),
+			'txid'      => $pix->getTxid(),
+			'pix'       => $pix
 		);
+	}
+
+	/**
+	 * Process pending pix.
+	 *
+	 * @action pgly_wc_piggly_pix_close_to_expires
+	 * @action woocommerce_payment_complete
+	 * @filter woocommerce_payment_complete_order_status
+	 * @param PixEntity $pix
+	 * @since 2.0.0
+	 * @return boolean
+	 */
+	public function process_pending ( PixEntity $pix ) : bool
+	{
+		if ( $pix->isStatus(PixEntity::STATUS_CREATED) )
+		{
+			// Run action when closest to expires
+			if ( $pix->isClosestToExpires() )
+			{ do_action('pgly_wc_piggly_pix_close_to_expires', $pix); }
+			
+			// Check if is expired or cancelled
+			if ( $pix->isExpired() )
+			{ return false; }
+		}
+		else if ( $pix->isStatus(PixEntity::STATUS_EXPIRED) 
+						|| $pix->isStatus(PixEntity::STATUS_CANCELLED) )
+		{ return false; }
+
+		$order = $pix->getOrder();
+
+		// Order does not exists
+		if ( empty($order) )
+		{ return false; }
+
+		// Order was cancelled
+		if ( $order->has_status(['cancelled']) )
+		{ 
+			$pix->updateStatus(PixEntity::STATUS_CANCELLED); 
+			return false;
+		}
+
+		// Pix is paid
+		if ( $pix->isPaid() && !static::order_not_waiting_payment($order) )
+		{
+			// Flush session
+			if ( WC()->session ) 
+			{ WC()->session->set( 'order_awaiting_payment', false ); }
+
+			$order->set_transaction_id($pix->getE2eid());
+
+			// Update status
+			$order->set_status( 
+				apply_filters( 
+					'woocommerce_payment_complete_order_status',
+					$order->needs_processing() ? CoreConnector::settings()->get('orders', new KeyingBucket())->get('paid_status', 'processing') : 'completed', 
+					$order->get_id(), 
+					$order 
+				),
+				\sprintf(
+					CoreConnector::__translate('Pix `%s` identificado e confirmado.'), 
+					$pix->getE2eid()
+				)
+			);
+
+			// Set paid date
+			if ( ! $order->get_date_paid( 'edit' ) ) 
+			{ $order->set_date_paid( time() ); }
+
+			// Save order
+			$order->save();
+			
+			// Do action
+			do_action( 'woocommerce_payment_complete', $order->get_id() );
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -153,7 +245,7 @@ class PixGateway extends WC_Payment_Gateway
 	public function payment_fields ()
 	{
 		/** @var KeyingBucket $gatewaySettings */
-		$gatewaySettings = $this->_settings->bucket()->get('gateway', new KeyingBucket());
+		$gatewaySettings = CoreConnector::settings()->get('gateway', new KeyingBucket());
 
 		if ( !$gatewaySettings->get('advanced_description', false) )
 		{
@@ -165,22 +257,26 @@ class PixGateway extends WC_Payment_Gateway
 			return;
 		}
 
-		if ( !wp_style_is('wpgly-woo-pix-gateway') )
+		if ( !wp_style_is('pix-por-piggly-front-css') )
 		{
 			wp_enqueue_style(
-				'wpgly-woo-pix-gateway',
-				$this->_plugin->getUrl().'assets/css/wpgly-woo-pix-gateway.css'
+				'pix-por-piggly-front-css',
+				CoreConnector::plugin()->getUrl().'assets/css/pix-por-piggly.front.css',
+				[],
+				'2.0.0'
 			);
 		}
-
-		wc_get_template(
+		
+		$banner = CoreConnector::plugin()->getUrl().'assets/images/banner-'.$gatewaySettings->get('icon').'.png';
+		
+		\wc_get_template(
 			'html-woocommerce-instructions.php',
-			[
+			[	
+				'pix_banner '=> $banner,
 				'description' => $this->get_description(),
-				'banner '=> $this->_plugin->getUrl().'assets/banners/banner-'.$gatewaySettings->get('icon').'.png'
 			],
-			WC()->template_path().\dirname($this->_plugin->getBasename()).'/',
-			$this->_plugin->getTemplatePath()
+			WC()->template_path().\dirname(CoreConnector::plugin()->getBasename()).'/',
+			CoreConnector::plugin()->getTemplatePath().'woocommerce/'
 		);
 	}
 	
@@ -195,4 +291,75 @@ class PixGateway extends WC_Payment_Gateway
 	 */
 	public function process_admin_options ()
 	{ return false; }
+	
+
+	/**
+	 * Update a single option.
+	 *
+	 * @since 2.0.0
+	 * @param string $key Option key.
+	 * @param mixed  $value Value to set.
+	 * @return bool was anything saved?
+	 */
+	public function update_option( $key, $value = '' ) 
+	{
+		/** @var KeyingBucket $gatewaySettings */
+		$settings = CoreConnector::settings()->get('gateway', new KeyingBucket());
+		
+		if ( $key === 'enabled' )
+		{ $value = \filter_var($value, \FILTER_VALIDATE_BOOL); }
+
+		$settings->set($key, $value);
+		
+		CoreConnector::settingsManager()->save();
+		return true;
+	}
+
+	/**
+	 * Get option from DB.
+	 *
+	 * Gets an option from the settings API, using defaults if necessary to prevent undefined notices.
+	 *
+	 * @param  string $key Option key.
+	 * @param  mixed  $empty_value Value when empty.
+	 * @return string The value specified for the option or a default value for the option.
+	 */
+	public function get_option( $key, $empty_value = null ) {
+		/** @var KeyingBucket $gatewaySettings */
+		$settings = CoreConnector::settings()->get('gateway', new KeyingBucket());
+		$value = $settings->get($key, $empty_value);
+
+		if ( \is_bool($value) )
+		{ $value = $value ? 'yes' : 'no'; }
+
+		return $value;
+	}
+
+	/**
+	 * Return the name of the option in the WP DB.
+	 *
+	 * @since 2.0.0
+	 * @return string
+	 */
+	public function get_option_key() 
+	{ return 'wc_piggly_pix_settings'; }
+
+	/**
+	 * Order is not cancelled or waiting payment anymore.
+	 *
+	 * @param WC_Order $order
+	 * @since 2.0.0
+	 * @return boolean
+	 */
+	public static function order_not_waiting_payment ( WC_Order $order ) : bool
+	{
+		/** @var KeyingBucket $gatewaySettings */
+		$settings = CoreConnector::settings()->get('orders', new KeyingBucket());
+
+		return !$order->has_status([
+			'pending', 
+			$settings->get('receipt_status', 'on-hold'),
+			'pix-receipt'
+		]);
+	}
 }

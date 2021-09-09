@@ -1,22 +1,35 @@
 <?php
 namespace Piggly\WooPixGateway\WP;
 
-use Piggly\WooPixGateway\Core\Entities\PixPayload;
+use Piggly\WooPixGateway\Core\Entities\PixEntity;
 use Piggly\WooPixGateway\Core\Gateway\PixGateway;
-use Piggly\Wordpress\Core\Scaffold\Initiable;
-use Piggly\Wordpress\Core\WP;
-use Piggly\Wordpress\Plugin;
-use Piggly\Wordpress\Settings\KeyingBucket;
+use Piggly\WooPixGateway\CoreConnector;
 
-use WC_Order;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Initiable;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\WP;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Plugin;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Settings\KeyingBucket;
 
+/**
+ * Cronjob tasks.
+ * 
+ * @package \Piggly\WooPixGateway
+ * @subpackage \Piggly\WooPixGateway\WP
+ * @version 2.0.0
+ * @since 2.0.0
+ * @category WP
+ * @author Caique Araujo <caique@piggly.com.br>
+ * @author Piggly Lab <dev@piggly.com.br>
+ * @license GPLv3 or later
+ * @copyright 2021 Piggly Lab <dev@piggly.com.br>
+ */
 class Cron extends Initiable
 {
 	/**
 	 * Available frequencies.
 	 * 
 	 * @var string
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 */
 	const AVAILABLE_FREQUENCIES = [
 		'everyfifteen', 
@@ -31,7 +44,7 @@ class Cron extends Initiable
 	 * Startup method with all actions and
 	 * filter to run.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @return void
 	 */
 	public function startup ()
@@ -44,7 +57,7 @@ class Cron extends Initiable
 		);
 
 		WP::add_action(
-			'wpgly_cron_woo_pix_gateway_processing',
+			'pgly_cron_wc_piggly_pix_processing',
 			$this,
 			'processing'
 		);
@@ -52,43 +65,35 @@ class Cron extends Initiable
 
 	/**
 	 * Get all orders paid with Pix, and run action
-	 * wpgly_woo_pix_gateway_process to processing
+	 * pgly_wc_piggly_pix_process to processing
 	 * payment data and update pix.
 	 *
+	 * @action pgly_wc_piggly_pix_process
 	 * @since 2.0.0
 	 * @return void
 	 */
 	public function processing ()
 	{
-		/** @var KeyingBucket $settings */
-		$settings = $plugin->settings()->bucket()->get('orders', new KeyingBucket());
-
-		$this->debug()->debug($this->__translate('Iniciando a tarefa cron para processamento dos Pix'));
+		WC()->mailer();
 		
-		$orders = wc_get_orders( array(
-			'limit'          => -1,
-			'payment_method' => $this->_plugin->getName(),
-			'status'         => [
-				$settings->get('waiting_status', 'on-hold'),
-				$settings->get('receipt_status', 'on-hold')
-			]
-		) );
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'pgly_pix';
+		$gateway = new PixGateway();
 
-		foreach ( $orders as $order )
-		{
-			$order   = $order instanceof WC_Order ? $order : new WC_Order($order);
-			$gateway = wc_get_payment_gateway_by_order($order);
-			
-			if ( $gateway instanceof PixGateway )
-			{ do_action('wpgly_woo_pix_gateway_process', PixPayload::fill($order)); }
-		}
+		CoreConnector::debugger()->debug(CoreConnector::__translate('Iniciando a tarefa cron para processamento dos Pix'));
+		
+		// All non-static pixs
+		$pixs = $wpdb->get_results("SELECT * FROM $table_name WHERE `status` = 'created' OR status = 'warning'");
+
+		foreach ( $pixs as $pix )
+		{ $gateway->process_pending(\apply_filters('pgly_wc_piggly_pix_process', PixEntity::create($pix))); }
 	}
 
 	/**
 	 * All schedules available to current cron jobs.
 	 *
 	 * @param array $schedules
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @return array
 	 */
 	public function schedules ( array $schedules ) : array
@@ -120,7 +125,7 @@ class Cron extends Initiable
 	 * Create cron jobs.
 	 *
 	 * @param Plugin $plugin
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @return void
 	 */
 	public static function create ( Plugin $plugin ) 
@@ -129,24 +134,22 @@ class Cron extends Initiable
 		$settings = $plugin->settings()->bucket()->get('orders', new KeyingBucket());
 
 		// --- Cronjob to do transactions
-		if ( wp_next_scheduled('wpgly_cron_woo_pix_gateway_processing') )
-		{ wp_clear_scheduled_hook( 'wpgly_cron_woo_pix_gateway_processing' ); }
+		if ( wp_next_scheduled('pgly_cron_wc_piggly_pix_processing') )
+		{ wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_processing' ); }
 
 		wp_schedule_event(
 			current_time('timestamp'), 
 			$settings->get('cron_frequency', 'everyfifteen'), 
-			'wpgly_cron_woo_pix_gateway_processing' 
+			'pgly_cron_wc_piggly_pix_processing' 
 		);
 	}
 
 	/**
 	 * Destroy cron jobs.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @return void
 	 */
 	public static function destroy ()
-	{
-		wp_clear_scheduled_hook( 'wpgly_cron_woo_pix_gateway_processing' );
-	}
+	{ wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_processing' ); }
 }

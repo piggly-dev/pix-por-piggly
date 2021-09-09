@@ -1,0 +1,44 @@
+{
+    "name": "piggly\/php-pix",
+    "description": "Uma biblioteca para preparar e gerar o c\u00f3digo Pix do Banco Central do Brasil.",
+    "keywords": [
+        "piggly",
+        "pix",
+        "bcb",
+        "emv",
+        "qrcode",
+        "payment"
+    ],
+    "type": "library",
+    "homepage": "https:\/\/github.com\/piggly-dev\/php-pix",
+    "autoload": {
+        "psr-4": {
+            "Piggly\\WooPixGateway\\Vendor\\Piggly\\Pix\\": "src"
+        }
+    },
+    "suggest": {
+        "piggly\/php-api-client": "Recomentado para criar requisi\u00e7\u00f5es HTTP seguras e din\u00e2micas para as API Pix junto com os Payloads padr\u00f5es."
+    },
+    "require": {
+        "php": "^7.2 || ^8.0",
+        "ext-gd": "*",
+        "chillerlan\/php-qrcode": "^3.3"
+    },
+    "require-dev": {
+        "php": "^7.3 || ^8.0",
+        "phpunit\/phpunit": "^9.5",
+        "fakerphp\/faker": "^1.14"
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Caique Araujo",
+            "email": "caique@studiopiggly.com.br",
+            "homepage": "https:\/\/github.com\/caiquearaujo",
+            "role": "Developer"
+        }
+    ]
+}

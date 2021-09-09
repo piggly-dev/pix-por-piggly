@@ -2,24 +2,30 @@
 namespace Piggly\WooPixGateway\WP;
 
 use Exception;
-use Piggly\Wordpress\Core\Interfaces\Runnable;
-use Piggly\Wordpress\Core\WP;
-use Piggly\Wordpress\Core\Scaffold\Internationalizable;
+use Piggly\WooPixGateway\CoreConnector;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Interfaces\Runnable;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\WP;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Internationalizable;
 
+/**
+ * Activate plugin.
+ * 
+ * @package \Piggly\WooPixGateway
+ * @subpackage \Piggly\WooPixGateway\WP
+ * @version 2.0.0
+ * @since 2.0.0
+ * @category WP
+ * @author Caique Araujo <caique@piggly.com.br>
+ * @author Piggly Lab <dev@piggly.com.br>
+ * @license GPLv3 or later
+ * @copyright 2021 Piggly Lab <dev@piggly.com.br>
+ */
 class Activator extends Internationalizable implements Runnable
 {
 	/**
-	 * Requirements string.
-	 *
-	 * @since 1.0.0
-	 * @var string
-	 */
-	protected $_requirements;
-
-	/**
 	 * Method to run all business logic.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @return void
 	 */
 	public function run ()
@@ -34,24 +40,12 @@ class Activator extends Internationalizable implements Runnable
 
 		// Create cronjobs
 		Cron::create($this->_plugin);
-
-		// First setup
-		$this->setup();
 	}
-
-	/**
-	 * First setup to plugin.
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	protected function setup ()
-	{}
 
 	/**
 	 * Create the main database.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @return void
 	 */
 	protected function create_database () 
@@ -77,36 +71,58 @@ class Activator extends Internationalizable implements Runnable
 			if ( !empty ( $wpdb->collate ) ) 
 			{ $charset_collate .= ' COLLATE '.$wpdb->collate; }
 
-			$table_name = $prefix . 'wpgly_pix_receipts';
+			$table_name = $prefix . 'pgly_bdm_payments';
 			
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name )
 			{
 				$SQL = 
 					"CREATE TABLE $table_name 
 					(
-						`id` INT(11) NOT NULL AUTO_INCREMENT,
-						`order_number` VARCHAR(255) NOT NULL DEFAULT 'BRL',
-						`customer_email` VARCHAR(255) NOT NULL,
-						`pix_receipt` VARCHAR(255) NOT NULL,
-						`trusted` TINYINT(1) NOT NULL DEFAULT 1,
-						`send_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+						`id` INT NOT NULL AUTO_INCREMENT,
+						`oid` INT NULL COMMENT 'Order ID',
+						`txid` VARCHAR(255) NOT NULL UNIQUE KEY,
+						`e2eid` VARCHAR(255) NULL,
+						`store_name` VARCHAR(255) NULL,
+						`merchant_name` VARCHAR(255) NULL,
+						`merchant_city` VARCHAR(255) NULL,
+						`key` VARCHAR(255) NOT NULL,
+						`key_type` VARCHAR(255) NOT NULL,
+						`description` VARCHAR(255) NULL,
+						`amount` DECIMAL(8,2) NOT NULL,
+						`discount` DECIMAL(8,2) NULL DEFAULT 0,
+						`bank` INT NULL,
+						`brcode` TEXT NULL,
+						`qrcode` TEXT NULL,
+						`receipt` TEXT NULL,
+						`metadata` TEXT NULL,
+						`type` enum('static', 'cob', 'cobv') NOT NULL DEFAULT 'static',
+						`status` enum('created','expired','paid','cancelled') NOT NULL DEFAULT 'created',
+						`expires_at` TIMESTAMP NULL,
+						`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+						`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 						PRIMARY KEY `id` (`id`),
-						INDEX `currency` (`currency`)
+						INDEX `oid` (`oid`),
+						INDEX `type` (`type`),
+						INDEX `status` (`status`),
+						INDEX `expires_at` (`expires_at`)
 					) $charset_collate;";
 
 				@dbDelta( $SQL );
 			}
 
-			update_option('wc_piggly_pix_dbversion', $this->_plugin->getDbVersion());
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name )
+			{ update_option('wc_piggly_pix_dbversion', CoreConnector::plugin()->getDbVersion()); }
+			else
+			{ @\trigger_error(CoreConnector::__translate('Não foi possível criar o banco de dados: %s')); }
 		}
 		catch ( Exception $e )
-		{ $this->debug()->force()->error(\sprintf($this->__translate('Não foi possível criar o banco de dados: %s'), $e->getMessage())); }
+		{ $this->debug()->force()->error(\sprintf(CoreConnector::__translate('Não foi possível criar o banco de dados: %s'), $e->getMessage())); }
 	}
 
 	/**
 	 * Create plugin paths.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @return void
 	 */
 	protected function create_paths ()

@@ -1,10 +1,26 @@
 <?php
 namespace Piggly\WooPixGateway\Core;
 
-use Piggly\Wordpress\Core\Scaffold\Initiable;
-use Piggly\Wordpress\Core\WP;
+use Piggly\WooPixGateway\CoreConnector;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Initiable;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\WP;
+
+use WC_Order;
 use WP_Post;
 
+/**
+ * Manages all metabox actions and filters.
+ * 
+ * @package \Piggly\WooBdmGateway
+ * @subpackage \Piggly\WooBdmGateway\Core
+ * @version 2.0.0
+ * @since 2.0.0
+ * @category Core
+ * @author Caique Araujo <caique@piggly.com.br>
+ * @author Piggly Lab <dev@piggly.com.br>
+ * @license GPLv3 or later
+ * @copyright 2021 Piggly Lab <dev@piggly.com.br>
+ */
 class Metabox extends Initiable
 {
 	
@@ -17,6 +33,9 @@ class Metabox extends Initiable
 	 */
 	public function startup ()
 	{
+		if ( !WP::is_pure_admin() )
+		{ return; }
+
 		WP::add_action(
 			'add_meta_boxes', 
 			$this, 
@@ -42,53 +61,58 @@ class Metabox extends Initiable
 
 		$order = new WC_Order($post->ID);
 
-		if ( $order->get_payment_method() !== $this->_plugin->getName() )
+		if ( $order->get_payment_method() !== CoreConnector::plugin()->getName() )
 		{ return; }
 
-		$this->wp_enqueue();
+		// CSS and JS
+		CoreConnector::enqueuePglyWpsAdmin(true);
 
-		add_meta_box(
-			$this->_plugin->getDomain().'-metabox-pix',
-			$this->__translate('Dados do Pix'),
-			array( $this, 'display' ),
-			'shop_order',
-			'side',
-			'high'
-		);
+		$pix = $order->get_meta('_pgly_wc_piggly_pix_latest_pix');
+
+		if ( !empty($pix) )
+		{
+			add_meta_box(
+				$this->_plugin->getDomain().'-metabox-pix-gateway',
+				$this->__translate('Dados do Pix'),
+				array( $this, 'display' ),
+				'shop_order',
+				'side',
+				'high'
+			);
+		}
+		else
+		{
+			$pix = $order->get_meta('_wc_piggly_pix');
+
+			if ( !empty($pix) )
+			{
+				add_meta_box(
+					$this->_plugin->getDomain().'-metabox-pix-gateway',
+					$this->__translate('Dados do Pix'),
+					array( $this, 'display_legacy' ),
+					'shop_order',
+					'side',
+					'high'
+				);
+			}
+		}
 	}
-
-	public function display ()
-	{ require_once($this->_plugin->getTemplatePath().'admin/metabox.php');	}
 
 	/**
-	 * Enqueue CSS scripts.
+	 * Display the legacy metabox.
 	 *
-	 * @since 1.0.0
+	 * @since 2.0.0
 	 * @return void
 	 */
-	protected function wp_enqueue ()
-	{
-		wp_enqueue_script(
-			'wpgly-bdm-commerce-admin-basic-js',
-			$this->_plugin->getUrl().'assets/dist/js/wpgly-bdm-commerce-admin.basic.js',
-			[],
-			'0.0.1',
-			true
-		);
+	public function display_legacy ()
+	{ require_once($this->_plugin->getTemplatePath().'admin/legacy-metabox.php');	}
 
-		wp_localize_script(
-			'wpgly-bdm-commerce-admin-basic-js',
-			'bdmCommerce',
-			[
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'x_security' => wp_create_nonce('wpgly_bdm_ajax'),
-				'plugin_url' => admin_url('admin.php?page='.$this->_plugin->getDomain())
-			]
-		);
-
-		wp_enqueue_style(
-			'wpgly-wps-admin',
-			$this->_plugin->getUrl().'assets/dist/css/wpgly-wps-admin.css'
-		);
-	}
+	/**
+	 * Display the metabox.
+	 *
+	 * @since 2.0.0
+	 * @return void
+	 */
+	public function display ()
+	{ require_once($this->_plugin->getTemplatePath().'admin/metabox.php');	}
 }
