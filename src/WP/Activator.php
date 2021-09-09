@@ -1,88 +1,190 @@
 <?php
-namespace Piggly\WC\Pix\WP;
+namespace Piggly\WooPixGateway\WP;
 
-use Piggly\WC\Pix\WP\Helper as WP;
-
-if ( ! defined( 'ABSPATH' ) ) { exit; }
+use Exception;
+use Piggly\WooPixGateway\CoreConnector;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Interfaces\Runnable;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\WP;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Internationalizable;
 
 /**
- * Plugin behavior when activated.
+ * Activate plugin.
  * 
- * @since      1.2.0 
- * @package    Piggly\WC\Pix
- * @subpackage Piggly\WC\Pix\WP
- * @author     Caique <caique@piggly.com.br>
- * @author     Piggly Lab <dev@piggly.com.br>
+ * @package \Piggly\WooPixGateway
+ * @subpackage \Piggly\WooPixGateway\WP
+ * @version 2.0.0
+ * @since 2.0.0
+ * @category WP
+ * @author Caique Araujo <caique@piggly.com.br>
+ * @author Piggly Lab <dev@piggly.com.br>
+ * @license GPLv3 or later
+ * @copyright 2021 Piggly Lab <dev@piggly.com.br>
  */
-class Activator
+class Activator extends Internationalizable implements Runnable
 {
 	/**
-	 * All function to run when activate plugin.
-	 * 
-	 * @since 1.2.0
+	 * Method to run all business logic.
+	 *
+	 * @since 2.0.0
 	 * @return void
 	 */
-	public static function activate ()
+	public function run ()
 	{
 		if ( !WP::is_pure_admin() )
 		{ return; }
 
-		self::create_database();
-		self::setup_welcome();
+		// Prepare and create database
+		$this->create_database();
+		// Prepare and create paths
+		$this->create_paths();
+
+		// Create cronjobs
+		Cron::create($this->_plugin);
 	}
 
 	/**
-	 * Create new database when activating plugin.
-	 * 
-	 * @since 1.3.0
+	 * Create the main database.
+	 *
+	 * @since 2.0.0
 	 * @return void
 	 */
-	public static function create_database ()
+	protected function create_database () 
 	{
 		global $wpdb;
 
-		$ivl_db_version = \WC_PIGGLY_PIX_DB_VERSION;
-		$ins_db_version = get_option('wc_piggly_pix_dbversion', '0' );
-		$prefix         = $wpdb->prefix;
-		$table_name     = $prefix . 'wpgly_pix_receipts';
+		// It is not initial database version
+		if ( get_option('wc_piggly_pix_dbversion', '0' ) !== '0' )
+		{ return; }
+		
+		if ( !function_exists('dbDelta') )
+		{ require_once(ABSPATH . 'wp-admin/includes/upgrade.php'); }
 
-		/** Setting the default charset collation **/
-		$charset_collate = '';
-
-		if ( $ins_db_version === '0' || $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name )
+		try
 		{
+			$prefix          = $wpdb->prefix;
+			$charset_collate = '';
+
+			/** Setting the default charset collation **/
 			if ( !empty ( $wpdb->charset ) )
 			{ $charset_collate = 'DEFAULT CHARACTER SET '.$wpdb->charset; }
 
 			if ( !empty ( $wpdb->collate ) ) 
 			{ $charset_collate .= ' COLLATE '.$wpdb->collate; }
 
-			$SQL = 
-				"CREATE TABLE $table_name 
-				(
-					id int(11) NOT NULL AUTO_INCREMENT,
-					order_number varchar(255) NOT NULL,
-					customer_email varchar(255) NOT NULL,
-					pix_receipt varchar(255) NOT NULL,
-					auto_fill tinyint(1) NOT NULL DEFAULT 0,
-					send_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-					PRIMARY KEY id (id)
-				) $charset_collate;";
+			$table_name = $prefix . 'pgly_bdm_payments';
+			
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name )
+			{
+				$SQL = 
+					"CREATE TABLE $table_name 
+					(
+						`id` INT NOT NULL AUTO_INCREMENT,
+						`oid` INT NULL COMMENT 'Order ID',
+						`txid` VARCHAR(255) NOT NULL UNIQUE KEY,
+						`e2eid` VARCHAR(255) NULL,
+						`store_name` VARCHAR(255) NULL,
+						`merchant_name` VARCHAR(255) NULL,
+						`merchant_city` VARCHAR(255) NULL,
+						`key` VARCHAR(255) NOT NULL,
+						`key_type` VARCHAR(255) NOT NULL,
+						`description` VARCHAR(255) NULL,
+						`amount` DECIMAL(8,2) NOT NULL,
+						`discount` DECIMAL(8,2) NULL DEFAULT 0,
+						`bank` INT NULL,
+						`brcode` TEXT NULL,
+						`qrcode` TEXT NULL,
+						`receipt` TEXT NULL,
+						`metadata` TEXT NULL,
+						`type` enum('static', 'cob', 'cobv') NOT NULL DEFAULT 'static',
+						`status` enum('created','expired','paid','cancelled') NOT NULL DEFAULT 'created',
+						`expires_at` TIMESTAMP NULL,
+						`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+						`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+						PRIMARY KEY `id` (`id`),
+						INDEX `oid` (`oid`),
+						INDEX `type` (`type`),
+						INDEX `status` (`status`),
+						INDEX `expires_at` (`expires_at`)
+					) $charset_collate;";
 
-			if ( !function_exists('dbDelta') )
-			{ require_once(ABSPATH . 'wp-admin/includes/upgrade.php'); }
+				@dbDelta( $SQL );
+			}
 
-			@dbDelta( $SQL );
-			update_option('wc_piggly_pix_dbversion', $ivl_db_version);
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name )
+			{ update_option('wc_piggly_pix_dbversion', CoreConnector::plugin()->getDbVersion()); }
+			else
+			{ @\trigger_error(CoreConnector::__translate('Não foi possível criar o banco de dados: %s')); }
 		}
+		catch ( Exception $e )
+		{ $this->debug()->force()->error(\sprintf(CoreConnector::__translate('Não foi possível criar o banco de dados: %s'), $e->getMessage())); }
 	}
 
 	/**
-	 * Set welcome transient to redirect after activation.
-	 * 
-	 * @since 1.3.0
+	 * Create plugin paths.
+	 *
+	 * @since 2.0.0
 	 * @return void
 	 */
-	public static function setup_welcome ()
-	{ set_transient( \WC_PIGGLY_PIX_PLUGIN_NAME.'-welcome-screen', true, 10 ); }
+	protected function create_paths ()
+	{
+		/** @var string $base_dir Upload base dir */
+		$base_dir = wp_upload_dir()['basedir'];
+		/** @var string $pix_dir Folder name */
+		$pix_dir  = \dirname($this->_plugin->getBasename());
+
+		// INDEX
+		// Check for .htaccess file
+		$PATH = \sprintf('%s/%s/.htaccess', $base_dir, $pix_dir);
+
+		if ( !\file_exists( $PATH ) )
+		{ file_put_contents( $PATH, 'Options -Indexes' ); }
+
+		// Check for index.php file
+		$PATH = \sprintf('%s/%s/index.php', $base_dir, $pix_dir);
+
+		if ( !\file_exists( $PATH ) )
+		{ file_put_contents( $PATH, '<?php // Silence is golden' ); }
+
+		// QR CODES
+
+		// QR CODE PATH
+		$PATH = sprintf('%s/%s/qr-codes/', $base_dir, $pix_dir);
+
+		// Create folder if not exists...
+		if ( !\file_exists( $PATH ) ) 
+		{ wp_mkdir_p($PATH); }
+
+		// Check for .htaccess file
+		$PATH = \sprintf('%s/%s/qr-codes/.htaccess', $base_dir, $pix_dir);
+
+		if ( !\file_exists( $PATH ) )
+		{ file_put_contents( $PATH, 'Options -Indexes' ); }
+
+		// Check for index.php file
+		$PATH = sprintf('%s/%s/qr-codes/index.php', $base_dir, $pix_dir);
+
+		if ( !\file_exists( $PATH ) )
+		{ file_put_contents( $PATH, '<?php // Silence is golden' ); }
+
+		// RECEIPTS
+
+		// RECEIPTS PATH
+		$PATH = \sprintf('%s/%s/receipts/', $base_dir, $pix_dir);
+
+		// Create folder if not exists...
+		if ( !\file_exists( $PATH ) ) 
+		{ wp_mkdir_p($PATH); }
+
+		// Check for .htaccess file
+		$PATH = sprintf('%s/%s/receipts/.htaccess', $base_dir, $pix_dir);
+
+		if ( !\file_exists( $PATH ) )
+		{ file_put_contents( $PATH, 'Options -Indexes' ); }
+
+		// Check for index.php file
+		$PATH = sprintf('%s/%s/receipts/index.php', $base_dir, $pix_dir);
+
+		if ( !\file_exists( $PATH ) )
+		{ file_put_contents( $PATH, '<?php // Silence is golden' ); }
+	}
 }

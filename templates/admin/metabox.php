@@ -1,70 +1,96 @@
-<?php if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <?php
-use Piggly\WC\Pix\Gateway\PixGateway;
+
+use Piggly\WooPixGateway\Core\Entities\PixEntity;
+use Piggly\WooPixGateway\Core\Repo\PixRepo;
+use Piggly\WooPixGateway\CoreConnector;
+use Piggly\WooPixGateway\Vendor\Piggly\Pix\Parser;
+
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 global $post;
 
-$order   = new WC_Order( $post->ID );
-$gateway = new PixGateway();
-$data    = [];
-
-$receipt = $order->get_meta('_wc_piggly_pix_receipt');
-
-if ( !empty($receipt) ) :
-	printf('<a href="%s" target="_blank" style="display: block; text-align: center; margin: 0 0 6px;" class="wpgly-button wpgly-success">%s</a>', $receipt, __('Último Comprovante Recebido', WC_PIGGLY_PIX_PLUGIN_NAME));
-	echo '<p>Para ver todos os comprovantes do pedido, vá para Woocommerce > Comprovantes.</p>';
-endif;
-
-if ( $gateway->enabled === 'no' )
-{
-	// Get order meta data...
-	$pixOrder = $order->get_meta('_wc_piggly_pix');
-
-	if ( !empty($pixOrder) ) 
-	{
-		$data = [
-			'qrcode' => $pixOrder['pix_qr'],
-			'pix' => $pixOrder['pix_code'],
-			'key' => $pixOrder['key_value'],
-			'id' => $pixOrder['identifier'],
-			'amount' => $pixOrder['amount']
-		];
-	}
-}
-else
-{
-	$data = $gateway->get_pix_data($order);
-
-	$data = [
-		'qrcode' => $data['qrcode'],
-		'pix' => $data['pix'],
-		'key' => $gateway->key_value,
-		'id' => $gateway->identifier,
-		'amount' => $data['amount']
-	];
-}
+$order = new WC_Order( $post->ID );
+$pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc_piggly_pix_latest_pix'));
 ?>
-<div class="wpgly">
-<?php if ( !empty($data) ) : ?>
-	<?php if ( !empty($data['qrcode']) ) : ?>
-	<div class="pix-method">
-		<?php echo '<img style="max-width:100%; height: auto;" src="'.$data['qrcode'].'" alt="QR Code de Pagamento" />'; ?>
+
+<div id="pgly-pix-por-piggly" class="pgly-wps--settings" style="padding: 10px;">
+	<?php if ( $pix->isType(PixEntity::TYPE_STATIC) ) : ?>
+		<h3 style="text-align: center" class="pgly-wps--title pgly-wps-is-7">Pix Estático</h3>
+	<?php else: ?>
+		<h3 style="text-align: center" class="pgly-wps--title pgly-wps-is-7">Pix Dinâmico</h3>
+	<?php endif; ?>
+	<?php if ( !empty($pix->getQrCode()['url']) ) : ?>
+	<div>
+		<img style="max-width:100%; height: auto;" src="<?=$pix->getQrCode()['url'];?>" alt="QR Code de Pagamento"/>
 	</div>
 	<?php endif; ?>
 
-	<p><strong class="wpgly-caption">Valor do Pix</strong> <span class="wpgly-data"><?=wc_price($data['amount']);?></span></p>
-	<p><strong class="wpgly-caption">Chave Pix</strong> <span class="wpgly-data"><?=$data['key'];?></span></p>
-	<p><strong class="wpgly-caption">Identificador</strong> <span class="wpgly-data"><?=$data['id'] ?? '-';?></span></p>
-	<p><strong class="wpgly-caption">Pix Copia & Cola</strong> <code style="word-break: break-all;" class="wpgly-data"><?=$data['pix'];?></code></p>
-<?php else : ?>
-	<p>Pix não disponível para o pedido... verifique as configurações do plugin.</p>
-<?php endif; ?>
+	<div class="pgly-wps--explorer pgly-wps-is-compact">
+		<strong>Identificador</strong>
+		<span><?=$pix->getTxid();?></span>
+	</div>
+	<div class="pgly-wps--explorer pgly-wps-is-compact">
+		<strong>Nome do Titular do Pix</strong>
+		<span><?=$pix->getMerchantName();?></span>
+	</div>
+	<div class="pgly-wps--explorer pgly-wps-is-compact">
+		<strong>Cidade do Titular do Pix</strong>
+		<span><?=$pix->getMerchantCity();?></span>
+	</div>
+	<div class="pgly-wps--explorer pgly-wps-is-compact">
+		<strong>Banco</strong>
+		<span>CÓDIGO <?=$pix->getBank();?></span>
+	</div>
+	<div class="pgly-wps--explorer pgly-wps-is-compact">
+		<strong>Status</strong>
+		<div style="margin-top: 4px" class="pgly-wps--badge pgly-wps-is-<?=$pix->getStatusColor()?>"><?=$pix->getStatusLabel();?></div>
+	</div>
+	<div class="pgly-wps--explorer pgly-wps-is-compact">
+		<strong>Chave Pix</strong>
+		<span><?=$pix->getPixKeyValue();?> (<?=Parser::getAlias($pix->getPixKeyType());?>)</span>
+	</div>
+	<div class="pgly-wps--explorer pgly-wps-is-compact">
+		<strong>Valor do Pix</strong>
+		<span><?=\wc_price($pix->getAmount());?></span>
+	</div>
+	<?php if ( !empty($pix->getDiscount()) ) : ?>
+	<div class="pgly-wps--explorer pgly-wps-is-compact">
+		<strong>Desconto</strong>
+		<span><?=\wc_price($pix->getDiscount());?></span>
+	</div>
+	<?php endif; ?>
+	<div class="pgly-wps--explorer pgly-wps-is-compact">
+		<strong>Pix Copia & Cola</strong>
+		<span><?=$pix->getBrCode();?></span>
+	</div>
 
-<?php
-if ( $gateway->is_payment_waiting($order) ) :
-	printf('<button class="wpgly-pix-button wpgly-button wpgly-button-extended wpgly-accent" data-oid="%s" data-aid="%s" style="margin-bottom:6px">%s</button>', $order->get_id(), 'regenerate', __('Regenerar', WC_PIGGLY_PIX_PLUGIN_NAME));
-endif; 
-?>
+	<?php if ( $pix->isStatus(PixEntity::STATUS_CREATED) ) : ?>
+		<div class="pgly-wps--explorer pgly-wps-is-compact">
+			<strong>Data da Expiração</strong>
+			<span><?=$pix->getExpiresAt()->format('d/m/Y H:i:s');?></span>
+		</div>
+	<?php endif; ?>
 
-<a href="<?=admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_piggly_pix_gateway' );?>" style="display: block; text-align: center;" class="wpgly-button wpgly-action">Configurações do Pix</a>
+	<?php if ( !$pix->isType(PixEntity::TYPE_STATIC) ) : ?>
+		<div class="pgly-wps--explorer pgly-wps-is-compact">
+			<strong>ID do Pagamento</strong>
+			<span><?=$pix->getE2eid() ?? 'Não Processado';?></span>
+		</div>
+	<?php endif; ?>
+
+	<?php if ( !empty($pix->getReceipt()['url']) ) : ?>
+	<div>
+		<h4 style="text-align: center" class="pgly-wps--title pgly-wps-is-8">Comprovante Pix</h4>
+		<div class="pgly-wps--explorer pgly-wps-is-compact">
+			<strong>Verificação do Arquivo</strong>
+			<span><?=$pix->getReceipt()['trusted'] ? 'Arquivo Verificado' : 'O arquivo não pode ser verificado';?></span>
+		</div>
+		<a 
+			class="pgly-wps--button pgly-wps-is-success pgly-wps-is-expanded"
+			href="<?=$pix->getReceipt()['url'];?>"
+			target="_blank">
+			Visualizar Comprovante
+		</a>
+	</div>
+	<?php endif; ?>
 </div>

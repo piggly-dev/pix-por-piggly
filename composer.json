@@ -1,26 +1,67 @@
 {
-    "name": "piggly-dev/woocommerce-pix",
-    "description": "Implemente o Pix de uma forma simples e rápida em sua loja Woocommerce.",
-    "type": "wordpress-plugin",
-    "require": {
-        "piggly/php-pix": "^2.0.0"
-    },
-    "license": "GPL-2.0+",
-    "authors": [
-        {
-            "name": "Caique Araujo",
-            "email": "caique@piggly.com.br"
-        },
-        {
-            "name": "Piggly Lab",
-            "email": "dev@piggly.com.br"
-        }
-    ],
-	"autoload": {
-        "psr-4": {
-            "Piggly\\WC\\Pix\\": "src/"
-        }
-	},
+	"name": "piggly/pix-por-piggly",
+	"description": "Implemente o Pix de uma forma simples e rápida em sua loja Woocommerce.",
+	"type": "wordpress-plugin",
+	"homepage": "https://github.com/piggly-dev/pix-por-piggly",
+	"license": "GPL-3.0-or-later",
 	"minimum-stability": "stable",
-	"version": "1.2.0"
+	"prefer-stable": true,
+	"config": {
+	  "preferred-install": "dist",
+	  "sort-packages": true
+	},
+	"authors": [
+		{
+			"name": "Caique Araujo",
+			"email": "caique@piggly.com.br",
+			"homepage": "https://github.com/caiquearaujo",
+			"role": "Developer"
+		},
+		{
+			"name": "Piggly Lab",
+			"email": "dev@piggly.com.br",
+			"homepage": "https://github.com/piggly-dev",
+			"role": "Developer"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Piggly\\WooPixGateway\\": "src/"
+		},
+		"classmap": [
+			"libs"
+		]
+	},
+	"require": {
+		"php": ">=7.2",
+		"piggly/php-pix": "^2.0.1",
+		"piggly/wordpress-starter-kit": "^1.0.6",
+		"monolog/monolog": "^2.3"
+	},
+	"require-dev": {
+	  "roave/security-advisories": "dev-master",
+	  "php-stubs/woocommerce-stubs": "^5.6"
+	},
+	"scripts": {
+		"pre-install-cmd": "@create-libs-folder",
+		"pre-update-cmd": "@create-libs-folder",
+		"create-libs-folder": "npm run gulp composer:create_prefixed_folder",
+		"prefix-dependencies": [
+			"@composer --working-dir=php-scoper install",
+			"php-scoper/vendor/bin/php-scoper add-prefix --config=php-scoper/config.php --output-dir=./libs --force",
+			"npm run gulp composer:delete_prefixed_libraries",
+			"@composer dump-autoload --no-plugins"
+		],
+		"dev-composer-install": [
+			"@create-libs-folder",
+			"@composer install --prefer-dist --no-scripts",
+			"@prefix-dependencies"
+		],
+		"build": [
+			"npm run gulp composer:delete_lock_and_vendor",
+			"composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-scripts --optimize-autoloader",
+			"@prefix-dependencies"
+		]
+	},
+	"version": "2.0.0"
 }
