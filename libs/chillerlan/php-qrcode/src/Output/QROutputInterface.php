@@ -20,8 +20,6 @@ interface QROutputInterface
 {
     const DEFAULT_MODULE_VALUES = [
         // light
-        QRMatrix::M_NULL => \false,
-        // 0
         QRMatrix::M_DATA => \false,
         // 4
         QRMatrix::M_FINDER => \false,
@@ -63,6 +61,8 @@ interface QROutputInterface
     ];
     /**
      * generates the output, optionally dumps it to a file, and returns it
+     *
+     * @param string|null $file
      *
      * @return mixed
      */

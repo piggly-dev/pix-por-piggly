@@ -269,7 +269,7 @@ class SettingsManager
 			$data,
 			[
 				'store_name' => [ 'default' => '', 'sanitize' => \FILTER_SANITIZE_STRING ],
-				'bank' => [ 'default' => '', 'sanitize' => \FILTER_VALIDATE_INT ],
+				'bank' => [ 'default' => 0, 'sanitize' => \FILTER_VALIDATE_INT ],
 				'merchant_name' => [ 'default' => '', 'required' => true, 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'merchant_city' => [ 'default' => '', 'required' => true, 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'key_type' => [ 'default' => '', 'required' => true, 'sanitize' => \FILTER_SANITIZE_STRING ],

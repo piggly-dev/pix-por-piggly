@@ -195,7 +195,7 @@ class VersionUpgrader extends Internationalizable implements Runnable
 			],
 			'account' => [
 				'store_name' => $settings['store_name'] ?? '',
-				'bank' => $settings['bank'] ?? '',
+				'bank' => \intval($settings['bank'] ?? 0),
 				'key_type' => $settings['key_type'] ?? '',
 				'key_value' => $settings['key_value'] ?? '',
 				'merchant_name' => $settings['merchant_name'] ?? '',
@@ -270,7 +270,7 @@ class VersionUpgrader extends Internationalizable implements Runnable
 						`receipt` TEXT NULL,
 						`metadata` TEXT NULL,
 						`type` enum('static', 'cob', 'cobv') NOT NULL DEFAULT 'static',
-						`status` enum('created','expired','paid','cancelled') NOT NULL DEFAULT 'created',
+						`status` enum('created','waiting','expired','paid','cancelled') NOT NULL DEFAULT 'created',
 						`expires_at` TIMESTAMP NULL,
 						`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
 						`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,

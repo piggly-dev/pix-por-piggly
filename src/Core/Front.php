@@ -144,6 +144,9 @@ class Front extends Initiable
 
 			$settings = CoreConnector::settings();
 
+			if ( empty($order->get_user_id()) )
+			{ $settings->get('receipts')->set('receipt_page', false); }
+
 			\wc_get_template(
 				'html-woocommerce-payment-instructions.php',
 				array(

@@ -71,7 +71,7 @@ class Activator extends Internationalizable implements Runnable
 			if ( !empty ( $wpdb->collate ) ) 
 			{ $charset_collate .= ' COLLATE '.$wpdb->collate; }
 
-			$table_name = $prefix . 'pgly_bdm_payments';
+			$table_name = $prefix . 'pgly_pix';
 			
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name )
 			{
@@ -96,7 +96,7 @@ class Activator extends Internationalizable implements Runnable
 						`receipt` TEXT NULL,
 						`metadata` TEXT NULL,
 						`type` enum('static', 'cob', 'cobv') NOT NULL DEFAULT 'static',
-						`status` enum('created','expired','paid','cancelled') NOT NULL DEFAULT 'created',
+						`status` enum('created','waiting','expired','paid','cancelled') NOT NULL DEFAULT 'created',
 						`expires_at` TIMESTAMP NULL,
 						`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
 						`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
