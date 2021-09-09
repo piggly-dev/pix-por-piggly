@@ -508,9 +508,9 @@ class PixEntity
 	 * Get pix bank.
 	 *
 	 * @since 2.0.0
-	 * @return int
+	 * @return int|null
 	 */
-	public function getBank () : int
+	public function getBank () : ?int
 	{ return $this->bank; }
 
 	/**
