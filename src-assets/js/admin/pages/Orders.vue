@@ -365,9 +365,9 @@ export default defineComponent({
 			{ this.fields.closest_lifetime.value = '0'; }
 
 			await api.saveSettings('discount', {
-				discount_value: this.fields.discount_value.value,
-				discount_type: this.fields.discount_type.value,
-				discount_label: this.fields.discount_label.value,
+				value: this.fields.discount_value.value,
+				type: this.fields.discount_type.value,
+				label: this.fields.discount_label.value,
 			});
 
 			await api.saveSettings('receipts', {
