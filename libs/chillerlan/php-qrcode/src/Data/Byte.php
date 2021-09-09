@@ -16,17 +16,14 @@ use Piggly\WooPixGateway\Vendor\chillerlan\QRCode\QRCode;
 use function ord;
 /**
  * Byte mode, ISO-8859-1 or UTF-8
+ *
+ * ISO/IEC 18004:2000 Section 8.3.4
+ * ISO/IEC 18004:2000 Section 8.4.4
  */
-class Byte extends QRDataAbstract
+final class Byte extends QRDataAbstract
 {
-    /**
-     * @inheritdoc
-     */
-    protected $datamode = QRCode::DATA_BYTE;
-    /**
-     * @inheritdoc
-     */
-    protected $lengthBits = [8, 16, 16];
+    protected int $datamode = QRCode::DATA_BYTE;
+    protected array $lengthBits = [8, 16, 16];
     /**
      * @inheritdoc
      */
