@@ -160,13 +160,13 @@ class Admin extends Initiable
 			'pgly-pix-por-piggly-settings',
 			CoreConnector::plugin()->getUrl().'assets/js/pgly-pix-por-piggly.settings.js',
 			[],
-			'2.0.4',
+			'2.0.6',
 			true
 		);
 
 		wp_localize_script(
 			'pgly-pix-por-piggly-settings',
-			'wcPigglyPix	',
+			'wcPigglyPix',
 			[
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 				'x_security' => wp_create_nonce('pgly_wc_piggly_pix_admin'),
