@@ -162,7 +162,9 @@
 				@afterChange="onChanged">
 				<template v-slot:description>
 					Página para redirecionar o usuário após envio
-					do comprovante.
+					do comprovante. A página não será exibida
+					para clientes anônimos por razões de segurança
+					e prevenção contra SPAM e invasões.
 				</template>
 			</pgly-basic-select>
 		</pgly-column>

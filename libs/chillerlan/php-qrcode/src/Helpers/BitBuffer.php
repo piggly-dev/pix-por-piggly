@@ -13,23 +13,18 @@
 namespace Piggly\WooPixGateway\Vendor\chillerlan\QRCode\Helpers;
 
 use function count, floor;
-/**
- * Holds the raw binary data
- */
-final class BitBuffer
+class BitBuffer
 {
     /**
-     * The buffer content
-     *
-     * @var int[]
+     * @var  int[]
      */
-    protected array $buffer = [];
+    public $buffer = [];
     /**
-     * Length of the content (bits)
+     * @var int
      */
-    protected int $length = 0;
+    public $length = 0;
     /**
-     * clears the buffer
+     * @return \chillerlan\QRCode\Helpers\BitBuffer
      */
     public function clear() : BitBuffer
     {
@@ -38,7 +33,10 @@ final class BitBuffer
         return $this;
     }
     /**
-     * appends a sequence of bits
+     * @param int $num
+     * @param int $length
+     *
+     * @return \chillerlan\QRCode\Helpers\BitBuffer
      */
     public function put(int $num, int $length) : BitBuffer
     {
@@ -48,7 +46,9 @@ final class BitBuffer
         return $this;
     }
     /**
-     * appends a single bit
+     * @param bool $bit
+     *
+     * @return \chillerlan\QRCode\Helpers\BitBuffer
      */
     public function putBit(bool $bit) : BitBuffer
     {
@@ -61,19 +61,5 @@ final class BitBuffer
         }
         $this->length++;
         return $this;
-    }
-    /**
-     * returns the current buffer length
-     */
-    public function getLength() : int
-    {
-        return $this->length;
-    }
-    /**
-     * returns the buffer content
-     */
-    public function getBuffer() : array
-    {
-        return $this->buffer;
     }
 }

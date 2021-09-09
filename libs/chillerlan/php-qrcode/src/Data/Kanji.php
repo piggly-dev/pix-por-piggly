@@ -16,14 +16,17 @@ use Piggly\WooPixGateway\Vendor\chillerlan\QRCode\QRCode;
 use function mb_strlen, ord, sprintf, strlen;
 /**
  * Kanji mode: double-byte characters from the Shift JIS character set
- *
- * ISO/IEC 18004:2000 Section 8.3.5
- * ISO/IEC 18004:2000 Section 8.4.5
  */
-final class Kanji extends QRDataAbstract
+class Kanji extends QRDataAbstract
 {
-    protected int $datamode = QRCode::DATA_KANJI;
-    protected array $lengthBits = [8, 10, 12];
+    /**
+     * @inheritdoc
+     */
+    protected $datamode = QRCode::DATA_KANJI;
+    /**
+     * @inheritdoc
+     */
+    protected $lengthBits = [8, 10, 12];
     /**
      * @inheritdoc
      */
@@ -33,17 +36,15 @@ final class Kanji extends QRDataAbstract
     }
     /**
      * @inheritdoc
-     *
-     * @throws \chillerlan\QRCode\Data\QRCodeDataException on an illegal character occurence
      */
     protected function write(string $data) : void
     {
         $len = strlen($data);
         for ($i = 0; $i + 1 < $len; $i += 2) {
             $c = (0xff & ord($data[$i])) << 8 | 0xff & ord($data[$i + 1]);
-            if ($c >= 0x8140 && $c <= 0x9ffc) {
+            if (0x8140 <= $c && $c <= 0x9ffc) {
                 $c -= 0x8140;
-            } elseif ($c >= 0xe040 && $c <= 0xebbf) {
+            } elseif (0xe040 <= $c && $c <= 0xebbf) {
                 $c -= 0xc140;
             } else {
                 throw new QRCodeDataException(sprintf('illegal char at %d [%d]', $i + 1, $c));

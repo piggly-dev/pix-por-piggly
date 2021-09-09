@@ -1,6 +1,7 @@
 <?php
 namespace Piggly\WooPixGateway\WP;
 
+use Exception;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Interfaces\Runnable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Internationalizable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\WP;
@@ -40,9 +41,9 @@ class Upgrader extends Internationalizable implements Runnable
 
 		$this->rebuild_paths();
 		
-		if ( \version_compare($version, '2.0.2', '<') )
+		if ( \version_compare($version, '2.0.4', '<') )
 		{ 
-			$this->_plugin->settings()->bucket()->get('upgraded_endpoints', true); 
+			$this->_plugin->settings()->bucket()->set('upgraded_endpoints', true); 
 			$this->_plugin->settings()->save();
 			
 			WP::add_action(
@@ -54,6 +55,36 @@ class Upgrader extends Internationalizable implements Runnable
 
 		// New version
 		\update_option('wc_piggly_pix_version', $this->_plugin->getVersion());
+	}
+
+	/**
+	 * Upgrade database when needed.
+	 * 
+	 * @since 2.0.4
+	 * @return void
+	 */
+	public function update_database ()
+	{
+		global $wpdb;
+
+		$ivl_db_version = \WC_PIGGLY_PIX_DB_VERSION;
+		$ins_db_version = get_option('wc_piggly_pix_dbversion', '0' );
+
+		if ( \version_compare($ins_db_version, $ivl_db_version, '>=' ) )
+		{ return; }
+
+		$prefix = $wpdb->prefix;
+		$table_name = $prefix . 'pgly_pix';
+
+		if ( \version_compare($ins_db_version, '2.0.1', '<' ) )
+		{
+			try
+			{ $wpdb->query("ALTER TABLE $table_name MODIFY COLUMN `status` enum('created','waiting','expired','paid','cancelled') NOT NULL DEFAULT 'created' AFTER `type`"); }
+			catch ( Exception $e )
+			{ $this->_plugin->debugger()->force()->error('Não foi possível atualizar o banco de dados...'); }
+		}
+
+		update_option('wc_piggly_pix_dbversion', $ivl_db_version);
 	}
 
 	/**
@@ -139,7 +170,7 @@ class Upgrader extends Internationalizable implements Runnable
 				Acesse <strong>Configurações > Links permanentes</strong>
 				e apenas clique em <strong>Salvar Alterações</strong>
 				para que o plugin <strong>Pix por Piggly</strong>
-				funcione corretamente.
+				funcione corretamente. Não esqueça de limpar o cachê.
 			</p>
 		</div>
 		<?php

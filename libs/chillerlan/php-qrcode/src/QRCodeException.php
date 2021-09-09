@@ -12,10 +12,6 @@
  */
 namespace Piggly\WooPixGateway\Vendor\chillerlan\QRCode;
 
-use Exception;
-/**
- * An exception container
- */
-class QRCodeException extends Exception
+class QRCodeException extends \Exception
 {
 }

@@ -66,8 +66,8 @@ class Admin extends Initiable
 		
 		add_submenu_page(
 			CoreConnector::domain(),
-			CoreConnector::__translate('Versão 2.0.0'),
-			CoreConnector::__translate('Versão 2.0.0'),
+			CoreConnector::__translate('Versão '.CoreConnector::plugin()->getVersion()),
+			CoreConnector::__translate('Versão '.CoreConnector::plugin()->getVersion()),
 			'manage_woocommerce',
 			CoreConnector::domain().'-upgrade',
 			[$this, 'upgrade_page']
@@ -160,7 +160,7 @@ class Admin extends Initiable
 			'pgly-pix-por-piggly-settings',
 			CoreConnector::plugin()->getUrl().'assets/js/pgly-pix-por-piggly.settings.js',
 			[],
-			'2.0.0',
+			'2.0.4',
 			true
 		);
 
