@@ -1,6 +1,7 @@
 <?php
 namespace Piggly\WooPixGateway\WP;
 
+use Piggly\WooPixGateway\CoreConnector;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Interfaces\Runnable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Internationalizable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\WP;
@@ -35,13 +36,24 @@ class Upgrader extends Internationalizable implements Runnable
 		$version = \get_option('wc_piggly_pix_version', '0' );
 
 		// If version greater than plugin version, ignore
-		if ( \version_compare($version, $this->_plugin->getVersion(), '>=') )
+		if ( \version_compare($version, CoreConnector::plugin()->getVersion(), '>=') )
 		{ return; }
 
 		$this->rebuild_paths();
 		
+		if ( \version_compare($version, '2.0.2', '<') )
+		{ 
+			CoreConnector::settings()->get('upgraded_endpoints', true); 
+			
+			WP::add_action(
+				'admin_notices', 
+				$this,
+				'upgrader_notice' 
+			);
+		}
+
 		// New version
-		\update_option('wc_piggly_pix_version', $this->_plugin->getVersion());
+		\update_option('wc_piggly_pix_version', CoreConnector::plugin()->getVersion());
 	}
 
 	/**
@@ -111,5 +123,25 @@ class Upgrader extends Internationalizable implements Runnable
 
 		if ( !\file_exists( $PATH ) )
 		{ file_put_contents( $PATH, '<?php // Silence is golden' ); }
+	}
+
+	/**
+	 * Shows about the update.
+	 * 
+	 * @since 2.0.2
+	 * @return void
+	 */
+	public function upgrader_notice ()
+	{
+		?>
+		<div class="notice notice-warning">
+			<p>
+				Acesse <strong>Configurações > Links permanentes</strong>
+				e apenas clique em <strong>Salvar Alterações</strong>
+				para que o plugin <strong>Pix por Piggly</strong>
+				funcione corretamente.
+			</p>
+		</div>
+		<?php
 	}
 }

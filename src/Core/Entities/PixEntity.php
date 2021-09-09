@@ -1064,6 +1064,7 @@ class PixEntity
 	 *
 	 * @param WC_Order $order
 	 * @since 2.0.0
+	 * @since 2.0.3 Bank must be always int...
 	 * @return PixEntity
 	 * @throws Exception
 	 */
@@ -1089,7 +1090,7 @@ class PixEntity
 			$pix
 				->setOrder($order)
 				->setAmount($order_amount)
-				->setBank($account->get('bank', null))
+				->setBank(\intval($account->get('bank', null)))
 				->setPixKey(
 					$account->get('key_type'),
 					$account->get('key_value')
