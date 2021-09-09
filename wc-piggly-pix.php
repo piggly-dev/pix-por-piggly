@@ -17,7 +17,7 @@
  * Description:       O melhor plugin para pagamentos via Pix no Woocommerce. Aplique desconto automático, personalize o comportamento e muito mais.
  * Requires at least: 4.0
  * Requires PHP:      7.2
- * Version:           2.0.4
+ * Version:           2.0.5
  * Author:            Piggly Lab
  * Author URI:        https://lab.piggly.com.br
  * License:           GPLv3 or later
@@ -40,10 +40,10 @@ use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Plugin;
 if ( ! defined( 'WPINC' ) ) exit;
 
 /** @var string Currently plugin version. Start at version 1.0.0 and use SemVer - https://semver.org */
-if (!defined('PGLY_PIX_GATEWAY_VERSION')) define( 'PGLY_PIX_GATEWAY_VERSION', '2.0.4' );
+if (!defined('PGLY_PIX_GATEWAY_VERSION')) define( 'PGLY_PIX_GATEWAY_VERSION', '2.0.5' );
 
 /** @var string Currently plugin version. Start at version 1.0.0 and use SemVer - https://semver.org */
-if (!defined('PGLY_PIX_GATEWAY_DBVERSION')) define( 'PGLY_PIX_GATEWAY_DBVERSION', '2.0.2' );
+if (!defined('PGLY_PIX_GATEWAY_DBVERSION')) define( 'PGLY_PIX_GATEWAY_DBVERSION', '2.0.5' );
 
 /** @var string Minimum php version required. */
 if (!defined('PGLY_PIX_GATEWAY_PHPVERSION')) define( 'PGLY_PIX_GATEWAY_PHPVERSION', '7.2' );
