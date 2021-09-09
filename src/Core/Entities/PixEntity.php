@@ -1040,7 +1040,7 @@ class PixEntity
 		$pix->amount = \floatval($payload->amount);
 		$pix->discount = \floatval($payload->discount);
 		$pix->type = $payload->type;
-		$pix->status = $payload->status;
+		$pix->status = $payload->status ?? 'created';
 
 		$pix->brcode = $payload->brcode ?? null;
 		$pix->qrcode = !empty($payload->qrcode) ? json_decode($payload->qrcode, true) : null;

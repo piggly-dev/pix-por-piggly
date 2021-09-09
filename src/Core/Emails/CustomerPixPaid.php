@@ -76,8 +76,6 @@ class CustomerPixPaid extends WC_Email
 
 		$this->setup_locale();
 
-		$order = $pix->getOrder();
-
 		if ( !empty($order) )
 		{
 			CoreConnector::debugger()->debug(\sprintf('Disparo de e-mail %s para %s', $this->id, $order->get_billing_email()));

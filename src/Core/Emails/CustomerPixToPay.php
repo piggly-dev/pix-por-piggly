@@ -69,6 +69,11 @@ class CustomerPixToPay extends WC_Email
 	 */
 	public function trigger ( PixEntity $pix )
 	{
+		$order = $pix->getOrder();
+
+		if ( empty($order->get_user_id()) )
+		{ return; }
+
 		$this->setup_locale();
 
 		$order = $pix->getOrder();

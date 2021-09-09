@@ -112,12 +112,12 @@ class Activator extends Internationalizable implements Runnable
 			}
 
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name )
-			{ update_option('wc_piggly_pix_dbversion', CoreConnector::plugin()->getDbVersion()); }
+			{ update_option('wc_piggly_pix_dbversion', $this->_plugin->getDbVersion()); }
 			else
-			{ @\trigger_error(CoreConnector::__translate('Não foi possível criar o banco de dados')); }
+			{ @\trigger_error($this->__translate('Não foi possível criar o banco de dados')); }
 		}
 		catch ( Exception $e )
-		{ $this->debug()->force()->error(\sprintf(CoreConnector::__translate('Não foi possível criar o banco de dados: %s'), $e->getMessage())); }
+		{ $this->debug()->force()->error(\sprintf($this->__translate('Não foi possível criar o banco de dados: %s'), $e->getMessage())); }
 	}
 
 	/**
