@@ -385,7 +385,7 @@ class SettingsManager
 	public static function defaults () : KeyingBucket
 	{
 		$settings = [
-			'upgraded' => true,
+			'upgraded' => false,
 			'upgraded_endpoints' => false,
 			'global' => [
 				'debug' => false

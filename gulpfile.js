@@ -83,7 +83,6 @@ const plugin = {
 		'!.packages/',
 		'!.env.example',
 		'!.env',
-		'!vendor/composer/!(*.php)/**',
 		'!vendor/instituteweb/**',
 		'!vendor/instituteweb/',
 		// Prefixed packages
@@ -96,6 +95,8 @@ const plugin = {
 		'!vendor/psr/**',
 		'!vendor/psr/',
 		// Common files
+		'vendor/composer/**',
+		'vendor/autoload.php',
 		'./assets/vendor/**',
 		'composer.json',
 		'LICENSE',

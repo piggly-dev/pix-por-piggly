@@ -44,12 +44,17 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 		<br>
 		<p>
-			O processo de atualização poderá demorar alguns minutos.
+			O processo de atualização poderá demorar alguns instantes.
 			Quando o processo for concluído, você terá acesso a todas
 			as configurações do plugin e aos novos recursos. 
 			<strong>Suas configurações serão preservadas.</strong>
 		</p>
 		<br>
+
+		<div class="pgly-wps--notification pgly-wps-is-danger">
+			Recomendamos que revise as suas configurações após
+			o processo de atualização ser concluído.
+		</div>
 
 		<button 
 			class="pgly-wps--button pgly-async--behaviour pgly-wps-is-warning"
