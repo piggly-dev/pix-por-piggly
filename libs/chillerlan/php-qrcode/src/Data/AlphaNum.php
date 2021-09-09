@@ -13,17 +13,20 @@
 namespace Piggly\WooPixGateway\Vendor\chillerlan\QRCode\Data;
 
 use Piggly\WooPixGateway\Vendor\chillerlan\QRCode\QRCode;
-use function ord, sprintf;
+use function array_search, ord, sprintf;
 /**
  * Alphanumeric mode: 0 to 9, A to Z, space, $ % * + - . / :
- *
- * ISO/IEC 18004:2000 Section 8.3.3
- * ISO/IEC 18004:2000 Section 8.4.3
  */
-final class AlphaNum extends QRDataAbstract
+class AlphaNum extends QRDataAbstract
 {
-    protected int $datamode = QRCode::DATA_ALPHANUM;
-    protected array $lengthBits = [9, 11, 13];
+    /**
+     * @inheritdoc
+     */
+    protected $datamode = QRCode::DATA_ALPHANUM;
+    /**
+     * @inheritdoc
+     */
+    protected $lengthBits = [9, 11, 13];
     /**
      * @inheritdoc
      */
@@ -37,15 +40,17 @@ final class AlphaNum extends QRDataAbstract
         }
     }
     /**
-     * get the code for the given character
+     * @param string $chr
      *
-     * @throws \chillerlan\QRCode\Data\QRCodeDataException on an illegal character occurence
+     * @return int
+     * @throws \chillerlan\QRCode\Data\QRCodeDataException
      */
     protected function getCharCode(string $chr) : int
     {
-        if (!isset($this::CHAR_MAP_ALPHANUM[$chr])) {
-            throw new QRCodeDataException(sprintf('illegal char: "%s" [%d]', $chr, ord($chr)));
+        $i = array_search($chr, $this::ALPHANUM_CHAR_MAP);
+        if ($i !== \false) {
+            return $i;
         }
-        return $this::CHAR_MAP_ALPHANUM[$chr];
+        throw new QRCodeDataException(sprintf('illegal char: "%s" [%d]', $chr, ord($chr)));
     }
 }

@@ -9,138 +9,170 @@
  * @author       smiley <smiley@chillerlan.net>
  * @copyright    2018 smiley
  * @license      MIT
- *
- * @noinspection PhpUnused
  */
 namespace Piggly\WooPixGateway\Vendor\chillerlan\QRCode;
 
-use function array_values, count, in_array, is_numeric, max, min, sprintf, strtolower;
-/**
- * The QRCode plug-in settings & setter functionality
- */
+use function array_values, count, in_array, is_array, is_numeric, max, min, sprintf, strtolower;
 trait QROptionsTrait
 {
     /**
      * QR Code version number
      *
-     * [1 ... 40] or QRCode::VERSION_AUTO
-     */
-    protected int $version = QRCode::VERSION_AUTO;
-    /**
-     * Minimum QR version
+     *   [1 ... 40] or QRCode::VERSION_AUTO
      *
-     * if $version = QRCode::VERSION_AUTO
+     * @var int
      */
-    protected int $versionMin = 1;
+    protected $version = QRCode::VERSION_AUTO;
+    /**
+     * Minimum QR version (if $version = QRCode::VERSION_AUTO)
+     *
+     * @var int
+     */
+    protected $versionMin = 1;
     /**
      * Maximum QR version
+     *
+     * @var int
      */
-    protected int $versionMax = 40;
+    protected $versionMax = 40;
     /**
      * Error correct level
      *
-     * QRCode::ECC_X where X is:
+     *   QRCode::ECC_X where X is
+     *    L =>  7%
+     *    M => 15%
+     *    Q => 25%
+     *    H => 30%
      *
-     *   - L =>  7%
-     *   - M => 15%
-     *   - Q => 25%
-     *   - H => 30%
+     * @var int
      */
-    protected int $eccLevel = QRCode::ECC_L;
+    protected $eccLevel = QRCode::ECC_L;
     /**
      * Mask Pattern to use
      *
-     * [0...7] or QRCode::MASK_PATTERN_AUTO
+     *   [0...7] or QRCode::MASK_PATTERN_AUTO
+     *
+     * @var int
      */
-    protected int $maskPattern = QRCode::MASK_PATTERN_AUTO;
+    protected $maskPattern = QRCode::MASK_PATTERN_AUTO;
     /**
      * Add a "quiet zone" (margin) according to the QR code spec
+     *
+     * @var bool
      */
-    protected bool $addQuietzone = \true;
+    protected $addQuietzone = \true;
     /**
      * Size of the quiet zone
      *
-     * internally clamped to [0 ... $moduleCount / 2], defaults to 4 modules
+     *   internally clamped to [0 ... $moduleCount / 2], defaults to 4 modules
+     *
+     * @var int
      */
-    protected int $quietzoneSize = 4;
+    protected $quietzoneSize = 4;
     /**
      * Use this to circumvent the data mode detection and force the usage of the given mode.
-     *
-     * valid modes are: Number, AlphaNum, Kanji, Byte (case insensitive)
+     * valid modes are: Number, AlphaNum, Kanji, Byte
      *
      * @see https://github.com/chillerlan/php-qrcode/issues/39
-     */
-    protected ?string $dataModeOverride = null;
-    /**
-     * The output type
      *
-     *   - QRCode::OUTPUT_MARKUP_XXXX where XXXX = HTML, SVG
-     *   - QRCode::OUTPUT_IMAGE_XXX where XXX = PNG, GIF, JPG
-     *   - QRCode::OUTPUT_STRING_XXXX where XXXX = TEXT, JSON
-     *   - QRCode::OUTPUT_CUSTOM
+     * @var string|null
      */
-    protected string $outputType = QRCode::OUTPUT_IMAGE_PNG;
+    protected $dataMode = null;
+    /**
+     * QRCode::OUTPUT_MARKUP_XXXX where XXXX = HTML, SVG
+     * QRCode::OUTPUT_IMAGE_XXX where XXX = PNG, GIF, JPG
+     * QRCode::OUTPUT_STRING_XXXX where XXXX = TEXT, JSON
+     * QRCode::OUTPUT_CUSTOM
+     *
+     * @var string
+     */
+    protected $outputType = QRCode::OUTPUT_IMAGE_PNG;
     /**
      * the FQCN of the custom QROutputInterface if $outputType is set to QRCode::OUTPUT_CUSTOM
+     *
+     * @var string|null
      */
-    protected ?string $outputInterface = null;
+    protected $outputInterface = null;
     /**
      * /path/to/cache.file
+     *
+     * @var string|null
      */
-    protected ?string $cachefile = null;
+    protected $cachefile = null;
     /**
      * newline string [HTML, SVG, TEXT]
+     *
+     * @var string
      */
-    protected string $eol = \PHP_EOL;
+    protected $eol = \PHP_EOL;
     /**
-     * size of a QR code pixel [SVG, IMAGE_*], HTML via CSS
+     * size of a QR code pixel [SVG, IMAGE_*]
+     * HTML -> via CSS
+     *
+     * @var int
      */
-    protected int $scale = 5;
+    protected $scale = 5;
     /**
      * a common css class
+     *
+     * @var string
      */
-    protected string $cssClass = '';
+    protected $cssClass = '';
     /**
      * SVG opacity
+     *
+     * @var float
      */
-    protected float $svgOpacity = 1.0;
+    protected $svgOpacity = 1.0;
     /**
      * anything between <defs>
      *
      * @see https://developer.mozilla.org/docs/Web/SVG/Element/defs
+     *
+     * @var string
      */
-    protected string $svgDefs = '<style>rect{shape-rendering:crispEdges}</style>';
+    protected $svgDefs = '<style>rect{shape-rendering:crispEdges}</style>';
     /**
      * SVG viewBox size. a single integer number which defines width/height of the viewBox attribute.
      *
      * viewBox="0 0 x x"
      *
      * @see https://css-tricks.com/scale-svg/#article-header-id-3
+     *
+     * @var int|null
      */
-    protected ?int $svgViewBoxSize = null;
+    protected $svgViewBoxSize = null;
     /**
      * string substitute for dark
+     *
+     * @var string
      */
-    protected string $textDark = '🔴';
+    protected $textDark = '🔴';
     /**
      * string substitute for light
+     *
+     * @var string
      */
-    protected string $textLight = '⭕';
+    protected $textLight = '⭕';
     /**
      * markup substitute for dark (CSS value)
+     *
+     * @var string
      */
-    protected string $markupDark = '#000';
+    protected $markupDark = '#000';
     /**
      * markup substitute for light (CSS value)
+     *
+     * @var string
      */
-    protected string $markupLight = '#fff';
+    protected $markupLight = '#fff';
     /**
      * Return the image resource instead of a render if applicable.
      * This option overrides other output options, such as $cachefile and $imageBase64.
      *
      * Supported by the following modules:
      *
-     * - QRImage:   resource (PHP < 8), GdImage
+     * - QRImage:   resource
      * - QRImagick: Imagick
      * - QRFpdf:    FPDF
      *
@@ -148,56 +180,75 @@ trait QROptionsTrait
      *
      * @var bool
      */
-    protected bool $returnResource = \false;
+    protected $returnResource = \false;
     /**
      * toggle base64 or raw image data
+     *
+     * @var bool
      */
-    protected bool $imageBase64 = \true;
+    protected $imageBase64 = \true;
     /**
      * toggle transparency, not supported by jpg
+     *
+     * @var bool
      */
-    protected bool $imageTransparent = \true;
+    protected $imageTransparent = \true;
     /**
      * @see imagecolortransparent()
      *
-     * [R, G, B]
+     * @var array [R, G, B]
      */
-    protected array $imageTransparencyBG = [255, 255, 255];
+    protected $imageTransparencyBG = [255, 255, 255];
     /**
      * @see imagepng()
+     *
+     * @var int
      */
-    protected int $pngCompression = -1;
+    protected $pngCompression = -1;
     /**
      * @see imagejpeg()
+     *
+     * @var int
      */
-    protected int $jpegQuality = 85;
+    protected $jpegQuality = 85;
     /**
      * Imagick output format
      *
-     * @see \Imagick::setType()
+     * @see Imagick::setType()
+     *
+     * @var string
      */
-    protected string $imagickFormat = 'png';
+    protected $imagickFormat = 'png';
     /**
      * Imagick background color (defaults to "transparent")
      *
      * @see \ImagickPixel::__construct()
+     *
+     * @var string|null
      */
-    protected ?string $imagickBG = null;
+    protected $imagickBG = null;
     /**
      * Measurement unit for FPDF output: pt, mm, cm, in (defaults to "pt")
      *
      * @see \FPDF::__construct()
      */
-    protected string $fpdfMeasureUnit = 'pt';
+    protected $fpdfMeasureUnit = 'pt';
     /**
      * Module values map
      *
-     *   - HTML, IMAGICK: #ABCDEF, cssname, rgb(), rgba()...
-     *   - IMAGE: [63, 127, 255] // R, G, B
+     *   HTML, IMAGICK: #ABCDEF, cssname, rgb(), rgba()...
+     *   IMAGE: [63, 127, 255] // R, G, B
+     *
+     * @var array|null
      */
-    protected ?array $moduleValues = null;
+    protected $moduleValues = null;
     /**
      * clamp min/max version number
+     *
+     * @param int $versionMin
+     * @param int $versionMax
+     *
+     * @return void
      */
     protected function setMinMaxVersion(int $versionMin, int $versionMax) : void
     {
@@ -208,6 +259,10 @@ trait QROptionsTrait
     }
     /**
      * sets the minimum version number
+     *
+     * @param int $version
+     *
+     * @return void
      */
     protected function set_versionMin(int $version) : void
     {
@@ -215,6 +270,10 @@ trait QROptionsTrait
     }
     /**
      * sets the maximum version number
+     *
+     * @param int $version
+     *
+     * @return void
      */
     protected function set_versionMax(int $version) : void
     {
@@ -223,6 +282,9 @@ trait QROptionsTrait
     /**
      * sets the error correction level
      *
+     * @param int $eccLevel
+     *
+     * @return void
      * @throws \chillerlan\QRCode\QRCodeException
      */
     protected function set_eccLevel(int $eccLevel) : void
@@ -234,6 +296,10 @@ trait QROptionsTrait
     }
     /**
      * sets/clamps the mask pattern
+     *
+     * @param int $maskPattern
+     *
+     * @return void
      */
     protected function set_maskPattern(int $maskPattern) : void
     {
@@ -244,20 +310,19 @@ trait QROptionsTrait
     /**
      * sets the transparency background color
      *
+     * @param mixed $imageTransparencyBG
+     *
+     * @return void
      * @throws \chillerlan\QRCode\QRCodeException
      */
-    protected function set_imageTransparencyBG(array $imageTransparencyBG) : void
+    protected function set_imageTransparencyBG($imageTransparencyBG) : void
     {
         // invalid value - set to white as default
-        if (count($imageTransparencyBG) < 3) {
+        if (!is_array($imageTransparencyBG) || count($imageTransparencyBG) < 3) {
             $this->imageTransparencyBG = [255, 255, 255];
             return;
         }
         foreach ($imageTransparencyBG as $k => $v) {
-            // cut off exceeding items
-            if ($k > 2) {
-                break;
-            }
             if (!is_numeric($v)) {
                 throw new QRCodeException('Invalid RGB value.');
             }
@@ -269,6 +334,10 @@ trait QROptionsTrait
     }
     /**
      * sets/clamps the version number
+     *
+     * @param int $version
+     *
+     * @return void
      */
     protected function set_version(int $version) : void
     {

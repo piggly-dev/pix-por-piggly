@@ -5,7 +5,7 @@
  *
  * @filesource   Number.php
  * @created      26.11.2015
- * @package      chillerlan\QRCode\Data
+ * @package      QRCode
  * @author       Smiley <smiley@chillerlan.net>
  * @copyright    2015 Smiley
  * @license      MIT
@@ -13,17 +13,20 @@
 namespace Piggly\WooPixGateway\Vendor\chillerlan\QRCode\Data;
 
 use Piggly\WooPixGateway\Vendor\chillerlan\QRCode\QRCode;
-use function ord, sprintf, str_split, substr;
+use function ord, sprintf, substr;
 /**
- * Numeric mode: decimal digits 0 to 9
- *
- * ISO/IEC 18004:2000 Section 8.3.2
- * ISO/IEC 18004:2000 Section 8.4.2
+ * Numeric mode: decimal digits 0 through 9
  */
-final class Number extends QRDataAbstract
+class Number extends QRDataAbstract
 {
-    protected int $datamode = QRCode::DATA_NUMBER;
-    protected array $lengthBits = [10, 12, 14];
+    /**
+     * @inheritdoc
+     */
+    protected $datamode = QRCode::DATA_NUMBER;
+    /**
+     * @inheritdoc
+     */
+    protected $lengthBits = [10, 12, 14];
     /**
      * @inheritdoc
      */
@@ -43,17 +46,19 @@ final class Number extends QRDataAbstract
         }
     }
     /**
-     * get the code for the given numeric string
+     * @param string $string
      *
-     * @throws \chillerlan\QRCode\Data\QRCodeDataException on an illegal character occurence
+     * @return int
+     * @throws \chillerlan\QRCode\Data\QRCodeDataException
      */
     protected function parseInt(string $string) : int
     {
         $num = 0;
-        foreach (str_split($string) as $chr) {
-            $c = ord($chr);
-            if (!isset($this::CHAR_MAP_NUMBER[$chr])) {
-                throw new QRCodeDataException(sprintf('illegal char: "%s" [%d]', $chr, $c));
+        $len = \strlen($string);
+        for ($i = 0; $i < $len; $i++) {
+            $c = ord($string[$i]);
+            if (!\in_array($string[$i], $this::NUMBER_CHAR_MAP, \true)) {
+                throw new QRCodeDataException(sprintf('illegal char: "%s" [%d]', $string[$i], $c));
             }
             $c = $c - 48;
             // ord('0')
