@@ -2,6 +2,7 @@
 namespace Piggly\WooPixGateway\WP;
 
 use Exception;
+use Piggly\WooPixGateway\CoreConnector;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Interfaces\Runnable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Internationalizable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\WP;
@@ -78,6 +79,67 @@ class Upgrader extends Internationalizable implements Runnable
 
 		if ( \version_compare($ins_db_version, '2.0.1', '<' ) )
 		{
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name )
+			{
+				$charset_collate = '';
+	
+				/** Setting the default charset collation **/
+				if ( !empty ( $wpdb->charset ) )
+				{ $charset_collate = 'DEFAULT CHARACTER SET '.$wpdb->charset; }
+	
+				if ( !empty ( $wpdb->collate ) ) 
+				{ $charset_collate .= ' COLLATE '.$wpdb->collate; }
+
+				if ( !function_exists('dbDelta') )
+				{ require_once(ABSPATH . 'wp-admin/includes/upgrade.php'); }
+
+				$SQL = 
+					"CREATE TABLE $table_name 
+					(
+						`id` INT NOT NULL AUTO_INCREMENT,
+						`oid` INT NULL COMMENT 'Order ID',
+						`txid` VARCHAR(255) NOT NULL UNIQUE KEY,
+						`e2eid` VARCHAR(255) NULL,
+						`store_name` VARCHAR(255) NULL,
+						`merchant_name` VARCHAR(255) NULL,
+						`merchant_city` VARCHAR(255) NULL,
+						`key` VARCHAR(255) NOT NULL,
+						`key_type` VARCHAR(255) NOT NULL,
+						`description` VARCHAR(255) NULL,
+						`amount` DECIMAL(8,2) NOT NULL,
+						`discount` DECIMAL(8,2) NULL DEFAULT 0,
+						`bank` INT NULL,
+						`brcode` TEXT NULL,
+						`qrcode` TEXT NULL,
+						`receipt` TEXT NULL,
+						`metadata` TEXT NULL,
+						`type` enum('static', 'cob', 'cobv') NOT NULL DEFAULT 'static',
+						`status` enum('created','waiting','expired','paid','cancelled') NOT NULL DEFAULT 'created',
+						`expires_at` TIMESTAMP NULL,
+						`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+						`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+						PRIMARY KEY `id` (`id`),
+						INDEX `oid` (`oid`),
+						INDEX `type` (`type`),
+						INDEX `status` (`status`),
+						INDEX `expires_at` (`expires_at`)
+					) $charset_collate;";
+
+				try
+				{ 
+					@dbDelta( $SQL );
+
+					if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name )
+					{ update_option('wc_piggly_pix_dbversion', CoreConnector::plugin()->getDbVersion()); }
+					else
+					{ @\trigger_error(CoreConnector::__translate('Não foi possível criar o banco de dados')); }
+				}
+				catch ( Exception $e )
+				{ $this->_plugin->debugger()->force()->error('Não foi possível atualizar o banco de dados...'); }
+				
+				return;
+			}
+
 			try
 			{ $wpdb->query("ALTER TABLE $table_name MODIFY COLUMN `status` enum('created','waiting','expired','paid','cancelled') NOT NULL DEFAULT 'created' AFTER `type`"); }
 			catch ( Exception $e )

@@ -52,8 +52,12 @@ class Activator extends Internationalizable implements Runnable
 	{
 		global $wpdb;
 
+		$prefix     = $wpdb->prefix;
+		$table_name = $prefix . 'pgly_pix';
+
 		// It is not initial database version
-		if ( get_option('wc_piggly_pix_dbversion', '0' ) !== '0' )
+		if ( get_option('wc_piggly_pix_dbversion', '0' ) !== '0'
+				|| $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name )
 		{ return; }
 		
 		if ( !function_exists('dbDelta') )
@@ -61,7 +65,6 @@ class Activator extends Internationalizable implements Runnable
 
 		try
 		{
-			$prefix          = $wpdb->prefix;
 			$charset_collate = '';
 
 			/** Setting the default charset collation **/
@@ -70,8 +73,6 @@ class Activator extends Internationalizable implements Runnable
 
 			if ( !empty ( $wpdb->collate ) ) 
 			{ $charset_collate .= ' COLLATE '.$wpdb->collate; }
-
-			$table_name = $prefix . 'pgly_pix';
 			
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name )
 			{
@@ -113,7 +114,7 @@ class Activator extends Internationalizable implements Runnable
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name )
 			{ update_option('wc_piggly_pix_dbversion', CoreConnector::plugin()->getDbVersion()); }
 			else
-			{ @\trigger_error(CoreConnector::__translate('Não foi possível criar o banco de dados: %s')); }
+			{ @\trigger_error(CoreConnector::__translate('Não foi possível criar o banco de dados')); }
 		}
 		catch ( Exception $e )
 		{ $this->debug()->force()->error(\sprintf(CoreConnector::__translate('Não foi possível criar o banco de dados: %s'), $e->getMessage())); }
