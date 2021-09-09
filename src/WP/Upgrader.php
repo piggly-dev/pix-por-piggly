@@ -1,7 +1,6 @@
 <?php
 namespace Piggly\WooPixGateway\WP;
 
-use Piggly\WooPixGateway\CoreConnector;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Interfaces\Runnable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Internationalizable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\WP;
@@ -36,14 +35,15 @@ class Upgrader extends Internationalizable implements Runnable
 		$version = \get_option('wc_piggly_pix_version', '0' );
 
 		// If version greater than plugin version, ignore
-		if ( \version_compare($version, CoreConnector::plugin()->getVersion(), '>=') )
+		if ( \version_compare($version, $this->_plugin->getVersion(), '>=') )
 		{ return; }
 
 		$this->rebuild_paths();
 		
 		if ( \version_compare($version, '2.0.2', '<') )
 		{ 
-			CoreConnector::settings()->get('upgraded_endpoints', true); 
+			$this->_plugin->settings()->bucket()->get('upgraded_endpoints', true); 
+			$this->_plugin->settings()->save();
 			
 			WP::add_action(
 				'admin_notices', 
@@ -53,7 +53,7 @@ class Upgrader extends Internationalizable implements Runnable
 		}
 
 		// New version
-		\update_option('wc_piggly_pix_version', CoreConnector::plugin()->getVersion());
+		\update_option('wc_piggly_pix_version', $this->_plugin->getVersion());
 	}
 
 	/**
