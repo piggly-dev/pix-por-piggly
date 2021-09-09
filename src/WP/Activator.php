@@ -57,7 +57,7 @@ class Activator extends Internationalizable implements Runnable
 
 		// It is not initial database version
 		if ( get_option('wc_piggly_pix_dbversion', '0' ) !== '0'
-				|| $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name )
+				|| $wpdb->get_var( "SHOW TABLES LIKE '".$table_name."'" ) != $table_name )
 		{ return; }
 		
 		if ( !function_exists('dbDelta') )
@@ -74,11 +74,10 @@ class Activator extends Internationalizable implements Runnable
 			if ( !empty ( $wpdb->collate ) ) 
 			{ $charset_collate .= ' COLLATE '.$wpdb->collate; }
 			
-			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) !== $table_name )
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '".$table_name."'" ) != $table_name )
 			{
 				$SQL = 
-					"CREATE TABLE $table_name 
-					(
+					"CREATE TABLE ".$table_name." (
 						`id` INT NOT NULL AUTO_INCREMENT,
 						`oid` INT NULL COMMENT 'Order ID',
 						`txid` VARCHAR(255) NOT NULL UNIQUE KEY,
@@ -96,8 +95,8 @@ class Activator extends Internationalizable implements Runnable
 						`qrcode` TEXT NULL,
 						`receipt` TEXT NULL,
 						`metadata` TEXT NULL,
-						`type` enum('static', 'cob', 'cobv') NOT NULL DEFAULT 'static',
-						`status` enum('created','waiting','expired','paid','cancelled') NOT NULL DEFAULT 'created',
+						`type` VARCHAR(10) NOT NULL DEFAULT 'static',
+						`status` VARCHAR(10) NOT NULL DEFAULT 'created',
 						`expires_at` TIMESTAMP NULL,
 						`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
 						`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -106,12 +105,12 @@ class Activator extends Internationalizable implements Runnable
 						INDEX `type` (`type`),
 						INDEX `status` (`status`),
 						INDEX `expires_at` (`expires_at`)
-					) $charset_collate;";
+					) ".$charset_collate.";";
 
 				@dbDelta( $SQL );
 			}
 
-			if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name )
+			if ( $wpdb->get_var( "SHOW TABLES LIKE '".$table_name."'" ) == $table_name )
 			{ update_option('wc_piggly_pix_dbversion', $this->_plugin->getDbVersion()); }
 			else
 			{ @\trigger_error($this->__translate('Não foi possível criar o banco de dados')); }
