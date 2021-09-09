@@ -239,9 +239,13 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.1 ###
+
+* Micro correções.
+
 ### 2.0.0 ###
 
-- Novo release com mudanças substanciais no núcleo do plugin.
+* Novo release com mudanças substanciais no núcleo do plugin.
 
 ### 1.3.14 ###
 
