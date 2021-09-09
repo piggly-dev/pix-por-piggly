@@ -135,16 +135,6 @@ class Core extends WordpressCore
 			$settings->set('upgraded_endpoints', true);
 			CoreConnector::settingsManager()->save();
 		}
-
-		// Show update page to plugin
-		if ( $settings->get('upgraded', false) )
-		{
-			$settings->set('upgraded', false);
-			CoreConnector::settingsManager()->save();
-
-			\wp_redirect(admin_url('admin.php?page='.CoreConnector::domain().'-upgrade'));
-			exit;
-		}
 	}
 	
 	/**

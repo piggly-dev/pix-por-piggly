@@ -46,6 +46,12 @@ class VersionUpgrader extends Internationalizable implements Runnable
 			'add_menu', 
 			99
 		);
+
+		WP::add_action( 
+			'admin_notices', 
+			$this,
+			'upgrader_notice' 
+		);
 	}
 
 	/**
@@ -67,9 +73,36 @@ class VersionUpgrader extends Internationalizable implements Runnable
 	}
 
 	/**
+	 * Shows about the update.
+	 * 
+	 * @since 2.0.0
+	 * @return void
+	 */
+	public function upgrader_notice ()
+	{
+		?>
+		<div class="notice notice-error">
+			<p>
+				O plugin <strong>Pix por Piggly</strong> precisa
+				da sua atenção.
+			</p>
+		</div>
+		<?php
+		?>
+		<div class="notice notice-warning">
+			<p>
+				O plugin <strong>Pix por Piggly</strong> sofreu
+				uma atualização muito importante e requer a sua
+				atenção para continuar funcionando. <a href="<?=admin_url('admin.php?page='.CoreConnector::domain())?>">
+				Clique aqui</a> para verificar.
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Load plugin page settings.
 	 * 
-	 * @internal When update the CSS/JS, update version.
 	 * @since 2.0.0
 	 * @return void
 	 */
@@ -135,6 +168,8 @@ class VersionUpgrader extends Internationalizable implements Runnable
 		{ return true; }
 
 		$newest = [
+			'upgraded' => true,
+			'upgraded_endpoints' => false,
 			'global' => [
 				'debug' => ($settings['debug'] ?? 'no') === 'yes'
 			],
