@@ -239,6 +239,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.4/2.0.5 ###
+
+* Correção no banco de dados.
+
 ### 2.0.3 ###
 
 * Correção para aceitar a ausência de banco no Pix.
