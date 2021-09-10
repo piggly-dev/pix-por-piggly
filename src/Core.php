@@ -92,7 +92,7 @@ class Core extends WordpressCore
 		// Init
 		WP::add_action('init', $this, 'init_all' );
 		// Admin init
-		WP::add_action('admin_init', $this, 'admin_init' );
+		WP::add_action('wp_loaded', $this, 'wp_loaded' );
 		// WP load
 		WP::add_action('wp', $this, 'front_init' );
 	}
@@ -122,7 +122,7 @@ class Core extends WordpressCore
 	 * @since 2.0.0
 	 * @return void
 	 */
-	public function admin_init ()
+	public function wp_loaded ()
 	{
 		$settings = CoreConnector::settings();
 
