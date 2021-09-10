@@ -100,7 +100,7 @@ class Activator extends Internationalizable implements Runnable
 						`expires_at` TIMESTAMP NULL,
 						`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
 						`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-						PRIMARY KEY `id` (`id`),
+						PRIMARY KEY (`id`),
 						INDEX `oid` (`oid`),
 						INDEX `type` (`type`),
 						INDEX `status` (`status`),
