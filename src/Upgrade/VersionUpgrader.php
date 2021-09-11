@@ -135,7 +135,7 @@ class VersionUpgrader extends Internationalizable implements Runnable
 				\update_option('wc_piggly_pix_upgrader', $upgrader);
 			}
 			else
-			{ throw new Exception(CoreConnector::__translate('Não foi possível atualizar o banco de dados. Tente novamente')); }
+			{ throw new Exception(CoreConnector::__translate('Não foi possível atualizar o banco de dados. Você deve estar utilizando uma versão antiga do MySQL. Tente novamente.')); }
 		}
 
 		if ( !\in_array('settings', $upgrader, true) )
@@ -184,6 +184,7 @@ class VersionUpgrader extends Internationalizable implements Runnable
 				'shows_qrcode' => true,
 				'shows_copypast' => true,
 				'shows_manual' => true,
+				'shows_amount' => true
 			],
 			'orders' => [
 				'receipt_status' => ($settings['auto_update_receipt'] ?? 'no') === 'yes' ? 'pix-receipt' : 'on-hold',
@@ -191,7 +192,8 @@ class VersionUpgrader extends Internationalizable implements Runnable
 				'after_receipt' => $settings['redirect_after_receipt'] ?? '',
 				'expires_after' => 24,
 				'closest_lifetime' => 60,
-				'cron_frequency' => 'daily'
+				'cron_frequency' => 'daily',
+				'decrease_stock' => true
 			],
 			'account' => [
 				'store_name' => $settings['store_name'] ?? '',
@@ -209,6 +211,7 @@ class VersionUpgrader extends Internationalizable implements Runnable
 				'label' => $settings['discount_label'] ?? $this->__translate('Desconto Pix Aplicado')
 			],
 			'receipts' => [
+				'shows_receipt' => 'up',
 				'receipt_page' => true,
 				'whatsapp_number' => $settings['whatsapp'] ?? '',
 				'whatsapp_message' => \str_replace('{{pedido}}', '{{order_number}}', $settings['whatsapp_message'] ?? $this->__translate('Segue o comprovante para o pedido {{order_number}}:')),

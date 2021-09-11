@@ -241,14 +241,25 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.11 ###
+
+* Opção para reduzir o estoque do pedido assim que o Pix é criado;
+* Posição dos links de comprovante;
+* Estoque reduzido assim que o comprovante Pix é enviado;
+* Opção de ocultar valor do Pix antes dos dados Pix.
+
+### 2.0.9/2.0.11 ###
+
+* Micro correções.
+
 ### 2.0.8 ###
 
-- Correção no banco de dados.
+* Correção no banco de dados.
 
 ### 2.0.7 ###
 
-- Correção no banco de dados.
-- Notificação sobre atualização dos Links permanentes.
+* Correção no banco de dados.
+* Notificação sobre atualização dos Links permanentes.
 
 ### 2.0.6 ###
 

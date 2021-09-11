@@ -185,6 +185,7 @@ class SettingsManager
 				'shows_qrcode' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],				
 				'shows_copypast' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],				
 				'shows_manual' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
+				'shows_amount' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 			]
 		);	
 		
@@ -238,6 +239,7 @@ class SettingsManager
 			$settings,
 			$data,
 			[
+				'decrease_stock' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 				'receipt_status' => [ 'default' => 'on-hold', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => $allowedStatus ],
 				'paid_status' => [ 'default' => 'processing', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => $allowedStatus ],
 				'after_receipt' => [ 'default' => 0, 'sanitize' => \FILTER_VALIDATE_INT ],
@@ -345,6 +347,7 @@ class SettingsManager
 				'telegram_number' => [ 'default' => '', 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'telegram_message' => [ 'default' => 'Segue o comprovante para o pedido {{order_number}}:', 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'receipt_page' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
+				'shows_receipt' => [ 'default' => 'up', 'sanitize' => \FILTER_SANITIZE_STRING ],
 			]
 		);
 	}
@@ -400,6 +403,7 @@ class SettingsManager
 				'shows_qrcode' => true,
 				'shows_copypast' => true,
 				'shows_manual' => true,
+				'shows_amount' => true
 			],
 			'orders' => [
 				'receipt_status' => 'on-hold',
@@ -407,7 +411,8 @@ class SettingsManager
 				'after_receipt' => '',
 				'expires_after' => 24,
 				'closest_lifetime' => 60,
-				'cron_frequency' => 'daily'
+				'cron_frequency' => 'daily',
+				'decrease_stock' => true
 			],
 			'account' => [
 				'store_name' => '',
@@ -417,7 +422,7 @@ class SettingsManager
 				'merchant_name' => '',
 				'merchant_city' => '',
 				'description' =>'Compra em {{store_name}}',
-				'fix' => true,
+				'fix' => true
 			],
 			'discount' => [
 				'value' => '',
@@ -425,11 +430,12 @@ class SettingsManager
 				'label' => __('Desconto Pix Aplicado', 'wc-piggly-pix')
 			],
 			'receipts' => [
+				'shows_receipt' => 'up',
 				'receipt_page' => true,
 				'whatsapp_number' => '',
 				'whatsapp_message' => __('Segue o comprovante para o pedido {{order_number}}:', 'wc-piggly-pix'),
 				'telegram_number' => '',
-				'telegram_message' => __('Segue o comprovante para o pedido {{order_number}}:', 'wc-piggly-pix'),
+				'telegram_message' => __('Segue o comprovante para o pedido {{order_number}}:', 'wc-piggly-pix')
 			]
 		];
 
