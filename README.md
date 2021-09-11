@@ -239,6 +239,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.8 ###
+
+- Correção no banco de dados.
+
 ### 2.0.7 ###
 
 - Correção no banco de dados.
