@@ -6,6 +6,7 @@ use DateTime;
 use Exception;
 use Piggly\WooPixGateway\Core\Exceptions\DatabaseException;
 use Piggly\WooPixGateway\Core\Processors\QrCodeProcessor;
+use Piggly\WooPixGateway\Core\Repo\PixRepo;
 use Piggly\WooPixGateway\CoreConnector;
 use Piggly\WooPixGateway\Vendor\Piggly\Pix\AbstractPayload;
 use Piggly\WooPixGateway\Vendor\Piggly\Pix\Parser;
@@ -992,6 +993,16 @@ class PixEntity
 		}
 		else
 		{ 
+			try
+			{
+				$tx = (new PixRepo(CoreConnector::plugin()))->byId($this->getTxid());
+
+				if ( !empty($tx) )
+				{ $this->setTxid($this->generateTxid()); }
+			}
+			catch ( Exception $e )
+			{ $this->setTxid($this->generateTxid()); }
+
 			CoreConnector::debugger()->debug('Insert to database', $this->export());
 			$response = $wpdb->insert($table_name, $this->export());
 			$this->loaded = true;

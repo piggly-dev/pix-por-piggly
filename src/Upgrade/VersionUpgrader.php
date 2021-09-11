@@ -245,7 +245,7 @@ class VersionUpgrader extends Internationalizable implements Runnable
 					"CREATE TABLE ".$table_name." (
 						`id` INT NOT NULL AUTO_INCREMENT,
 						`oid` INT NULL COMMENT 'Order ID',
-						`txid` VARCHAR(255) NOT NULL UNIQUE KEY,
+						`txid` VARCHAR(255) NOT NULL,
 						`e2eid` VARCHAR(255) NULL,
 						`store_name` VARCHAR(255) NULL,
 						`merchant_name` VARCHAR(255) NULL,
@@ -267,8 +267,6 @@ class VersionUpgrader extends Internationalizable implements Runnable
 						`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 						PRIMARY KEY (`id`),
 						INDEX `oid` (`oid`),
-						INDEX `type` (`type`),
-						INDEX `status` (`status`),
 						INDEX `expires_at` (`expires_at`)
 					);";
 
