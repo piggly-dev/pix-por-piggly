@@ -44,7 +44,7 @@ class Upgrader extends Internationalizable implements Runnable
 		$this->check_database();
 		$this->rebuild_paths();
 		
-		if ( \version_compare($version, '2.0.7', '<') )
+		if ( \version_compare($version, '2.0.8', '<') )
 		{ 
 			$this->_plugin->settings()->bucket()->set('upgraded_endpoints', true); 
 			$this->_plugin->settings()->save();
@@ -97,48 +97,39 @@ class Upgrader extends Internationalizable implements Runnable
 		
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '".$table_name."'" ) != $table_name )
 		{
-			$charset_collate = '';
-
-			/** Setting the default charset collation **/
-			if ( !empty ( $wpdb->charset ) )
-			{ $charset_collate = 'DEFAULT CHARACTER SET '.$wpdb->charset; }
-
-			if ( !empty ( $wpdb->collate ) ) 
-			{ $charset_collate .= ' COLLATE '.$wpdb->collate; }
-
 			if ( !function_exists('dbDelta') )
 			{ require_once(ABSPATH . 'wp-admin/includes/upgrade.php'); }
 
 			$SQL = 
-				"CREATE TABLE ".$table_name." (
-					`id` INT NOT NULL AUTO_INCREMENT,
-					`oid` INT NULL COMMENT 'Order ID',
-					`txid` VARCHAR(255) NOT NULL UNIQUE KEY,
-					`e2eid` VARCHAR(255) NULL,
-					`store_name` VARCHAR(255) NULL,
-					`merchant_name` VARCHAR(255) NULL,
-					`merchant_city` VARCHAR(255) NULL,
-					`key` VARCHAR(255) NOT NULL,
-					`key_type` VARCHAR(255) NOT NULL,
-					`description` VARCHAR(255) NULL,
-					`amount` DECIMAL(8,2) NOT NULL,
-					`discount` DECIMAL(8,2) NULL DEFAULT 0,
-					`bank` INT NULL,
-					`brcode` TEXT NULL,
-					`qrcode` TEXT NULL,
-					`receipt` TEXT NULL,
-					`metadata` TEXT NULL,
-					`type` VARCHAR(10) NOT NULL DEFAULT 'static',
-					`status` VARCHAR(10) NOT NULL DEFAULT 'created',
-					`expires_at` TIMESTAMP NULL,
-					`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-					`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-					PRIMARY KEY (`id`),
-					INDEX `oid` (`oid`),
-					INDEX `type` (`type`),
-					INDEX `status` (`status`),
-					INDEX `expires_at` (`expires_at`)
-				) ".$charset_collate.";";
+			"CREATE TABLE ".$table_name." (
+				`id` INT NOT NULL AUTO_INCREMENT,
+				`oid` INT NULL COMMENT 'Order ID',
+				`txid` VARCHAR(255) NOT NULL UNIQUE KEY,
+				`e2eid` VARCHAR(255) NULL,
+				`store_name` VARCHAR(255) NULL,
+				`merchant_name` VARCHAR(255) NULL,
+				`merchant_city` VARCHAR(255) NULL,
+				`key` VARCHAR(255) NOT NULL,
+				`key_type` VARCHAR(255) NOT NULL,
+				`description` VARCHAR(255) NULL,
+				`amount` DECIMAL(8,2) NOT NULL,
+				`discount` DECIMAL(8,2) NULL DEFAULT 0,
+				`bank` INT NULL,
+				`brcode` TEXT NULL,
+				`qrcode` TEXT NULL,
+				`receipt` TEXT NULL,
+				`metadata` TEXT NULL,
+				`type` VARCHAR(10) NOT NULL DEFAULT 'static',
+				`status` VARCHAR(10) NOT NULL DEFAULT 'created',
+				`expires_at` TIMESTAMP NULL,
+				`updated_at` TIMESTAMP NULL,
+				`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+				PRIMARY KEY (`id`),
+				INDEX `oid` (`oid`),
+				INDEX `type` (`type`),
+				INDEX `status` (`status`),
+				INDEX `expires_at` (`expires_at`)
+			);";
 
 			try
 			{ 
