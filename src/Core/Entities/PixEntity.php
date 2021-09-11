@@ -983,6 +983,7 @@ class PixEntity
 	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'pgly_pix';
+		$this->update_at = new DateTime('now', \wp_timezone());
 
 		if ( $this->loaded )
 		{ 
@@ -1190,7 +1191,8 @@ class PixEntity
 			'metadata' => \json_encode($this->getMetadata()),
 			'discount' => $this->discount ?? 0,
 			'amount' => $this->amount ?? 0,
-			'expires_at' => empty($this->expires_at) ? null : $this->expires_at->format('Y-m-d H:i:s')
+			'expires_at' => empty($this->expires_at) ? null : $this->expires_at->format('Y-m-d H:i:s'),
+			'updated_at' => empty($this->expires_at) ? null : $this->expires_at->format('Y-m-d H:i:s')
 		];
 
 		foreach ( $remove as $key )

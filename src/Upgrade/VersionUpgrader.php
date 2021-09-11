@@ -235,15 +235,7 @@ class VersionUpgrader extends Internationalizable implements Runnable
 
 		try
 		{
-			$prefix          = $wpdb->prefix;
-			$charset_collate = '';
-
-			/** Setting the default charset collation **/
-			if ( !empty ( $wpdb->charset ) )
-			{ $charset_collate = 'DEFAULT CHARACTER SET '.$wpdb->charset; }
-
-			if ( !empty ( $wpdb->collate ) ) 
-			{ $charset_collate .= ' COLLATE '.$wpdb->collate; }
+			$prefix = $wpdb->prefix;
 
 			$table_name = $prefix . 'pgly_pix';
 			
@@ -271,14 +263,14 @@ class VersionUpgrader extends Internationalizable implements Runnable
 						`type` VARCHAR(10) NOT NULL DEFAULT 'static',
 						`status` VARCHAR(10) NOT NULL DEFAULT 'created',
 						`expires_at` TIMESTAMP NULL,
-						`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+						`updated_at` TIMESTAMP NULL,
 						`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 						PRIMARY KEY (`id`),
 						INDEX `oid` (`oid`),
 						INDEX `type` (`type`),
 						INDEX `status` (`status`),
 						INDEX `expires_at` (`expires_at`)
-					) ".$charset_collate.";";
+					);";
 
 				@dbDelta( $SQL );
 			}
