@@ -15,6 +15,25 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 			o sistema para certificar que está tudo compatível.
 		</p>
 		<br>
+
+		<p>
+			Como a regra de versionamento de código manda, a versão 2.x será 
+			incompatível com a versão 1.x não tenha dúvidas disso. A versão 2.x 
+			foi projetada para ser totalmente compatível com as APIs do Pix, 
+			que atualizam automaticamente os pedidos, e essas APIs vão mudar 
+			sim o comportamento do Pix. Versões desatualizadas de MySQL e PHP 
+			podem ser o problema e dificultar a compatibilidade. E estamos nos 
+			esforçando para lançar micro-correções para essas necessidades. A 
+			qualquer momento é possível fazer o downgrade para a versão 1.x e 
+			continuar utilizando todos os recursos dela que já estão otimizados 
+			e não precisavam de atualização como uma versão 1.x.
+		</p>
+		<br>
+
+		<p>
+			Tenha certeza de que você quer continuar nesta versão antes de atualizar.
+		</p>
+		<br>
 		
 		<div class="pgly-wps--explorer pgly-wps-is-compact">
 			<strong>Sua versão do plugin</strong> 
@@ -52,8 +71,10 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 		<br>
 
 		<div class="pgly-wps--notification pgly-wps-is-danger">
-			Recomendamos que revise as suas configurações após
-			o processo de atualização ser concluído.
+			Recomendamos que revise as suas configurações do Pix após
+			o processo de atualização ser concluído, atualize os
+			Links permanentes do seu Wordpress para carregar os 
+			endpoints Pix e limpe o cachê.
 		</div>
 
 		<button 

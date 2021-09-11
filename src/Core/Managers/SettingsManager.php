@@ -397,7 +397,7 @@ class SettingsManager
 				'description' => __('Você não precisa ter uma chave cadastrada. Pague os seus pedidos via Pix.', 'wc-piggly-pix'),
 				'advanced_description' => true,
 				'instructions' => __('Faça o pagamento via PIX. O pedido número {{order_number}} será liberado assim que a confirmação do pagamento for efetuada.', 'wc-piggly-pix'),
-				'shows_qrcode' => false,
+				'shows_qrcode' => true,
 				'shows_copypast' => true,
 				'shows_manual' => true,
 			],
