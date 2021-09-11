@@ -160,7 +160,9 @@ class Front extends Initiable
 					'telegram_message' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('telegram_message', true)),
 					'shows_qrcode' => $settings->get('gateway')->get('shows_qrcode', false),
 					'shows_copypast' => $settings->get('gateway')->get('shows_copypast', false),
-					'shows_manual' => $settings->get('gateway')->get('shows_manual', false)
+					'shows_manual' => $settings->get('gateway')->get('shows_manual', false),
+					'shows_amount' => $settings->get('gateway')->get('shows_amount', false),
+					'shows_receipt' => $settings->get('receipts')->get('shows_receipt', 'up')
 				),
 				WC()->template_path().\dirname(CoreConnector::plugin()->getBasename()).'/',
 				CoreConnector::plugin()->getTemplatePath().'woocommerce/'

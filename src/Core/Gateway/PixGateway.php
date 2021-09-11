@@ -136,12 +136,18 @@ class PixGateway extends WC_Payment_Gateway
 				'pending', 
 				$order->get_id(), 
 				$order 
-			), 
+			)
+		);
+
+		$order->add_order_note(
 			\sprintf(
 				CoreConnector::__translate('Processo de pagamento via Pix iniciado. ID da transação %s criado.'),
 				$pix->getTxid()
 			)
 		);
+
+		if ( CoreConnector::settings()->get('orders')->get('decrease_stock', false) )
+		{ \wc_maybe_reduce_stock_levels($order_id); }
 
 		// Remove cart
 		$woocommerce->cart->empty_cart();

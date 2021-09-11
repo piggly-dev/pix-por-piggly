@@ -4,6 +4,19 @@
 	<h2 class="pgly-wps--title pgly-wps-is-6">Status dos Pedidos</h2>
 	
 	<pgly-row>
+		<pgly-column>
+			<pgly-basic-checkbox
+				id="decrease_stock"
+				label="Reduzir Estoque ao criar o Pix"
+				placeholder="O estoque será reduzido assim que o Pix for criado."
+				:error="fields.decrease_stock.error"
+				v-model="fields.decrease_stock.value"
+				@afterChange="onChanged">
+			</pgly-basic-checkbox>
+		</pgly-column>
+	</pgly-row>
+
+	<pgly-row>
 		<pgly-column :size="6">
 			<pgly-basic-select
 				id="receipt_status"
@@ -153,6 +166,23 @@
 	<pgly-row>
 		<pgly-column>
 			<pgly-basic-select
+				id="shows_receipt"
+				label="Posição dos Links do Comprovante"
+				placeholder="Selecione uma posição..."
+				:options="fields.shows_receipt.options"
+				:error="fields.shows_receipt.error"
+				v-model="fields.shows_receipt.value"
+				@afterChange="onChanged">
+				<template v-slot:description>
+					Recomendamos o status Aguardando Pagamento (<code>on-hold</code>).
+				</template>
+			</pgly-basic-select>
+		</pgly-column>
+	</pgly-row>
+
+	<pgly-row>
+		<pgly-column>
+			<pgly-basic-select
 				id="after_receipt"
 				label="Página de Redirecionamento"
 				placeholder="Selecione um status..."
@@ -283,6 +313,10 @@ export default defineComponent({
 		return {
 			window: window,
 			fields: {
+				decrease_stock: {
+					error: {state: false} as IErrorInput,
+					value: store.state.settings.get('orders').get('decrease_stock', true),
+				},
 				receipt_status: {
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('orders').get('receipt_status', ''),
@@ -326,6 +360,14 @@ export default defineComponent({
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('orders').get('after_receipt', 0).toString(),
 					options: store.state.settings.get('runtime').get('pages')
+				},
+				shows_receipt: {
+					error: {state: false} as IErrorInput,
+					value: store.state.settings.get('receipts').get('shows_receipt', 'up'),
+					options: [
+						{ value: 'up', label: 'Acima do Pix' },
+						{ value: 'down', label: 'Abaixo do Pix' }
+					]
 				},
 				receipt_page: {
 					error: {state: false} as IErrorInput,
@@ -371,6 +413,7 @@ export default defineComponent({
 			});
 
 			await api.saveSettings('receipts', {
+				shows_receipt: this.fields.shows_receipt.value,
 				receipt_page: this.fields.receipt_page.value,
 				whatsapp_number: this.fields.whatsapp_number.value,
 				whatsapp_message: this.fields.whatsapp_message.value,
@@ -379,6 +422,7 @@ export default defineComponent({
 			});
 
 			await api.saveSettings('orders', {
+				decrease_stock: this.fields.decrease_stock.value,
 				receipt_status: this.fields.receipt_status.value,
 				paid_status: this.fields.paid_status.value,
 				after_receipt: this.fields.after_receipt.value,
