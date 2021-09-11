@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.8
-Stable tag: 2.0.10
+Stable tag: 2.0.11
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -265,6 +265,17 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 10. Metabox Pix no pedido realizado via Pix.
 
 == Changelog ==
+
+= 2.0.11 =
+
+- Opção para reduzir o estoque do pedido assim que o Pix é criado;
+- Posição dos links de comprovante;
+- Estoque reduzido assim que o comprovante Pix é enviado;
+- Opção de ocultar valor do Pix antes dos dados Pix.
+
+= 2.0.9/2.0.10 =
+
+- Micro-correções.
 
 = 2.0.8 =
 

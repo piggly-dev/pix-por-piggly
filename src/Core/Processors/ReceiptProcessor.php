@@ -158,6 +158,8 @@ class ReceiptProcessor
 			->addToReceipt('trusted', $trusted)
 			->updateStatus(PixEntity::STATUS_WAITING);
 
+		\wc_maybe_reduce_stock_levels($order->get_id());
+
 		// Do after save order
 		do_action('pgly_wc_piggly_pix_after_save_receipt', $pix, $order, $order->get_id());
 		

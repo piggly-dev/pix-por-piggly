@@ -166,6 +166,19 @@
 		</pgly-column>
 	</pgly-row>
 
+	<pgly-row>
+		<pgly-column>
+			<pgly-basic-checkbox
+				id="shows_amount"
+				label="Mostrar Valor do Pix no Ínicio"
+				placeholder="Habilitar a visualização do Valor do Pix acima dos dados Pix"
+				:error="fields.shows_amount.error"
+				v-model="fields.shows_amount.value"
+				@afterChange="onChanged">
+			</pgly-basic-checkbox>
+		</pgly-column>
+	</pgly-row>
+
 	<div class="pgly-wps--space"></div>
 	<h2 class="pgly-wps--title pgly-wps-is-6">Depuração</h2>
 
@@ -266,6 +279,10 @@ export default defineComponent({
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('gateway').get('advanced_description', false),
 				},
+				shows_amount: {
+					error: {state: false} as IErrorInput,
+					value: store.state.settings.get('gateway').get('shows_amount', false),
+				},
 				shows_qrcode: {
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('gateway').get('shows_qrcode', false),
@@ -320,7 +337,8 @@ export default defineComponent({
 				instructions: this.fields.instructions.value,
 				shows_qrcode: this.fields.shows_qrcode.value,
 				shows_copypast: this.fields.shows_copypast.value,
-				shows_manual: this.fields.shows_manual.value
+				shows_manual: this.fields.shows_manual.value,
+				shows_amount: this.fields.shows_amount.value
 			});
 
 			return true;
