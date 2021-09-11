@@ -1,5 +1,7 @@
 # Pix por Piggly v2.0.0
 
+**Importante**: Como a regra de versionamento de código manda, a versão 2.x será incompatível com a versão 1.x não tenha dúvidas disso. A versão 2.x foi projetada para ser totalmente compatível com as APIs do Pix, que atualizam automaticamente os pedidos, e essas APIs vão mudar sim o comportamento do Pix. Versões desatualizadas de MySQL e PHP podem ser o problema e dificultar a compatibilidade. E estamos nos esforçando para lançar micro-correções para essas necessidades. A qualquer momento é possível fazer o downgrade para a versão 1.x e continuar utilizando todos os recursos dela que já estão otimizados e não precisavam de atualização como uma versão 1.x.
+
 O melhor plugin para pagamentos via Pix no Woocommerce. Na versão 2.0.0 o plugin está melhor mais dinâmico e muito mais responsivo. Veja mais detalhes.
 
 **Sempre atualize para continuar aproveitando**
