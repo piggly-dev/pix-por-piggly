@@ -126,18 +126,6 @@ class VersionUpgrader extends Internationalizable implements Runnable
 	{
 		$upgrader = \get_option('wc_piggly_pix_upgrader', []);
 
-		if ( !\in_array('settings', $upgrader, true) )
-		{
-			if ( $this->upgrade_settings() )
-			{ 
-				$upgrader = \array_merge($upgrader, ['settings']);
-				\delete_option('woocommerce_wc_piggly_pix_gateway_settings');
-				\update_option('wc_piggly_pix_upgrader', $upgrader);
-			}
-			else
-			{ throw new Exception(CoreConnector::__translate('Não foi possível atualizar as configurações. Tente novamente.')); }
-		}
-
 		if ( !\in_array('database', $upgrader, true) )
 		{
 			if ( $this->upgrade_database() )
@@ -148,6 +136,18 @@ class VersionUpgrader extends Internationalizable implements Runnable
 			}
 			else
 			{ throw new Exception(CoreConnector::__translate('Não foi possível atualizar o banco de dados. Tente novamente')); }
+		}
+
+		if ( !\in_array('settings', $upgrader, true) )
+		{
+			if ( $this->upgrade_settings() )
+			{ 
+				$upgrader = \array_merge($upgrader, ['settings']);
+				\delete_option('woocommerce_wc_piggly_pix_gateway_settings');
+				\update_option('wc_piggly_pix_upgrader', $upgrader);
+			}
+			else
+			{ throw new Exception(CoreConnector::__translate('Não foi possível atualizar as configurações. Tente novamente.')); }
 		}
 
 		\update_option('wc_piggly_pix_version', \PGLY_PIX_GATEWAY_VERSION);
@@ -181,9 +181,9 @@ class VersionUpgrader extends Internationalizable implements Runnable
 				'advanced_description' => ($settings['advanced_description'] ?? 'no') === 'yes',
 				'instructions' => \str_replace('{{pedido}}', '{{order_number}}', $settings['instructions'] ?? $this->__translate('Faça o pagamento via PIX. O pedido número {{order_number}} será liberado assim que a confirmação do pagamento for efetuada.')),
 				
-				'shows_qrcode' => ($settings['qrcode'] ?? 'no') === 'yes' || $settings['qrcode'] === true,
-				'shows_copypast' => ($settings['copypast'] ?? 'no') === 'yes' || $settings['copypast'] === true,
-				'shows_manual' => ($settings['manual'] ?? 'no') === 'yes' || $settings['manual'] === true,
+				'shows_qrcode' => true,
+				'shows_copypast' => true,
+				'shows_manual' => true,
 			],
 			'orders' => [
 				'receipt_status' => ($settings['auto_update_receipt'] ?? 'no') === 'yes' ? 'pix-receipt' : 'on-hold',

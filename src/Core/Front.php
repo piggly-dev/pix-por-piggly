@@ -155,7 +155,7 @@ class Front extends Initiable
 					'instructions' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('gateway')->get('instructions')),
 					'receipt_page' => $settings->get('receipts')->get('receipt_page', true),
 					'whatsapp_number' => $settings->get('receipts')->get('whatsapp_number', true),
-					'whatsapp_message' => $settings->get('receipts')->get('whatsapp_message', true),
+					'whatsapp_message' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('whatsapp_message', true)),
 					'telegram_number' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('telegram_number', true)),
 					'telegram_message' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('telegram_message', true)),
 					'shows_qrcode' => $settings->get('gateway')->get('shows_qrcode', false),
