@@ -160,7 +160,7 @@ class Admin extends Initiable
 			'pgly-pix-por-piggly-settings',
 			CoreConnector::plugin()->getUrl().'assets/js/pgly-pix-por-piggly.settings.js',
 			[],
-			'2.0.11',
+			'2.0.12',
 			true
 		);
 

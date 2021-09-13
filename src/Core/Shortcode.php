@@ -80,7 +80,7 @@ class Shortcode extends Initiable
 
 		$allowed = $order === false ? false : \get_current_user_id() === $order->get_customer_id();
 		$allowed = $allowed && $order->get_payment_method() === CoreConnector::plugin()->getName();
-		$allowed = $allowed && $order->has_status(['pending', $settings->get('receipt_status', 'on-hold')]);
+		$allowed = $allowed && $order->has_status([$settings->get('waiting_status', 'pending'), $settings->get('receipt_status', 'on-hold')]);
 
 		// If order is not payment waiting, return...
 		if ( !$allowed )
@@ -132,7 +132,7 @@ class Shortcode extends Initiable
 
 		$allowed = $order === false ? false : \get_current_user_id() === $order->get_customer_id();
 		$allowed = $allowed && $order->get_payment_method() === CoreConnector::plugin()->getName();
-		$allowed = $allowed && $order->has_status(['pending', $settings->get('receipt_status', 'on-hold')]);
+		$allowed = $allowed && $order->has_status([$settings->get('waiting_status', 'pending'), $settings->get('receipt_status', 'on-hold')]);
 
 		if ( !$allowed )
 		{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pedido indisponível. Contate o suporte.').'</ul></div>'; }
