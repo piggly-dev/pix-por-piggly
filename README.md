@@ -241,6 +241,11 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.12 ###
+
+* Correção de bugs nas configurações do plugin;
+* Adição da personalização do status de aguardando o pagamento.
+
 ### 2.0.11 ###
 
 * Opção para reduzir o estoque do pedido assim que o Pix é criado;

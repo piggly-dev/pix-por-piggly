@@ -240,6 +240,7 @@ class SettingsManager
 			$data,
 			[
 				'decrease_stock' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
+				'waiting_status' => [ 'default' => 'pending', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => $allowedStatus ],
 				'receipt_status' => [ 'default' => 'on-hold', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => $allowedStatus ],
 				'paid_status' => [ 'default' => 'processing', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => $allowedStatus ],
 				'after_receipt' => [ 'default' => 0, 'sanitize' => \FILTER_VALIDATE_INT ],
@@ -367,10 +368,10 @@ class SettingsManager
 	{
 		foreach ( $fields as $key => $meta )
 		{
-			$value = \filter_var( $data[$key] ?? null, $meta['sanitize'], FILTER_NULL_ON_FAILURE );
+			$value = \filter_var( $data[$key] ?? '', $meta['sanitize'], FILTER_NULL_ON_FAILURE );
 
 			if ( !$this->isFilled($value) || !\in_array($value, ($meta['allowed'] ?? [$value]), true) )
-			{ $value = $settings->get($key, $meta['default']); }
+			{ $settings->set($key, ''); continue; }
 
 			if ( !$this->isFilled($value) && ($meta['required'] ?? false) )
 			{ throw new Exception(CoreConnector::__translate('Campo obrigatório não preenchido')); }
@@ -406,6 +407,7 @@ class SettingsManager
 				'shows_amount' => true
 			],
 			'orders' => [
+				'waiting_status' => 'pending',
 				'receipt_status' => 'on-hold',
 				'paid_status' => 'processing',
 				'after_receipt' => '',

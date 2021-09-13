@@ -1115,7 +1115,7 @@ class PixEntity
 				->setDescription(
 					$description
 				);
-			
+				
 			if ( !empty($orders->get('expires_after', 0)) )
 			{ $pix->setExpiration(new DateInterval('PT'.\strval($orders->get('expires_after', 24)).'H')); }
 			
