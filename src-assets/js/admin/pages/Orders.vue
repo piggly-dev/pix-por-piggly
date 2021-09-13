@@ -16,6 +16,33 @@
 		</pgly-column>
 	</pgly-row>
 
+	<pgly-notification color="warning">
+		Quando o status para Aguardando Pagamento for <code>
+		Pendente</code> a página de redirecionamento do pedido
+		será a página de pagamento do pedido, se for escolhido
+		qualquer outro status, então a página de redirecionamento
+		do pedido será a página "Obrigado".
+	</pgly-notification>
+
+	<pgly-row>
+		<pgly-column>
+			<pgly-basic-select
+				id="waiting_status"
+				label="Status para Aguardando Pagamento"
+				placeholder="Selecione um status..."
+				:options="fields.waiting_status.options"
+				:error="fields.waiting_status.error"
+				v-model="fields.waiting_status.value"
+				@afterChange="onChanged">
+				<template v-slot:description>
+					Recomendamos o status Pendente (<code>pendente</code>)
+					quando utilizando uma API do Pix. Para Pix Estáticos,
+					selecione o status desejado.
+				</template>
+			</pgly-basic-select>
+		</pgly-column>
+	</pgly-row>
+
 	<pgly-row>
 		<pgly-column :size="6">
 			<pgly-basic-select
@@ -185,7 +212,7 @@
 			<pgly-basic-select
 				id="after_receipt"
 				label="Página de Redirecionamento"
-				placeholder="Selecione um status..."
+				placeholder="Selecione uma página..."
 				:options="fields.after_receipt.options"
 				:error="fields.after_receipt.error"
 				v-model="fields.after_receipt.value"
@@ -317,6 +344,11 @@ export default defineComponent({
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('orders').get('decrease_stock', true),
 				},
+				waiting_status: {
+					error: {state: false} as IErrorInput,
+					value: store.state.settings.get('orders').get('waiting_status', ''),
+					options: store.state.settings.get('runtime').get('statuses')
+				},
 				receipt_status: {
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('orders').get('receipt_status', ''),
@@ -423,6 +455,7 @@ export default defineComponent({
 
 			await api.saveSettings('orders', {
 				decrease_stock: this.fields.decrease_stock.value,
+				waiting_status: this.fields.waiting_status.value,
 				receipt_status: this.fields.receipt_status.value,
 				paid_status: this.fields.paid_status.value,
 				after_receipt: this.fields.after_receipt.value,

@@ -5,7 +5,7 @@ use Piggly\WooPixGateway\CoreConnector;
 
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Initiable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\WP;
-
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Settings\KeyingBucket;
 use WC_Order;
 
 /**
@@ -73,8 +73,10 @@ class Endpoints extends Initiable
 		if ( $order->get_payment_method() !== CoreConnector::plugin()->getName() )
 		{ return $actions; }
 
+		$waiting_status = CoreConnector::settings()->get('orders', new KeyingBucket())->get('waiting_status', 'pending');
+	
 		// Only when payment is not confirmed yet
-		if ( $order->has_status(['pending']) )
+		if ( $order->has_status([$waiting_status]) )
 		{
 			$actions['view-pix-payment'] = [
 				'url' => static::getPaymentUrl($order),

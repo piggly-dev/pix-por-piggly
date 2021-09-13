@@ -123,6 +123,7 @@ class PixGateway extends WC_Payment_Gateway
 	{
 		global $woocommerce;
 
+		$waiting_status = CoreConnector::settings()->get('orders', new KeyingBucket())->get('waiting_status', 'pending');
 		$order = new WC_Order($order_id);
 		$pix   = PixEntity::mount($order);
 
@@ -133,7 +134,7 @@ class PixGateway extends WC_Payment_Gateway
 		$order->update_status( 
 			apply_filters( 
 				'pgly_wc_piggly_pix_pending_status',
-				'pending', 
+				$waiting_status, 
 				$order->get_id(), 
 				$order 
 			)
@@ -158,7 +159,7 @@ class PixGateway extends WC_Payment_Gateway
 		// Return checkout payment url
 		return array(
 			'result' 	=> 'success',
-			'redirect'	=> $order->get_checkout_payment_url(true),
+			'redirect'	=> $waiting_status === 'pending' ? $order->get_checkout_payment_url(true) : $order->get_checkout_order_received_url(),
 			'txid'      => $pix->getTxid(),
 			'pix'       => $pix
 		);
@@ -363,7 +364,7 @@ class PixGateway extends WC_Payment_Gateway
 		$settings = CoreConnector::settings()->get('orders', new KeyingBucket());
 
 		return !$order->has_status([
-			'pending', 
+			$settings->get('waiting_status', 'pending'), 
 			$settings->get('receipt_status', 'on-hold'),
 			'pix-receipt'
 		]);

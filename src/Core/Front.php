@@ -33,6 +33,14 @@ class Front extends Initiable
 		);
 
 		WP::add_action( 
+			'woocommerce_thankyou_'.CoreConnector::plugin()->getName(), 
+			$this, 
+			'payment_page', 
+			5, 
+			1 
+		);
+
+		WP::add_action( 
 			'woocommerce_account_pgly-pix-payment_endpoint', 
 			$this, 
 			'pay'
@@ -410,7 +418,7 @@ class Front extends Initiable
 
 		$allowed = $order === false ? false : \get_current_user_id() === $order->get_customer_id();
 		$allowed = $allowed && $order->get_payment_method() === CoreConnector::plugin()->getName();
-		$allowed = $allowed && $order->has_status(['pending', $settings->get('receipt_status', 'on-hold')]);
+		$allowed = $allowed && $order->has_status([$settings->get('waiting_status', 'pending'), $settings->get('receipt_status', 'on-hold')]);
 		return $allowed;
 	}
 }
