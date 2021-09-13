@@ -178,6 +178,7 @@ class SettingsManager
 			$data,
 			[
 				'enabled' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
+				'icon' => [ 'default' => 'pix-payment-icon', 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'title' => [ 'default' => CoreConnector::__translate('Faça um Pix'), 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'description' => [ 'default' => CoreConnector::__translate('Você não precisa ter uma chave cadastrada. Pague os seus pedidos via Pix.'), 'sanitize' => \FILTER_SANITIZE_STRING ],
 				'advanced_description' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],

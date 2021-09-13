@@ -241,7 +241,7 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
-### 2.0.12 ###
+### 2.0.12/2.0.13 ###
 
 * Correção de bugs nas configurações do plugin;
 * Adição da personalização do status de aguardando o pagamento.
