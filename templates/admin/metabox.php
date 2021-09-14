@@ -64,7 +64,7 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 		<span><?=$pix->getBrCode();?></span>
 	</div>
 
-	<?php if ( $pix->isStatus(PixEntity::STATUS_CREATED) ) : ?>
+	<?php if ( $pix->isStatus(PixEntity::STATUS_CREATED) && !empty($pix->getExpiresAt()) ) : ?>
 		<div class="pgly-wps--explorer pgly-wps-is-compact">
 			<strong>Data da Expiração</strong>
 			<span><?=$pix->getExpiresAt()->format('d/m/Y H:i:s');?></span>

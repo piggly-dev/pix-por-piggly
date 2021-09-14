@@ -241,6 +241,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.15 ###
+
+* Correção de bug na metabox do pedido;
+
 ### 2.0.14 ###
 
 * Personalização do destinatário dos e-mails administrativos;
