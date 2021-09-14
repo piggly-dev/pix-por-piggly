@@ -79,6 +79,19 @@
 	<h2 class="pgly-wps--title pgly-wps-is-6">Expiração do Pix</h2>
 
 	<pgly-row>
+		<pgly-column>
+			<pgly-basic-checkbox
+				id="cancel_when_expired"
+				label="Cancelar Pedido após Expiração"
+				placeholder="Cancela o pedido, quando possível, após a expiração do Pix."
+				:error="fields.cancel_when_expired.error"
+				v-model="fields.cancel_when_expired.value"
+				@afterChange="onChanged">
+			</pgly-basic-checkbox>
+		</pgly-column>
+	</pgly-row>
+
+	<pgly-row>
 		<pgly-column :size="6">
 			<pgly-basic-input
 				id="expires_after"
@@ -359,6 +372,10 @@ export default defineComponent({
 					value: store.state.settings.get('orders').get('paid_status', ''),
 					options: store.state.settings.get('runtime').get('statuses')
 				},
+				cancel_when_expired: {
+					error: {state: false} as IErrorInput,
+					value: store.state.settings.get('orders').get('cancel_when_expired', false),
+				},
 				expires_after: {
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('orders').get('expires_after', '').toString(),
@@ -459,6 +476,7 @@ export default defineComponent({
 				receipt_status: this.fields.receipt_status.value,
 				paid_status: this.fields.paid_status.value,
 				after_receipt: this.fields.after_receipt.value,
+				cancel_when_expired: this.fields.cancel_when_expired.value,
 				expires_after: this.fields.expires_after.value,
 				closest_lifetime: this.fields.closest_lifetime.value,
 				cron_frequency: this.fields.cron_frequency.value
