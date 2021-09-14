@@ -155,4 +155,33 @@ class PixRepo extends Internationalizable
 
 		return $_txs;
 	}
+
+	/**
+	 * Unlink order from pix.
+	 *
+	 * @param integer $id
+	 * @param array $status
+	 * @since 2.0.14
+	 * @return void
+	 */
+	public function unlinkOrder ( $id )
+	{
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'pgly_pix';
+		
+		$response = $wpdb->update($table_name, ['oid' => null], ['oid' => $id]); 
+
+		if ( $response === false )
+		{ 
+			CoreConnector::debugger()->error(
+				CoreConnector::__translate(
+					\sprintf(
+						'Não foi possível atualizar o pix %s no banco de dados: %s', 
+						$this->txid,
+						empty($wpdb->last_error) ? $wpdb->last_query : $wpdb->last_error
+					)
+				)
+			);
+		}
+	}
 }

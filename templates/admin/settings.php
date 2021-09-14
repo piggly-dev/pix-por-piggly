@@ -6,12 +6,5 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 	Pix por Piggly
 </h1>
 
-<div class="pgly-wps--notification pgly-wps-is-danger">
-	Se as páginas de pagamento do Pix e envio de comprovante
-	não estiverem sendo exibidas, não esqueça de atualizar
-	os Links Permanentes do Wordpress. Basta acessar <code>
-	Configurações > Links permanentes</code> e salvar.
-</div>
-
 <div id="pgly-pix-por-piggly-settings">
 </div>

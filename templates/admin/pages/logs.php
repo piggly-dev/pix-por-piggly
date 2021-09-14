@@ -50,7 +50,7 @@ if ( !empty(($get_file = \filter_input( INPUT_POST, 'log_path', FILTER_SANITIZE_
 					id="log_path">
 					<?php
 					foreach ( $files as $file )
-					{ printf('<option value="%s">%s</option>', $file['basename'], $file['label']); }
+					{ printf('<option value="%s" %s>%s</option>', $file['basename'], $curr_file['basename'] === $file['basename'] ? 'selected="selected"' : '', $file['label']); }
 					?>
 				</select>
 			</div>
