@@ -241,6 +241,13 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.14 ###
+
+* Personalização do destinatário dos e-mails administrativos;
+* Correção no ícone do Pix;
+* Opção para cancelar o pedido quando o Pix expirar;
+* Recriação da cronjob ao atualizar.
+
 ### 2.0.12/2.0.13 ###
 
 * Correção de bugs nas configurações do plugin;

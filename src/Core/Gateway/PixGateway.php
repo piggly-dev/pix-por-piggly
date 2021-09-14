@@ -177,24 +177,35 @@ class PixGateway extends WC_Payment_Gateway
 	 */
 	public function process_pending ( PixEntity $pix ) : bool
 	{
+		CoreConnector::debugger()->debug(\sprintf(CoreConnector::__translate('Pix `%s` iniciando o processamento...'), $pix->getTxid()));
+
+		$settings = CoreConnector::settings()->get('orders', new KeyingBucket());
+		$order = $pix->getOrder();
+
+		// Order does not exists
+		if ( empty($order) )
+		{ return false; }
+
 		if ( $pix->isStatus(PixEntity::STATUS_CREATED) )
 		{
 			// Run action when closest to expires
 			if ( $pix->isClosestToExpires() )
 			{ do_action('pgly_wc_piggly_pix_close_to_expires', $pix); }
 			
-			// Check if is expired or cancelled
+			// Check if is expired
 			if ( $pix->isExpired() )
-			{ return false; }
+			{ 
+				// Cancel order when needed
+				if ( !static::order_not_waiting_payment($order)
+						&& !$order->has_status(['cancelled'])
+						&& $settings->get('cancel_when_expired', false) )
+				{ $order->update_status('cancelled'); $order->save(); }
+
+				return false; 
+			}
 		}
 		else if ( $pix->isStatus(PixEntity::STATUS_EXPIRED) 
 						|| $pix->isStatus(PixEntity::STATUS_CANCELLED) )
-		{ return false; }
-
-		$order = $pix->getOrder();
-
-		// Order does not exists
-		if ( empty($order) )
 		{ return false; }
 
 		// Order was cancelled
@@ -217,7 +228,7 @@ class PixGateway extends WC_Payment_Gateway
 			$order->set_status( 
 				apply_filters( 
 					'woocommerce_payment_complete_order_status',
-					$order->needs_processing() ? CoreConnector::settings()->get('orders', new KeyingBucket())->get('paid_status', 'processing') : 'completed', 
+					$order->needs_processing() ? $settings->get('paid_status', 'processing') : 'completed', 
 					$order->get_id(), 
 					$order 
 				),

@@ -59,6 +59,7 @@ class Upgrader extends Internationalizable implements Runnable
 		if ( \version_compare($version, '2.0.12', '<') )
 		{ $this->_plugin->settings()->bucket()->get('orders')->set('waiting_status', 'pending'); }
 
+		Cron::create($this->_plugin);
 		// New version
 		\update_option('wc_piggly_pix_version', $this->_plugin->getVersion());
 	}

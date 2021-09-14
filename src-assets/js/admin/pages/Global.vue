@@ -1,12 +1,21 @@
 <template>
 	<pgly-row>
 		<pgly-column>
+			<pgly-notification color="danger">
+				Se as páginas de pagamento do Pix e envio de comprovante 
+				não estiverem sendo exibidas, não esqueça de atualizar 
+				os <code>Links Permanentes</code> do Wordpress. 
+				Basta acessar <code>Configurações > Links permanentes</code> 
+				e salvar.
+			</pgly-notification>
+
 			<pgly-notification color="warning">
 				<strong>Enfrentando algum problema?</strong> Visite a seção de 
-				Suporte no menu acima e resolva os principais problemas.
+				<strong>Suporte</strong> no menu "Pix por Piggly" e 
+				resolva os principais problemas do plugin.
 			</pgly-notification>
 			
-			<pgly-notification color="primary">
+			<pgly-notification color="success">
 				<strong>Gostou o bastante? 👇</strong> 
 				Se você apreciar a função deste plugin e quiser apoiar 
 				este trabalho para que continuemos atualizando, sinta-se
@@ -121,6 +130,12 @@
 					Por padrão, a descrição avançada apresenta os três passos para pagamento via Pix.
 				</template>
 			</pgly-basic-checkbox>
+
+			<pgly-notification color="primary" :light="true">
+				<strong>Quer editar o template?</strong> Copie o arquivo
+				disponível em <code>/path/to/wp-content/plugins/pix-por-piggly/templates/woocommerce/html-woocommerce-instructions.php</code>
+				para a pasta <code>/woocommerce</code> dentro da pasta do seu Tema.
+			</pgly-notification>
 		</pgly-column>
 	</pgly-row>
 
@@ -332,6 +347,7 @@ export default defineComponent({
 			await api.saveSettings('gateway', {
 				enabled: this.fields.enabled.value,
 				title: this.fields.title.value,
+				icon: this.fields.icon.value,
 				description: this.fields.description.value,
 				advanced_description: this.fields.advanced_description.value,
 				instructions: this.fields.instructions.value,

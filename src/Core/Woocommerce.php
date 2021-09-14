@@ -79,6 +79,12 @@ class Woocommerce extends Initiable
 			$this,
 			'payment_cancelled'
 		);
+
+		WP::add_action(
+			'woocommerce_delete_order',
+			$this,
+			'order_deleted'
+		);
 	}
 
 	/**
@@ -120,6 +126,16 @@ class Woocommerce extends Initiable
 		if ( !$pix->isStatus(PixEntity::STATUS_PAID) )
 		{ $pix->updateStatus(PixEntity::STATUS_PAID); }
 	}
+	
+	/**
+	 * Remove links to order when it was removed.
+	 *
+	 * @param integer $id
+	 * @since 2.0.14
+	 * @return void
+	 */
+	public function order_deleted ( $id )
+	{ (new PixRepo($this->_plugin))->unlinkOrder($id); }
 	
 	/**
 	 * Update pix to cancelled status when order is cancelled.

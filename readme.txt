@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.8
-Stable tag: 2.0.13
+Stable tag: 2.0.14
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -266,6 +266,13 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Changelog ==
 
+= 2.0.14 =
+
+- Personalização do destinatário dos e-mails administrativos;
+- Correção no ícone do Pix;
+- Opção para cancelar o pedido quando o Pix expirar;
+- Recriação da cronjob ao atualizar.
+
 = 2.0.12/2.0.13 =
 
 - Correção de bugs nas configurações do plugin;
@@ -503,7 +510,9 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Upgrade Notice ==
 
-= 2.0.12/2.0.13 =
+= 2.0.14 =
 
-- Correção de bugs nas configurações do plugin;
-- Adição da personalização do status de aguardando o pagamento.
+- Personalização do destinatário dos e-mails administrativos;
+- Correção no ícone do Pix;
+- Opção para cancelar o pedido quando o Pix expirar;
+- Recriação da cronjob ao atualizar.
