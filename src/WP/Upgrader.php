@@ -44,22 +44,22 @@ class Upgrader extends Internationalizable implements Runnable
 		$this->check_database();
 		$this->rebuild_paths();
 		
-		if ( \version_compare($version, '2.0.8', '<') )
+		if ( \version_compare($version, '2.0.0', '<') )
 		{ 
 			$this->_plugin->settings()->bucket()->set('upgraded_endpoints', true); 
 			$this->_plugin->settings()->save();
-			
-			WP::add_action(
-				'admin_notices', 
-				$this,
-				'upgrader_notice' 
-			);
 		}
-		
-		if ( \version_compare($version, '2.0.12', '<') )
-		{ $this->_plugin->settings()->bucket()->get('orders')->set('waiting_status', 'pending'); }
 
+		// Recreate cron
 		Cron::create($this->_plugin);
+		
+		// Upgrader notice
+		WP::add_action(
+			'admin_notices', 
+			$this,
+			'upgrader_notice' 
+		);
+
 		// New version
 		\update_option('wc_piggly_pix_version', $this->_plugin->getVersion());
 	}
@@ -226,12 +226,11 @@ class Upgrader extends Internationalizable implements Runnable
 	public function upgrader_notice ()
 	{
 		?>
-		<div class="notice notice-warning">
+		<div class="notice notice-success">
 			<p>
-				Acesse <strong>Configurações > Links permanentes</strong>
-				e apenas clique em <strong>Salvar Alterações</strong>
-				para que o plugin <strong>Pix por Piggly</strong>
-				funcione corretamente. Não esqueça de limpar o cachê.
+				O <strong>Pix por Piggly</strong> atualizou, recomendamos
+				que você acesse a página da versão, <a href="<?=admin_url('admin.php?page='.$this->_plugin->getDomain())?>">
+				clicando aqui</a>, para descobrir todas as novidades e correções.
 			</p>
 		</div>
 		<?php

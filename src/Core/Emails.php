@@ -1,6 +1,7 @@
 <?php
 namespace Piggly\WooPixGateway\Core;
 
+use Piggly\WooPixGateway\Core\Emails\AdminPixCreated;
 use Piggly\WooPixGateway\Core\Emails\AdminPixPaid;
 use Piggly\WooPixGateway\Core\Emails\AdminPixReceiptSent;
 use Piggly\WooPixGateway\Core\Emails\CustomerPixCloseToExpires;
@@ -55,6 +56,7 @@ class Emails extends Initiable
 		$classes = [
 			'PixGatewayAdminPixReceiptSent' => AdminPixReceiptSent::class,
 			'PixGatewayAdminPixPaid' => AdminPixPaid::class,
+			'PixGatewatAdminPixCreated' => AdminPixCreated::class,
 			'PixGatewayCustomerPixCloseToExpires' => CustomerPixCloseToExpires::class,
 			'PixGatewayCustomerPixExpired' => CustomerPixExpired::class,
 			'PixGatewayCustomerPixPaid' => CustomerPixPaid::class,

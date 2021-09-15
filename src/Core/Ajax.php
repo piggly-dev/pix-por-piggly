@@ -214,8 +214,9 @@ class Ajax extends Ajaxable
 				$account->set('key_type', Parser::getKeyType($reader->getPixKey()));
 
 				$account->set('merchant_name', $reader->getMerchantName());
-				$account->set('merchant_city', Parser::getKeyType($reader->getMerchantCity()));
+				$account->set('merchant_city', $reader->getMerchantCity());
 
+				CoreConnector::settingsManager()->save();
 			}
 			catch ( InvalidPixCodeException $e )
 			{ throw new Exception(CoreConnector::__translate('O código Pix importado é inválido. Certifique-se que é um código "Pix Copia & Cola" válido.')); }

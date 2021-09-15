@@ -92,6 +92,19 @@
 	</pgly-row>
 
 	<pgly-row>
+		<pgly-column>
+			<pgly-basic-checkbox
+				id="show_expiration"
+				label="Exibir Data de Expiração para o cliente"
+				placeholder="Mostra um aviso que o Pix irá expirar na data especificada."
+				:error="fields.show_expiration.error"
+				v-model="fields.show_expiration.value"
+				@afterChange="onChanged">
+			</pgly-basic-checkbox>
+		</pgly-column>
+	</pgly-row>
+
+	<pgly-row>
 		<pgly-column :size="6">
 			<pgly-basic-input
 				id="expires_after"
@@ -376,6 +389,10 @@ export default defineComponent({
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('orders').get('cancel_when_expired', false),
 				},
+				show_expiration: {
+					error: {state: false} as IErrorInput,
+					value: store.state.settings.get('orders').get('show_expiration', false),
+				},
 				expires_after: {
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('orders').get('expires_after', '').toString(),
@@ -477,6 +494,7 @@ export default defineComponent({
 				paid_status: this.fields.paid_status.value,
 				after_receipt: this.fields.after_receipt.value,
 				cancel_when_expired: this.fields.cancel_when_expired.value,
+				show_expiration: this.fields.show_expiration.value,
 				expires_after: this.fields.expires_after.value,
 				closest_lifetime: this.fields.closest_lifetime.value,
 				cron_frequency: this.fields.cron_frequency.value

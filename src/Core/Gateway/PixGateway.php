@@ -154,7 +154,7 @@ class PixGateway extends WC_Payment_Gateway
 		$woocommerce->cart->empty_cart();
 
 		// Pix created
-		\do_action('pgly_wc_piggly_pix_to_pay', $pix);
+		\do_action('pgly_wc_piggly_pix_to_pay', $pix, $order, $order_id);
 
 		// Return checkout payment url
 		return array(
