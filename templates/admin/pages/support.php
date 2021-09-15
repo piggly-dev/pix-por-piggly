@@ -25,14 +25,34 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 	</div>
 	<div class="pgly-wps--column">
 		Se você está enfrentando algum problema, siga as recomendações abaixo 👇
+		<div class="pgly-wps--notification pgly-wps-is-warning">
+			Antes de continuar é importante habilitar o <strong>Modo Debug</strong>
+			nas <a href="<?=$plugin_page?>">Configurações do Plugin</a>. Esse modo registrará
+			todos os eventos e erros gerados pelo plugin nos arquivos de log localizados
+			no menu <a href="<?=$plugin_page?>-logs">Logs</a>.
+		</div>
 	</div>
 </div>
 
-<div class="pgly-wps--notification pgly-wps-is-warning">
-	Antes de continuar é importante habilitar o <strong>Modo Debug</strong>
-	nas <a href="<?=$plugin_page?>">Configurações do Plugin</a>. Esse modo registrará
-	todos os eventos e erros gerados pelo plugin nos arquivos de log localizados
-	no menu <a href="<?=$plugin_page?>-logs">Logs</a>.
+<div class="pgly-wps--space"></div>
+<h2 class="pgly-wps--title pgly-wps-is-7">A página do comprovante ou a página de pagamento retornam página não encontrada (404) 👇</h2>
+
+<div class="pgly-wps--row">
+	<div class="pgly-wps--column">
+		Para melhorar a segurança de dados, em acordo com a LGPD e para
+		garantir a segurança de envio dos comprovantes. Este plugin utiliza
+		<strong>endpoints</strong>. Os endpoints são como Link Permanentes.
+		Se os links não estão entrando, acesse "Configurações > Links permanentes"
+		e salve. Você só precisa fazer uma única vez.
+	</div>
+	<div class="pgly-wps--column">
+		<div class="pgly-wps--notification pgly-wps-is-danger">
+			Para operação correta dos links de pagamento e envio
+			de comprovante, lembre-se de <strong>atualizar
+			os Links Permanentes</strong> do Wordpress. Não esqueça
+			de limpar o cachê.
+		</div>
+	</div>
 </div>
 
 <div class="pgly-wps--space"></div>

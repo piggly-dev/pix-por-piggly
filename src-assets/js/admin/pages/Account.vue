@@ -25,23 +25,39 @@
 	</pgly-row>
 
 	<pgly-row>
-		<pgly-column>
+		<pgly-column :size="4">
+			<pgly-basic-input
+				id="bank"
+				type="number"
+				label="Código do Banco"
+				:required="true"
+				placeholder="Código do Banco"
+				:error="fields.bank.error"
+				v-model="fields.bank.value"
+				@afterChange="validateBankCode">
+				<template v-slot:description>
+					Informe o código do banco para seleção rápida.
+				</template>
+			</pgly-basic-input>
+		</pgly-column>
+		<pgly-column :size="8">
 			<pgly-basic-select
 				id="bank"
 				label="Banco"
-				placeholder="Selecione um banco..."
+				placeholder="Nenhum banco selecionado..."
 				:options="fields.bank.options"
 				:error="fields.bank.error"
 				v-model="fields.bank.value">
 			</pgly-basic-select>
-			
-			<pgly-notification color="warning">
-				O banco não é obrigatório e deve apesar ser considerado
-				<strong>apenas</strong> quando alguma API do Pix estiver
-				conectada a este plugin. Saiba mais em <strong>API</strong> no menu acima.
-			</pgly-notification>
 		</pgly-column>
 	</pgly-row>
+	
+			
+	<pgly-notification color="warning">
+		O banco não é obrigatório e deve apesar ser considerado
+		<strong>apenas</strong> quando alguma API do Pix estiver
+		conectada a este plugin. Saiba mais em <strong>API</strong> no menu "Pix por Piggly".
+	</pgly-notification>
 
 	<pgly-row>
 		<pgly-column :size="6">
@@ -94,7 +110,8 @@
 				placeholder="Selecione um tipo de chave..."
 				:options="fields.key_type.options"
 				:error="fields.key_type.error"
-				v-model="fields.key_type.value">
+				v-model="fields.key_type.value"
+				@afterChange="changedPixKeyType">
 				<template v-slot:description>
 					Informe o tipo da chave pix que será utilizada.
 				</template>
@@ -107,7 +124,8 @@
 				placeholder="Preencha com a chave pix..."
 				:required="true"
 				:error="fields.key_value.error"
-				v-model="fields.key_value.value">
+				v-model="fields.key_value.value"
+				@afterChange="validatePixKey">
 				<template v-slot:description>
 					Digite sua chave pix como ela foi cadastrada.
 				</template>
@@ -186,6 +204,7 @@ import {
 
 import { IErrorInput, IField } from "@piggly/vue-pgly-wps-settings/dist/types/src/core/interfaces";
 import { CronFrequencyOptions } from "@/core/data";
+import { __asyncValues } from "tslib";
 
 export default defineComponent({
 	name: 'account',
@@ -343,6 +362,154 @@ export default defineComponent({
 			{ msgs.push('possui caracteres inválidos'); }
 
 			return msgs.join(', ');
+		},
+
+		validateBankCode ( val: string ) {
+			this.fields.bank.value = parseInt(val).toString();
+		},
+
+		changedPixKeyType ( val: string )
+		{
+			this.validatePixKey(this.fields.key_value.value);
+		},
+
+		validatePixKey ( val: string ) {
+			const type = this.fields.key_type.value;
+			this.fields.key_value.error = { state: false };
+
+			if ( type === 'random' )
+			{
+				if ( !val.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i) )
+				{ this.fields.key_value.error = { state: true, message: 'Chave aleatória inválida' }; }
+
+				return;
+			}
+
+			if ( type === 'email' )
+			{
+				if ( !val.match(/^.+@.+\.[^.]+$/i) )
+				{ this.fields.key_value.error = { state: true, message: 'Não parece um e-mail válido' }; }
+
+				return;
+			}
+
+			if ( type === 'phone' )
+			{
+				if ( !val.match(/^[\d\(\)\ \-]+$/i) || val.length < 10 )
+				{ this.fields.key_value.error = { state: true, message: 'Não parece um telefone válido' }; }
+
+				return;
+			}
+
+			if ( type === 'document' )
+			{
+				val = val.replace(/[^\d]+/g, '');
+
+				if ( val.length <= 11 )
+				{
+					if ( !this.validateCPF(val) )
+					{ this.fields.key_value.error = { state: true, message: 'Não parece um CPF/CNPJ válido' }; }
+				
+					this.fields.key_value.value = this.formatCPF(val);
+				}
+				else if ( val.length > 11 && val.length <= 14 )
+				{
+					if ( !this.validateCNPJ(val) )
+					{ this.fields.key_value.error = { state: true, message: 'Não parece um CPF/CNPJ válido' }; }
+				
+					this.fields.key_value.value = this.formatCNPJ(val);
+				}
+				else
+				{ this.fields.key_value.error = { state: true, message: 'Não parece um CPF/CNPJ válido' }; }
+				
+				return;
+			}
+		},
+
+		formatCPF (val: string) : string {
+			const pattern = '***.***.***-**';
+			const chars = val.split('');
+
+			let count = 0;
+			let formatted = '';
+
+			for ( let i=0; i < pattern.length; i++ ) 
+			{
+				const c = pattern[i];
+
+				if (chars[count]) 
+				{
+					if (/\*/.test(c)) 
+					{
+						formatted += chars[count];
+						count++;
+					} 
+					else 
+					{ formatted += c; }
+				} 
+			}
+
+			return formatted;
+		},
+
+		formatCNPJ (val: string) : string {
+			const pattern = '**.***.***/****-**';
+
+			const chars = val.split('');
+
+			let count = 0;
+			let formatted = '';
+
+			for ( let i=0; i < pattern.length; i++ ) 
+			{
+				const c = pattern[i];
+
+				if (chars[count]) 
+				{
+					if (/\*/.test(c)) 
+					{
+						formatted += chars[count];
+						count++;
+					} 
+					else 
+					{ formatted += c; }
+				} 
+			}
+
+			return formatted;
+		},
+
+		validateCPF ( val: string ) : boolean {
+			if (val.length !== 11 || !!val.match(/(\d)\1{10}/)) return false;
+
+			let document = val.split('');
+			const validator = document
+				.filter((digit, index, array) => index >= array.length - 2 && digit)
+				.map( el => +el );
+			const toValidate = (pop: number) => document
+				.filter((digit, index, array) => index < array.length - pop && digit)
+				.map(el => +el);
+			const rest = (count: number, pop: number) => (toValidate(pop)
+				.reduce((soma, el, i) => soma + el * (count - i), 0) * 10) % 11 % 10;
+			
+			return !(rest(10,2) !== validator[0] || rest(11,1) !== validator[1]);
+		},
+
+		validateCNPJ ( val: string ) : boolean {
+			if (val.length !== 14 || !!val.match(/(\d)\1{13}/)) return false;
+
+			const b = [6,5,4,3,2,9,8,7,6,5,4,3,2];
+			const d = val.split('').map(n=>parseInt(n));
+
+			for(var i = 0, n = 0; i < 12; n += d[i] * b[++i]);
+
+			if(d[12] != (((n %= 11) < 2) ? 0 : 11 - n)) return false;
+
+			for(var i = 0, n = 0; i <= 12; n += d[i] * b[i++]);
+
+			if(d[13] != (((n %= 11) < 2) ? 0 : 11 - n)) return false;
+
+			return true;
 		}
 	}
 });

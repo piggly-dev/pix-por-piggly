@@ -9,13 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 	Pix por Piggly
 </h1>
 
-<div class="pgly-wps--notification pgly-wps-is-warning">
-	Para operação correta dos links de pagamento e envio
-	de comprovante, lembre-se de <strong>atualizar
-	os Links Permanentes</strong> do Wordpress. Não esqueça
-	de limpar o cachê.
-</div>
-
 <div class="pgly-wps--space"></div>
 <h2 class="pgly-wps--title pgly-wps-is-5">Versão <?=CoreConnector::plugin()->getVersion();?></h2>
 

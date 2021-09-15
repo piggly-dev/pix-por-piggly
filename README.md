@@ -241,6 +241,13 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.16 ###
+
+- E-mail quando o Pix for criado;
+- Exibição da data de expiração no template de pagamento;
+- Melhorias na interface de configuração;
+- Melhorias de comunicação nas páginas do plugin.
+
 ### 2.0.15 ###
 
 * Correção de bug na metabox do pedido;

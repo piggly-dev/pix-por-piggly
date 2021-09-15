@@ -46,7 +46,6 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 			<div class="pgly-wps--content">
 				<input 
 					tabindex="0" 
-					type="number" 
 					id="pix-por-piggly-brcode" 
 					name="pix-por-piggly-brcode" 
 					placeholder="000201..." 

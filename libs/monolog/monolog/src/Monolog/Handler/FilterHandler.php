@@ -41,7 +41,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
      * Minimum level for logs that are passed to handler
      *
      * @var int[]
-     * @phpstan-var Level[]
+     * @phpstan-var array<Level, int>
      */
     protected $acceptedLevels;
     /**
@@ -71,7 +71,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         }
     }
     /**
-     * @phpstan-return Level[]
+     * @phpstan-return array<int, Level>
      */
     public function getAcceptedLevels() : array
     {

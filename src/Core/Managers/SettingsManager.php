@@ -58,9 +58,11 @@ class SettingsManager
 
 		foreach ( $statuses as $key => $label )
 		{
+			$key = \str_replace('wc-','',$key);
+
 			$statusesOp[] = [
-				'value' => \str_replace('wc-','',$key),
-				'label' => $label
+				'value' => $key,
+				'label' => $label.' ('.$key.')'
 			];
 		}
 
@@ -247,6 +249,7 @@ class SettingsManager
 				'after_receipt' => [ 'default' => 0, 'sanitize' => \FILTER_VALIDATE_INT ],
 				'hide_in_order' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 				'cancel_when_expired' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
+				'show_expiration' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 				'expires_after' => [ 'default' => 24, 'sanitize' => \FILTER_VALIDATE_INT ],
 				'closest_lifetime' => [ 'default' => 60, 'sanitize' => \FILTER_VALIDATE_INT ],
 				'cron_frequency' => [ 'default' => 'everyfifteen', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => Cron::AVAILABLE_FREQUENCIES ],
@@ -414,6 +417,7 @@ class SettingsManager
 				'paid_status' => 'processing',
 				'after_receipt' => '',
 				'cancel_when_expired' => false,
+				'show_expiration' => false,
 				'expires_after' => 24,
 				'closest_lifetime' => 60,
 				'cron_frequency' => 'daily',
