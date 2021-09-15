@@ -170,6 +170,7 @@ class Front extends Initiable
 					'shows_copypast' => $settings->get('gateway')->get('shows_copypast', false),
 					'shows_manual' => $settings->get('gateway')->get('shows_manual', false),
 					'shows_amount' => $settings->get('gateway')->get('shows_amount', false),
+					'show_expiration' => $settings->get('orders')->get('show_expiration', false) && !empty($pix->getExpiresAt()),
 					'shows_receipt' => $settings->get('receipts')->get('shows_receipt', 'up')
 				),
 				WC()->template_path().\dirname(CoreConnector::plugin()->getBasename()).'/',

@@ -1,6 +1,6 @@
 {
 	"name": "pix-por-piggly",
-	"version": "2.0.14",
+	"version": "2.0.16",
 	"description": "Implemente o Pix de uma forma simples e rápida em sua loja Woocommerce.",
 	"private": true,
 	"scripts": {

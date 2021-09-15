@@ -20,13 +20,21 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 					<?php echo wptexturize( $instructions ); ?>
 				</p>
 				
-				
 				<?php if ( $shows_amount ) : ?>
 				<span class="pix-por-piggly--label">
 					Valor do Pedido
 				</span>
 				<span class="pix-por-piggly--data">
 					R$ <?=\wc_format_decimal($pix->getAmount(), 2);?>
+				</span>
+				<?php endif; ?>
+
+				<?php if ( $show_expiration ) : ?>
+				<span class="pix-por-piggly--label">
+					Data de Expiração
+				</span>
+				<span class="pix-por-piggly--data">
+					<?=$pix->getExpiresAt()->format('d/m/Y H:i:s')?>
 				</span>
 				<?php endif; ?>
 			</div>
@@ -147,7 +155,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 		</div>
 	</div>
 	<?php endif; ?>
-	
 
 	<?php if ( $shows_receipt === 'down' ) : ?>
 	<div style="padding: 28px 0; text-align: center">

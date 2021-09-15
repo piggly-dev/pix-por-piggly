@@ -71,6 +71,9 @@ class TelegramBotHandler extends AbstractProcessingHandler
      */
     public function __construct(string $apiKey, string $channel, $level = Logger::DEBUG, bool $bubble = \true, string $parseMode = null, bool $disableWebPagePreview = null, bool $disableNotification = null)
     {
+        if (!\extension_loaded('curl')) {
+            throw new MissingExtensionException('The curl extension is needed to use the TelegramBotHandler');
+        }
         parent::__construct($level, $bubble);
         $this->apiKey = $apiKey;
         $this->channel = $channel;

@@ -1,6 +1,6 @@
 <?php
 /**
- * @link https://lab.piggly.com.br
+ * @link https://studio.piggly.com.br/
  * @since 2.0.0
  * @version 2.0.0
  * @package \Piggly\WooPixGateway
@@ -13,13 +13,13 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Pix por Piggly (para Woocommerce)
- * Plugin URI:        https://lab.piggly.com.br/pix-por-piggly
+ * Plugin URI:        https://studio.piggly.com.br/
  * Description:       O melhor plugin para pagamentos via Pix no Woocommerce. Aplique desconto automático, personalize o comportamento e muito mais.
  * Requires at least: 4.0
  * Requires PHP:      7.2
- * Version:           2.0.15
+ * Version:           2.0.16
  * Author:            Piggly Lab
- * Author URI:        https://lab.piggly.com.br
+ * Author URI:        https://studio.piggly.com.br/
  * License:           GPLv3 or later
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.txt
  * Text Domain:       wc-piggly-pix
@@ -40,7 +40,7 @@ use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Plugin;
 if ( ! defined( 'WPINC' ) ) exit;
 
 /** @var string Currently plugin version. Start at version 1.0.0 and use SemVer - https://semver.org */
-if (!defined('PGLY_PIX_GATEWAY_VERSION')) define( 'PGLY_PIX_GATEWAY_VERSION', '2.0.15' );
+if (!defined('PGLY_PIX_GATEWAY_VERSION')) define( 'PGLY_PIX_GATEWAY_VERSION', '2.0.16' );
 
 /** @var string Currently plugin version. Start at version 1.0.0 and use SemVer - https://semver.org */
 if (!defined('PGLY_PIX_GATEWAY_DBVERSION')) define( 'PGLY_PIX_GATEWAY_DBVERSION', '2.0.11' );

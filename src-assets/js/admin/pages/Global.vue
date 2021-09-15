@@ -16,7 +16,7 @@
 			</pgly-notification>
 			
 			<pgly-notification color="success">
-				<strong>Gostou o bastante? 👇</strong> 
+				<strong>Gostou o bastante? 👍</strong> 
 				Se você apreciar a função deste plugin e quiser apoiar 
 				este trabalho para que continuemos atualizando, sinta-se
 				livre para fazer qualquer doação para a chave aleatória Pix 
