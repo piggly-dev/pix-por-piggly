@@ -57,7 +57,7 @@ class AdminPixPaid extends WC_Email
 		WP::add_action('pgly_wc_piggly_pix_updated_pix_status', $this, 'trigger', 10, 3);
 		
 		parent::__construct();
-		$this->manual = true;
+		$this->manual = false;
 
 		// Other settings.
 		$this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
@@ -83,24 +83,26 @@ class AdminPixPaid extends WC_Email
 
 		if ( !empty($order) )
 		{
-			CoreConnector::debugger()->debug(\sprintf('Disparo de e-mail %s para %s', $this->id, $order->get_billing_email()));
-
 			// Placeholders
 			$this->placeholders['{order_date}']   = wc_format_datetime( $order->get_date_created() );
 			$this->placeholders['{order_number}'] = $order->get_order_number();
 
 			$this->pix = $pix;
-			$this->recipient = $order->get_billing_email();
 
 			if ( $this->is_enabled() && $this->get_recipient() )
 			{
-				$this->send(
+				CoreConnector::debugger()->debug(\sprintf('Disparo de e-mail %s para %s', $this->id, $this->get_recipient()));
+
+				$sent = $this->send(
 					$this->get_recipient(),
 					$this->get_subject(),
 					$this->get_content(),
 					$this->get_headers(),
 					$this->get_attachments()
 				);
+
+				if ( !$sent )
+				{ CoreConnector::debugger()->debug(\sprintf('Erro ao enviar e-mail %s para %s', $this->id, $this->get_recipient())); }
 			}
 		}
 		

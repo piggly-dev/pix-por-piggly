@@ -57,7 +57,7 @@ class CustomerPixCloseToExpires extends WC_Email
 		WP::add_action('pgly_wc_piggly_pix_close_to_expires', $this, 'trigger', 10, 1);
 		
 		parent::__construct();
-		$this->manual = true;
+		$this->manual = false;
 	}
 
 	/**
@@ -76,8 +76,6 @@ class CustomerPixCloseToExpires extends WC_Email
 
 		if ( !empty($order) )
 		{
-			CoreConnector::debugger()->debug(\sprintf('Disparo de e-mail %s para %s', $this->id, $order->get_billing_email()));
-
 			// Placeholders
 			$this->placeholders['{order_date}']   = wc_format_datetime( $order->get_date_created() );
 			$this->placeholders['{order_number}'] = $order->get_order_number();
@@ -86,13 +84,18 @@ class CustomerPixCloseToExpires extends WC_Email
 
 			if ( $this->is_enabled() && $this->get_recipient() )
 			{
-				$this->send(
+				CoreConnector::debugger()->debug(\sprintf('Disparo de e-mail %s para %s', $this->id, $this->get_recipient()));
+
+				$sent = $this->send(
 					$this->get_recipient(),
 					$this->get_subject(),
 					$this->get_content(),
 					$this->get_headers(),
 					$this->get_attachments()
 				);
+
+				if ( !$sent )
+				{ CoreConnector::debugger()->debug(\sprintf('Erro ao enviar e-mail %s para %s', $this->id, $this->get_recipient())); }
 			}
 		}
 		
