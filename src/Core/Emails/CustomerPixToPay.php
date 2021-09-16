@@ -57,7 +57,7 @@ class CustomerPixToPay extends WC_Email
 		WP::add_action('pgly_wc_piggly_pix_to_pay', $this, 'trigger', 10, 1);
 		
 		parent::__construct();
-		$this->manual = true;
+		$this->manual = false;
 	}
 
 	/**
@@ -91,7 +91,7 @@ class CustomerPixToPay extends WC_Email
 
 			if ( $this->is_enabled() && $this->get_recipient() )
 			{
-				$this->send(
+				$sent = $this->send(
 					$this->get_recipient(),
 					$this->get_subject(),
 					$this->get_content(),

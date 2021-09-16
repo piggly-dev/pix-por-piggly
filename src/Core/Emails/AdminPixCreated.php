@@ -57,7 +57,7 @@ class AdminPixCreated extends WC_Email
 		WP::add_action('pgly_wc_piggly_pix_to_pay', $this, 'trigger', 10, 3);
 		
 		parent::__construct();
-		$this->manual = true;
+		$this->manual = false;
 
 		// Other settings.
 		$this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
@@ -87,11 +87,10 @@ class AdminPixCreated extends WC_Email
 			$this->placeholders['{order_number}'] = $order->get_order_number();
 
 			$this->pix = $pix;
-			$this->recipient = $order->get_billing_email();
 
 			if ( $this->is_enabled() && $this->get_recipient() )
 			{
-				$this->send(
+				$sent = $this->send(
 					$this->get_recipient(),
 					$this->get_subject(),
 					$this->get_content(),
