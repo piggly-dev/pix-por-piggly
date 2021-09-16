@@ -241,6 +241,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.17 ###
+
+- Correção nos modelos de e-mail;
+
 ### 2.0.16 ###
 
 - E-mail quando o Pix for criado;
