@@ -224,7 +224,7 @@ class Core extends WordpressCore
 
 		// create a log channel
 		$log = new Logger('wc-piggly-pix');
-		$log->pushHandler(new StreamHandler($path.$hash, Logger::DEBUG));
+		$log->pushHandler(new StreamHandler($path.$hash, Logger::DEBUG, true, 0666));
 
 		$this->debug()->setLogger($log);
 	}
