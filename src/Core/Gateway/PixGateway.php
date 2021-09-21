@@ -122,6 +122,8 @@ class PixGateway extends WC_Payment_Gateway
 	public function process_payment ( $order_id )
 	{
 		global $woocommerce;
+		
+		WC()->mailer();
 
 		$waiting_status = CoreConnector::settings()->get('orders', new KeyingBucket())->get('waiting_status', 'pending');
 		$order = new WC_Order($order_id);
@@ -190,7 +192,11 @@ class PixGateway extends WC_Payment_Gateway
 		{
 			// Run action when closest to expires
 			if ( $pix->isClosestToExpires() )
-			{ do_action('pgly_wc_piggly_pix_close_to_expires', $pix); }
+			{ 
+				CoreConnector::debugger()->debug(\sprintf('O Pix %s está próximo de ser expirado.', $pix->getTxid()));
+				do_action('pgly_wc_piggly_pix_close_to_expires', $pix); 
+				return false;
+			}
 			
 			// Check if is expired
 			if ( $pix->isExpired() )

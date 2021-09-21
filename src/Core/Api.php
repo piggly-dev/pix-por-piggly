@@ -175,5 +175,10 @@ class Api extends Initiable
 	 * @return void
 	 */
 	public function api_callback ()
-	{ do_action('pgly_wc_piggly_pix_webhook', CoreConnector::settings()->get('account')->get('bank', 0)); }
+	{ 
+		do_action('pgly_wc_piggly_pix_webhook', CoreConnector::settings()->get('account')->get('bank', 0)); 
+		
+		wp_send_json_error(CoreConnector::__translate('Uso restrito ao administrativo.'));
+		die();
+	}
 }

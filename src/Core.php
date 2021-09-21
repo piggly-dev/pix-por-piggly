@@ -4,6 +4,7 @@ namespace Piggly\WooPixGateway;
 use DateTime;
 use Piggly\WooPixGateway\Core\Admin;
 use Piggly\WooPixGateway\Core\Ajax;
+use Piggly\WooPixGateway\Core\Api;
 use Piggly\WooPixGateway\Core\Discount;
 use Piggly\WooPixGateway\Core\Emails;
 use Piggly\WooPixGateway\Core\Endpoints;
@@ -80,6 +81,7 @@ class Core extends WordpressCore
 
 		// Admin global menu settings
 		$this->initiable(Admin::class);
+		$this->initiable(Api::class);
 		$this->initiable(Ajax::class);
 		$this->initiable(Discount::class);
 		$this->initiable(Cron::class);
