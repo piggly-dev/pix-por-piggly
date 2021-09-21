@@ -3,6 +3,7 @@ namespace Piggly\WooPixGateway\Core\Entities;
 
 use DateInterval;
 use DateTime;
+use DateTimeImmutable;
 use Exception;
 use Piggly\WooPixGateway\Core\Exceptions\DatabaseException;
 use Piggly\WooPixGateway\Core\Processors\QrCodeProcessor;
@@ -921,7 +922,7 @@ class PixEntity
 		$minutes = CoreConnector::settings()->get('orders')->get('closest_lifetime', 10);
 
 		$now = new DateTime('now', wp_timezone());
-		$exp = $this->expires_at instanceof DateTime ? $this->expires_at : new DateTime($this->expires_at, wp_timezone());
+		$exp = new DateTimeImmutable($this->expires_at instanceof DateTime ? $this->expires_at->format('Y-m-d H:i:s') : $this->expires_at, wp_timezone());
 		$clo = $exp->sub(new DateInterval('PT'.$minutes.'M'));
 
 		return $now >= $clo && $now < $exp;
