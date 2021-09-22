@@ -985,7 +985,7 @@ class PixEntity
 	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'pgly_pix';
-		$this->update_at = new DateTime('now', \wp_timezone());
+		$this->update_at = new DateTime('now');
 
 		if ( $this->loaded )
 		{ 

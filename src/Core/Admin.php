@@ -66,56 +66,62 @@ class Admin extends Initiable
 		
 		add_submenu_page(
 			CoreConnector::domain(),
+			CoreConnector::__translate('Configurações do Pix'),
+			CoreConnector::__translate('Configurações do Pix'),
+			'manage_woocommerce',
+			CoreConnector::domain(),
+			[$this, 'upgrade_page'],
+			1
+		);
+		
+		add_submenu_page(
+			CoreConnector::domain(),
 			CoreConnector::__translate('Versão '.CoreConnector::plugin()->getVersion()),
 			CoreConnector::__translate('Versão '.CoreConnector::plugin()->getVersion()),
 			'manage_woocommerce',
 			CoreConnector::domain().'-upgrade',
-			[$this, 'upgrade_page']
+			[$this, 'upgrade_page'],
+			2
 		);
 		
 		add_submenu_page(
 			CoreConnector::domain(),
-			CoreConnector::__translate('Importador'),
-			CoreConnector::__translate('Importador'),
-			'manage_woocommerce',
-			CoreConnector::domain().'-import',
-			[$this, 'importer_page']
-		);
-		
-		add_submenu_page(
-			CoreConnector::domain(),
-			CoreConnector::__translate('APIs'),
-			CoreConnector::__translate('APIs'),
+			CoreConnector::__translate('API do Pix'),
+			CoreConnector::__translate('API do Pix'),
 			'manage_woocommerce',
 			CoreConnector::domain().'-api',
-			[$this, 'api_page']
+			[$this, 'api_page'],
+			10
+		);
+		
+		add_submenu_page(
+			CoreConnector::domain(),
+			CoreConnector::__translate('Importador do Pix'),
+			CoreConnector::__translate('Importador do Pix'),
+			'manage_woocommerce',
+			CoreConnector::domain().'-import',
+			[$this, 'importer_page'],
+			20
 		);
 		
 		add_submenu_page(
 			CoreConnector::domain(),
 			CoreConnector::__translate('Playground'),
-			CoreConnector::__translate('Testar o Pix'),
+			CoreConnector::__translate('Testar Pix Estático'),
 			'manage_woocommerce',
 			CoreConnector::domain().'-test',
-			[$this, 'test_page']
+			[$this, 'test_page'],
+			21
 		);
 		
 		add_submenu_page(
 			CoreConnector::domain(),
-			CoreConnector::__translate('Pixs'),
-			CoreConnector::__translate('Pixs'),
+			CoreConnector::__translate('Listagem dos Pix'),
+			CoreConnector::__translate('Listagem dos Pix'),
 			'manage_woocommerce',
 			CoreConnector::domain().'-orders',
-			[$this, 'orders_page']
-		);
-
-		add_submenu_page(
-			CoreConnector::domain(),
-			CoreConnector::__translate('Logs'),
-			CoreConnector::__translate('Logs'),
-			'manage_woocommerce',
-			CoreConnector::domain().'-logs',
-			[$this, 'logs_page']
+			[$this, 'orders_page'],
+			30
 		);
 		
 		add_submenu_page(
@@ -124,7 +130,18 @@ class Admin extends Initiable
 			CoreConnector::__translate('Suporte'),
 			'manage_woocommerce',
 			CoreConnector::domain().'-support',
-			[$this, 'support_page']
+			[$this, 'support_page'],
+			40
+		);
+
+		add_submenu_page(
+			CoreConnector::domain(),
+			CoreConnector::__translate('Logs'),
+			CoreConnector::__translate('Logs'),
+			'manage_woocommerce',
+			CoreConnector::domain().'-logs',
+			[$this, 'logs_page'],
+			41
 		);
 	}
 

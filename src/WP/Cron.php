@@ -32,6 +32,7 @@ class Cron extends Initiable
 	 * @since 2.0.0
 	 */
 	const AVAILABLE_FREQUENCIES = [
+		'everyminute',
 		'everyfifteen', 
 		'twicehourly', 
 		'hourly', 

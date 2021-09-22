@@ -241,6 +241,12 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.19 ###
+
+* Correção de permissão de logs durante execução da cronjob;
+* Correção na data de atualização do Pix;
+* Reorganização do menu Pix por Piggly.
+
 ### 2.0.18 ###
 
 * Correção da detecção de Pix próximo à expiração;
