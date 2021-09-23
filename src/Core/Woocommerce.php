@@ -81,7 +81,7 @@ class Woocommerce extends Initiable
 		);
 
 		WP::add_action(
-			'woocommerce_delete_order',
+			'before_delete_post',
 			$this,
 			'order_deleted'
 		);
@@ -135,7 +135,14 @@ class Woocommerce extends Initiable
 	 * @return void
 	 */
 	public function order_deleted ( $id )
-	{ (new PixRepo($this->_plugin))->unlinkOrder($id); }
+	{ 
+		$post_type = get_post_type($id);
+
+		if ($post_type !== 'shop_order') 
+		{ return; }
+
+		(new PixRepo($this->_plugin))->unlinkOrder($id); 
+	}
 	
 	/**
 	 * Update pix to cancelled status when order is cancelled.

@@ -204,6 +204,10 @@ class OrdersTable extends WP_List_Table
 								<div class="pgly-wps--row">
 									<div class="pgly-wps--column pgly-wps-col--6">
 										<div class="<?=$style?>">
+											<strong>ID da Transação</strong>
+											<span><?=$pix->getTxid();?></span>
+										</div>
+										<div class="<?=$style?>">
 											<strong>Tipo</strong>
 											<span><?=$pix->getTypeLabel();?></span>
 										</div>

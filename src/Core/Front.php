@@ -28,7 +28,7 @@ class Front extends Initiable
 			'woocommerce_receipt_'.CoreConnector::plugin()->getName(), 
 			$this, 
 			'payment_page', 
-			5, 
+			10, 
 			1 
 		);
 
@@ -36,7 +36,7 @@ class Front extends Initiable
 			'woocommerce_thankyou_'.CoreConnector::plugin()->getName(), 
 			$this, 
 			'payment_page', 
-			5, 
+			10, 
 			1 
 		);
 
@@ -133,7 +133,17 @@ class Front extends Initiable
 			{ $pix = (new PixRepo($this->_plugin))->byId($txid); }
 
 			if ( empty($pix) )
-			{ $pix = (new PixGateway())->recreate_pix($order); }
+			{ 
+				$pix = (new PixGateway())->recreate_pix($order); 
+
+				if ( empty($pix) )
+				{	
+					if ( $echo )
+					{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</ul></div>'; return null; }
+					else 
+					{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</ul></div>'; }	
+				}
+			}
 
 			if ( $pix->isExpired() || $pix->isStatus(PixEntity::STATUS_CANCELLED) || $order->has_status('cancelled') )
 			{
@@ -155,27 +165,75 @@ class Front extends Initiable
 			if ( empty($order->get_user_id()) )
 			{ $settings->get('receipts')->set('receipt_page', false); }
 
-			\wc_get_template(
-				'html-woocommerce-payment-instructions.php',
-				array(
-					'pix' => $pix,
-					'order' => $order,
-					'instructions' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('gateway')->get('instructions')),
-					'receipt_page' => $settings->get('receipts')->get('receipt_page', true),
-					'whatsapp_number' => $settings->get('receipts')->get('whatsapp_number', true),
-					'whatsapp_message' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('whatsapp_message', true)),
-					'telegram_number' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('telegram_number', true)),
-					'telegram_message' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('telegram_message', true)),
-					'shows_qrcode' => $settings->get('gateway')->get('shows_qrcode', false),
-					'shows_copypast' => $settings->get('gateway')->get('shows_copypast', false),
-					'shows_manual' => $settings->get('gateway')->get('shows_manual', false),
-					'shows_amount' => $settings->get('gateway')->get('shows_amount', false),
-					'show_expiration' => $settings->get('orders')->get('show_expiration', false) && !empty($pix->getExpiresAt()),
-					'shows_receipt' => $settings->get('receipts')->get('shows_receipt', 'up')
-				),
-				WC()->template_path().\dirname(CoreConnector::plugin()->getBasename()).'/',
-				CoreConnector::plugin()->getTemplatePath().'woocommerce/'
-			);
+			if ( !$pix->isType(PixEntity::TYPE_STATIC) ) :
+			?>
+			<script>
+				document.addEventListener('DOMContentLoaded', () => {
+					new PglyPixWebhook({
+						tries: 60,
+						each: 2000,
+						txid: '<?=$pix->getTxid()?>',
+						redirect_to: '<?=$order->get_checkout_order_received_url()?>',
+						action: 'pgly_wc_piggly_pix_webhook',
+						url: wcPigglyPix.ajax_url,
+						x_security: wcPigglyPix.x_security,
+						debug: <?=CoreConnector::debugger()->isDebugging() ? 'true' : 'false';?>
+					});
+				});
+			</script>
+			<?php
+			endif;
+
+			if ( $echo ) 
+			{
+				\wc_get_template(
+					'html-woocommerce-payment-instructions.php',
+					array(
+						'pix' => $pix,
+						'order' => $order,
+						'instructions' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('gateway')->get('instructions')),
+						'receipt_page' => $settings->get('receipts')->get('receipt_page', true),
+						'whatsapp_number' => $settings->get('receipts')->get('whatsapp_number', true),
+						'whatsapp_message' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('whatsapp_message', true)),
+						'telegram_number' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('telegram_number', true)),
+						'telegram_message' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('telegram_message', true)),
+						'shows_qrcode' => $settings->get('gateway')->get('shows_qrcode', false),
+						'shows_copypast' => $settings->get('gateway')->get('shows_copypast', false),
+						'shows_manual' => $settings->get('gateway')->get('shows_manual', false),
+						'shows_amount' => $settings->get('gateway')->get('shows_amount', false),
+						'show_expiration' => $settings->get('orders')->get('show_expiration', false) && !empty($pix->getExpiresAt()),
+						'shows_receipt' => $settings->get('receipts')->get('shows_receipt', 'up')
+					),
+					WC()->template_path().\dirname(CoreConnector::plugin()->getBasename()).'/',
+					CoreConnector::plugin()->getTemplatePath().'woocommerce/'
+				);
+
+				return null;
+			}
+			else
+			{
+				return \wc_get_template_html(
+					'html-woocommerce-payment-instructions.php',
+					array(
+						'pix' => $pix,
+						'order' => $order,
+						'instructions' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('gateway')->get('instructions')),
+						'receipt_page' => $settings->get('receipts')->get('receipt_page', true),
+						'whatsapp_number' => $settings->get('receipts')->get('whatsapp_number', true),
+						'whatsapp_message' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('whatsapp_message', true)),
+						'telegram_number' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('telegram_number', true)),
+						'telegram_message' => str_replace('{{order_number}}', $order->get_order_number(), $settings->get('receipts')->get('telegram_message', true)),
+						'shows_qrcode' => $settings->get('gateway')->get('shows_qrcode', false),
+						'shows_copypast' => $settings->get('gateway')->get('shows_copypast', false),
+						'shows_manual' => $settings->get('gateway')->get('shows_manual', false),
+						'shows_amount' => $settings->get('gateway')->get('shows_amount', false),
+						'show_expiration' => $settings->get('orders')->get('show_expiration', false) && !empty($pix->getExpiresAt()),
+						'shows_receipt' => $settings->get('receipts')->get('shows_receipt', 'up')
+					),
+					WC()->template_path().\dirname(CoreConnector::plugin()->getBasename()).'/',
+					CoreConnector::plugin()->getTemplatePath().'woocommerce/'
+				);
+			}
 		}
 		catch ( Exception $e )
 		{
@@ -393,16 +451,25 @@ class Front extends Initiable
 			'pix-por-piggly-front-css',
 			CoreConnector::plugin()->getUrl().'assets/css/pix-por-piggly.front.css',
 			[],
-			'2.0.0'
+			'2.0.19'
 		);
 
 		wp_enqueue_script(
 			'pix-por-piggly-front-js',
 			CoreConnector::plugin()->getUrl().'assets/js/pgly-pix-por-piggly.front.js',
 			[],
-			'2.0.0',
+			'2.0.19.3',
 			true
 		); 
+
+		wp_localize_script(
+			'pix-por-piggly-front-js',
+			'wcPigglyPix',
+			[
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'x_security' => wp_create_nonce('pgly_wc_piggly_pix')
+			]
+		);
 	}
 
 	/**

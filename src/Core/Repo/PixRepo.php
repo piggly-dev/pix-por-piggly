@@ -166,17 +166,20 @@ class PixRepo extends Internationalizable
 	 */
 	public function unlinkOrder ( $id )
 	{
+		if ( empty($id) )
+		{ return; }
+
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'pgly_pix';
 		
-		$response = $wpdb->update($table_name, ['oid' => null], ['oid' => $id]); 
+		$response = $wpdb->delete($table_name, ['oid' => $id]); 
 
 		if ( $response === false )
 		{ 
 			CoreConnector::debugger()->error(
 				CoreConnector::__translate(
 					\sprintf(
-						'Não foi possível atualizar o pix %s no banco de dados: %s', 
+						'Não foi possível remover o pix %s no banco de dados: %s', 
 						$this->txid,
 						empty($wpdb->last_error) ? $wpdb->last_query : $wpdb->last_error
 					)
