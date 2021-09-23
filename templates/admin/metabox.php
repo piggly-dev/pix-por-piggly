@@ -14,6 +14,17 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 ?>
 
 <div id="pgly-pix-por-piggly" class="pgly-wps--settings" style="padding: 10px;">
+<?php if ( empty($pix) ) : ?>
+	<h3 style="text-align: center" class="pgly-wps--title pgly-wps-is-7">Pix Indisponível</h3>
+	<div class="pgly-wps--notification pgly-wps-is-warning">
+		Nenhum Pix está associado ao pedido, ele deverá ser recriado
+		caso queira continuar com este pedido.
+	</div>
+	<div class="pgly-wps--notification">
+		Não se preocupe, se o pedido estiver ativo e o cliente
+		tentar efetuar o pagamento, o Pix será recriado.
+	</div>
+<?php else: ?>
 	<?php if ( $pix->isType(PixEntity::TYPE_STATIC) ) : ?>
 		<h3 style="text-align: center" class="pgly-wps--title pgly-wps-is-7">Pix Estático</h3>
 	<?php else: ?>
@@ -74,7 +85,7 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 	<?php if ( !$pix->isType(PixEntity::TYPE_STATIC) ) : ?>
 		<div class="pgly-wps--explorer pgly-wps-is-compact">
 			<strong>ID do Pagamento</strong>
-			<span><?=$pix->getE2eid() ?? 'Não Processado';?></span>
+			<span><?=$pix->getE2eid() ?? $order->get_transaction_id() ?? 'Não Processado';?></span>
 		</div>
 	<?php endif; ?>
 
@@ -93,4 +104,5 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 		</a>
 	</div>
 	<?php endif; ?>
+<?php endif; ?>
 </div>

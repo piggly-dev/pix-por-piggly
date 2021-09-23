@@ -836,6 +836,16 @@ class PixEntity
 	{ $this->metadata = $metadata; return $this; }
 
 	/**
+	 * Append pix metadata.
+	 *
+	 * @param array $metadata
+	 * @since 2.0.0
+	 * @return PixEntity
+	 */
+	public function appendMetadata ( array $metadata )
+	{ $this->metadata = \array_merge($this->metadata ?? [], $metadata); return $this; }
+
+	/**
 	 * Get pix metadata.
 	 *
 	 * @since 2.0.0
@@ -919,7 +929,10 @@ class PixEntity
 		{ return false; }
 
 		// Get the minutes
-		$minutes = CoreConnector::settings()->get('orders')->get('closest_lifetime', 10);
+		$minutes = CoreConnector::settings()->get('orders')->get('closest_lifetime', 0);
+
+		if ( empty($minutes) )
+		{ return false; }
 
 		$now = new DateTime('now', wp_timezone());
 		$exp = new DateTimeImmutable($this->expires_at instanceof DateTime ? $this->expires_at->format('Y-m-d H:i:s') : $this->expires_at, wp_timezone());

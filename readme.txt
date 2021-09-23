@@ -270,6 +270,13 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 - Correção de permissão de logs durante execução da cronjob;
 - Correção na data de atualização do Pix;
+- Correção no envio de notificação de Pix próximo a expiração;
+- Remoção do Pix ao remover o pedido;
+- Atualização automática para a página de pedido concluído, quando em uso da API do Pix;
+- Correção da atualização da Cron Job para executar a cada minuto;
+- Ação para executar os webhooks da API do Pix;
+- Exibição do e2eid identificando o pagamento do Pix, quando em uso da API do Pix;
+- Rotina para limpeza dos Pix expirados ou cancelados;
 - Reorganização do menu Pix por Piggly.
 
 = 2.0.18 =
@@ -541,6 +548,13 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 - Correção de permissão de logs durante execução da cronjob;
 - Correção na data de atualização do Pix;
+- Correção no envio de notificação de Pix próximo a expiração;
+- Remoção do Pix ao remover o pedido;
+- Atualização automática para a página de pedido concluído, quando em uso da API do Pix;
+- Correção da atualização da Cron Job para executar a cada minuto;
+- Ação para executar os webhooks da API do Pix;
+- Exibição do e2eid identificando o pagamento do Pix, quando em uso da API do Pix;
+- Rotina para limpeza dos Pix expirados ou cancelados;
 - Reorganização do menu Pix por Piggly.
 
 = 2.0.18 =

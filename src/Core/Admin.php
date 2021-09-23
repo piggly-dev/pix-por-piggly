@@ -70,7 +70,7 @@ class Admin extends Initiable
 			CoreConnector::__translate('Configurações do Pix'),
 			'manage_woocommerce',
 			CoreConnector::domain(),
-			[$this, 'upgrade_page'],
+			'',
 			1
 		);
 		
@@ -171,7 +171,7 @@ class Admin extends Initiable
 	public function settings_page ()
 	{
 		// CSS and JS
-		CoreConnector::enqueuePglyWpsAdmin();
+		CoreConnector::enqueuePglyWpsAdmin(false);
 
 		wp_enqueue_script(
 			'pgly-pix-por-piggly-settings',

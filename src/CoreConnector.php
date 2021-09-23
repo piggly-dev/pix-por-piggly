@@ -192,7 +192,8 @@ class CoreConnector
 			[
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 				'x_security' => wp_create_nonce('pgly_wc_piggly_pix_admin'),
-				'plugin_url' => admin_url('admin.php?page='.static::plugin()->getDomain())
+				'plugin_url' => admin_url('admin.php?page='.static::plugin()->getDomain()),
+				'assets_url' => CoreConnector::plugin()->getUrl()
 			]
 		);
 	}

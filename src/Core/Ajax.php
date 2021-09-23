@@ -2,8 +2,10 @@
 namespace Piggly\WooPixGateway\Core;
 
 use Exception;
+use Piggly\WooPixGateway\Core\Entities\PixEntity;
 use Piggly\WooPixGateway\Core\Gateway\PixGateway;
 use Piggly\WooPixGateway\Core\Managers\SettingsManager;
+use Piggly\WooPixGateway\Core\Repo\PixRepo;
 use Piggly\WooPixGateway\CoreConnector;
 use Piggly\WooPixGateway\Upgrade\VersionUpgrader;
 use Piggly\WooPixGateway\Vendor\Piggly\Pix\Exceptions\InvalidPixCodeException;
@@ -48,7 +50,8 @@ class Ajax extends Ajaxable
 			'pgly_wc_piggly_pix_admin_update',
 			'pgly_wc_piggly_pix_upgrader',
 			'pgly_wc_piggly_pix_admin_import',
-			'pgly_wc_piggly_pix_admin_cron_process'
+			'pgly_wc_piggly_pix_admin_cron_process',
+			'pgly_wc_piggly_pix_admin_cron_cleaning'
 		];
 
 		foreach ( $priv as $action )
@@ -61,6 +64,7 @@ class Ajax extends Ajaxable
 		} 
 
 		$public = [
+			'pgly_wc_piggly_pix_webhook'
 		];
 		
 		foreach ( $public as $action )
@@ -250,6 +254,109 @@ class Ajax extends Ajaxable
 			(new Cron($this->_plugin))->processing(); 
 			$this->success([
 				'message'=>CoreConnector::__translate('Pix processados')
+			]);
+		}
+		catch ( Exception $e )
+		{ $this->exceptionError($e); }
+	}
+
+	/**
+	 * Clean pix.
+	 * 
+	 *	@since 2.0.0
+	 * @return void
+	 */
+	public function pgly_wc_piggly_pix_admin_cron_cleaning () 
+	{
+		$this
+			->prepare('pgly_wc_piggly_pix_admin', 'xSecurity')
+			->need_capability('manage_woocommerce');
+
+		try
+		{ 
+			(new Cron($this->_plugin))->cleaning(); 
+			$this->success([
+				'message'=>CoreConnector::__translate('Banco de dados dos Pix otimizado')
+			]);
+		}
+		catch ( Exception $e )
+		{ $this->exceptionError($e); }
+	}
+
+	/**
+	 * Validate if pix was paid.
+	 * 
+	 *	@since 2.0.19
+	 * @return void
+	 */
+	public function pgly_wc_piggly_pix_webhook () {
+		$this
+			->prepare('pgly_wc_piggly_pix', 'xSecurity');
+
+		try
+		{ 
+			// Get pix-code
+			$txid = \filter_input(\INPUT_POST, 'txid', \FILTER_SANITIZE_STRING);
+
+			if ( empty($txid) )
+			{ throw new Exception(CoreConnector::__translate('Pagamento Pix não identificado')); }
+
+			// Read pix data and save it...
+			$pix = (new PixRepo($this->_plugin))->byId($txid);
+
+			if ( empty($pix) )
+			{ throw new Exception(CoreConnector::__translate('Pagamento Pix não identificado')); }
+
+			if ( $pix->isType(PixEntity::TYPE_STATIC) )
+			{ throw new Exception(CoreConnector::__translate('Pix estático identificado')); }
+
+			if ( !$pix->isPaid() )
+			{ 
+				// Try to process pendind pix
+				$pix = \apply_filters('pgly_wc_piggly_pix_process', $pix);
+
+				if ( $pix->isPaid() && !empty($pix->getOrder()))
+				{
+					$order = $pix->getOrder();
+					$settings = CoreConnector::settings()->get('orders', new KeyingBucket());
+
+					// Flush session
+					if ( WC()->session ) 
+					{ WC()->session->set( 'order_awaiting_payment', false ); }
+
+					$order->set_transaction_id($pix->getE2eid());
+
+					// Update status
+					$order->set_status( 
+						apply_filters( 
+							'woocommerce_payment_complete_order_status',
+							$order->needs_processing() ? $settings->get('paid_status', 'processing') : 'completed', 
+							$order->get_id(), 
+							$order 
+						),
+						\sprintf(
+							CoreConnector::__translate('Pix `%s` identificado e confirmado.'), 
+							$pix->getE2eid()
+						)
+					);
+
+					// Set paid date
+					if ( ! $order->get_date_paid( 'edit' ) ) 
+					{ $order->set_date_paid( time() ); }
+
+					// Save order
+					$order->save();
+					
+					// Do action
+					do_action( 'woocommerce_payment_complete', $order->get_id() );
+					return true;
+				}
+				else
+				{ throw new Exception(CoreConnector::__translate('Pagamento Pix não identificado')); }
+			}
+
+			$this->success([
+				'message' => 'Pagamento Pix identificado'
 			]);
 		}
 		catch ( Exception $e )

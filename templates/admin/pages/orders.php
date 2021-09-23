@@ -1,4 +1,6 @@
 <?php
+
+use Piggly\WooPixGateway\CoreConnector;
 use Piggly\WooPixGateway\Data\OrdersTable;
 
 if( !class_exists('WP_List_Table') ) require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
@@ -24,7 +26,7 @@ $table->prepare_items();
 				request_error: 'Ocorreu um erro ao processar a requisição',
 				invalid_fields: 'Campos inválidos'
 			},
-			debug: true
+			debug: <?=CoreConnector::debugger()->isDebugging() ? 'true' : 'false';?>
 		});
 	});
 </script>
@@ -34,6 +36,18 @@ $table->prepare_items();
 	data-action="pgly_wc_piggly_pix_admin_cron_process"
 	>
 	Processar Pix
+	<svg 
+		class="pgly-wps--spinner pgly-wps-is-white"
+		viewBox="0 0 50 50">
+		<circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+	</svg>
+</button>
+
+<button 
+	class="pgly-wps--button pgly-async--behaviour pgly-wps-is-warning"
+	data-action="pgly_wc_piggly_pix_admin_cron_cleaning"
+	>
+	Limpar Pix Inativos
 	<svg 
 		class="pgly-wps--spinner pgly-wps-is-white"
 		viewBox="0 0 50 50">

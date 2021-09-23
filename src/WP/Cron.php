@@ -3,6 +3,7 @@ namespace Piggly\WooPixGateway\WP;
 
 use Piggly\WooPixGateway\Core\Entities\PixEntity;
 use Piggly\WooPixGateway\Core\Gateway\PixGateway;
+use Piggly\WooPixGateway\Core\Repo\PixRepo;
 use Piggly\WooPixGateway\CoreConnector;
 
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Initiable;
@@ -62,6 +63,12 @@ class Cron extends Initiable
 			$this,
 			'processing'
 		);
+
+		WP::add_action(
+			'pgly_cron_wc_piggly_pix_cleaning',
+			$this,
+			'cleaning'
+		);
 	}
 
 	/**
@@ -84,10 +91,38 @@ class Cron extends Initiable
 		CoreConnector::debugger()->debug(CoreConnector::__translate('Iniciando a tarefa cron para processamento dos Pix'));
 		
 		// All non-static pixs
-		$pixs = $wpdb->get_results("SELECT * FROM $table_name WHERE `status` = 'created' OR status = 'waiting'");
+		$pixs = $wpdb->get_results("SELECT * FROM $table_name WHERE `status` = 'created' OR `status` = 'waiting'");
 
 		foreach ( $pixs as $pix )
-		{ $gateway->process_pending(\apply_filters('pgly_wc_piggly_pix_process', PixEntity::create($pix))); }
+		{ 
+			$entity = PixEntity::create($pix);
+
+			if ( empty($entity->getOrder()) )
+			{ (new PixRepo(CoreConnector::plugin()))->unlinkOrder($pix->oid); continue; }
+
+			$gateway->process_pending(\apply_filters('pgly_wc_piggly_pix_process', $entity)); 
+		}
+	}
+
+	/**
+	 * Get all unnecessary Pix and remove it from
+	 * database.
+	 *
+	 * @since 2.0.19
+	 * @return void
+	 */
+	public function cleaning ()
+	{
+		WC()->mailer();
+		
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'pgly_pix';
+		$gateway = new PixGateway();
+
+		CoreConnector::debugger()->debug(CoreConnector::__translate('Iniciando a tarefa cron para limpeza dos Pix'));
+		
+		// Delete all expired, cancelled or order empty pixes
+		$wpdb->get_results("DELETE FROM $table_name WHERE `status` = 'expired' OR `status` = 'cancelled' OR `oid` IS NULL");
 	}
 
 	/**
@@ -143,6 +178,16 @@ class Cron extends Initiable
 			$settings->get('cron_frequency', 'everyfifteen'), 
 			'pgly_cron_wc_piggly_pix_processing' 
 		);
+
+		// --- Cronjob to do transactions
+		if ( wp_next_scheduled('pgly_cron_wc_piggly_pix_cleaning') )
+		{ wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_cleaning' ); }
+
+		wp_schedule_event(
+			current_time('timestamp'), 
+			$settings->get('cleaning_frequency', 'hourly'), 
+			'pgly_cron_wc_piggly_pix_cleaning' 
+		);
 	}
 
 	/**
@@ -152,5 +197,8 @@ class Cron extends Initiable
 	 * @return void
 	 */
 	public static function destroy ()
-	{ wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_processing' ); }
+	{ 
+		wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_processing' );
+		wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_cleaning' );
+	}
 }

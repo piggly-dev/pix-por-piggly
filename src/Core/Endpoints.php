@@ -56,8 +56,8 @@ class Endpoints extends Initiable
 	 */
 	public function add_endpoints ()
 	{ 
-		add_rewrite_endpoint('pgly-pix-payment', EP_PAGES); 
-		add_rewrite_endpoint('pgly-pix-receipt', EP_PAGES); 
+		add_rewrite_endpoint('pgly-pix-payment', EP_ROOT | EP_PAGES); 
+		add_rewrite_endpoint('pgly-pix-receipt', EP_ROOT | EP_PAGES); 
 	}
 
 	/**
