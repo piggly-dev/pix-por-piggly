@@ -5,7 +5,7 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 5.8
-Stable tag: 2.0.18
+Stable tag: 2.0.19
 License: GPLv2 or later
 Language: pt_BR 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -265,6 +265,19 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 10. Metabox Pix no pedido realizado via Pix.
 
 == Changelog ==
+
+= 2.0.19 =
+
+- Correção de permissão de logs durante execução da cronjob;
+- Correção na data de atualização do Pix;
+- Correção no envio de notificação de Pix próximo a expiração;
+- Remoção do Pix ao remover o pedido;
+- Atualização automática para a página de pedido concluído, quando em uso da API do Pix;
+- Correção da atualização da Cron Job para executar a cada minuto;
+- Ação para executar os webhooks da API do Pix;
+- Exibição do e2eid identificando o pagamento do Pix, quando em uso da API do Pix;
+- Rotina para limpeza dos Pix expirados ou cancelados;
+- Reorganização do menu Pix por Piggly.
 
 = 2.0.18 =
 
@@ -530,6 +543,19 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 * Versão inicial do plugin.
 
 == Upgrade Notice ==
+
+= 2.0.19 =
+
+- Correção de permissão de logs durante execução da cronjob;
+- Correção na data de atualização do Pix;
+- Correção no envio de notificação de Pix próximo a expiração;
+- Remoção do Pix ao remover o pedido;
+- Atualização automática para a página de pedido concluído, quando em uso da API do Pix;
+- Correção da atualização da Cron Job para executar a cada minuto;
+- Ação para executar os webhooks da API do Pix;
+- Exibição do e2eid identificando o pagamento do Pix, quando em uso da API do Pix;
+- Rotina para limpeza dos Pix expirados ou cancelados;
+- Reorganização do menu Pix por Piggly.
 
 = 2.0.18 =
 

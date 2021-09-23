@@ -2,13 +2,14 @@
 namespace Piggly\WooPixGateway\Core\Gateway;
 
 use Piggly\WooPixGateway\Core\Entities\PixEntity;
-use Piggly\WooPixGateway\Core\Processors\PixProcessor;
+use Piggly\WooPixGateway\Core\Repo\PixRepo;
 use Piggly\WooPixGateway\CoreConnector;
 
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Settings\KeyingBucket;
 
 use WC_Order;
 use WC_Payment_Gateway;
+use WP_Error;
 
 /**
  * The main gateway woocommerce behavior.
@@ -37,7 +38,7 @@ class PixGateway extends WC_Payment_Gateway
 		$this->id                 = CoreConnector::plugin()->getName();
 		$this->method_title       = CoreConnector::__translate('Pix');
 		$this->method_description = CoreConnector::__translate('Habilite o pagamento de pedidos via Pix. Este plugin automaticamente adiciona as instruções Pix na Página de Obrigado e na Página do Pedido.');
-		$this->supports           = ['products'];
+		$this->supports           = ['products', 'refunds'];
 		$this->has_fields         = false;
 
 		$this->init_settings();
@@ -87,9 +88,9 @@ class PixGateway extends WC_Payment_Gateway
 	 *
 	 * @param WC_Order|integer $order_id
 	 * @since 2.0.0
-	 * @return PixEntity
+	 * @return PixEntity|null
 	 */
-	public function recreate_pix ( $order_id ) : PixEntity
+	public function recreate_pix ( $order_id ) : ?PixEntity
 	{
 		/** @var KeyingBucket $settings */
 		$settings = CoreConnector::settings()->get('orders', new KeyingBucket());
@@ -97,14 +98,15 @@ class PixGateway extends WC_Payment_Gateway
 		$order = $order_id instanceof WC_Order ? $order_id : new WC_Order($order_id);
 		$pix   = PixEntity::mount($order);
 
+		if ( $order->has_status(['cancelled']) )
+		{ return null; }
+
 		// Save as last order transaction
 		$order->update_meta_data('_pgly_wc_piggly_pix_latest_pix', $pix->getTxid());
 		$order->save();
 
 		// Order was cancelled
-		if ( $order->has_status(['cancelled']) )
-		{ $pix->updateStatus(PixEntity::STATUS_CANCELLED); }
-		else if ( static::order_not_waiting_payment($order) )
+		if ( static::order_not_waiting_payment($order) )
 		{ $pix->setStatus(PixEntity::STATUS_PAID)->save(); }
 		else if ( $order->has_status([$settings->get('receipt_status', 'on-hold')]) )
 		{ $pix->updateStatus(PixEntity::STATUS_WAITING); }
@@ -191,9 +193,11 @@ class PixGateway extends WC_Payment_Gateway
 		if ( $pix->isStatus(PixEntity::STATUS_CREATED) )
 		{
 			// Run action when closest to expires
-			if ( $pix->isClosestToExpires() )
+			if ( $pix->isClosestToExpires()
+					&& empty($pix->getMetadata()['notify_close_to_expires']) )
 			{ 
 				CoreConnector::debugger()->debug(\sprintf('O Pix %s está próximo de ser expirado.', $pix->getTxid()));
+				$pix->appendMetadata(['notify_close_to_expires'=>true]);
 				do_action('pgly_wc_piggly_pix_close_to_expires', $pix); 
 				return false;
 			}
@@ -222,7 +226,7 @@ class PixGateway extends WC_Payment_Gateway
 		}
 
 		// Pix is paid
-		if ( $pix->isPaid() && !static::order_not_waiting_payment($order) )
+		if ( $pix->isPaid() && static::order_waiting_payment($order) )
 		{
 			// Flush session
 			if ( WC()->session ) 
@@ -257,6 +261,45 @@ class PixGateway extends WC_Payment_Gateway
 		}
 
 		return false;
+	}
+
+	/**
+	 * Process refund.
+	 *
+	 * @filter pgly_wc_piggly_pix_refund
+	 * @param int $order_id Order ID.
+	 * @param float|null $amount Refund amount.
+	 * @param string $reason Refund reason.
+	 * @since 2.0.19
+	 * @return boolean True or false based on success, or a WP_Error object.
+	 */
+	public function process_refund( $order_id, $amount = null, $reason = '' ) 
+	{		
+		$order = new WC_Order($order_id);
+		$pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc_piggly_pix_latest_pix'));
+
+		if ( empty($pix) )
+		{ return new WP_Error(1, CoreConnector::__translate('Pix não localizado.')); }
+
+		if ( empty($amount) )
+		{ return new WP_Error(1, CoreConnector::__translate('O valor do reembolso não foi preenchido.')); }
+
+		if ( $amount > $pix->getAmount() )
+		{ return new WP_Error(1, CoreConnector::__translate('O valor do reembolso é maior que o valor do Pix.')); }
+
+		$e2eid = $pix->getE2eid() ?? $order->get_transaction_id();
+		
+		if ( !$pix->isPaid() || empty($e2eid) )
+		{ return new WP_Error(1, CoreConnector::__translate('Pix não processado.')); }
+
+		return apply_filters( 
+			'pgly_wc_piggly_pix_refund',
+			false,
+			$pix, 
+			$amount,
+			$reason,
+			$order 
+		);
 	}
 
 	/**
@@ -383,6 +426,27 @@ class PixGateway extends WC_Payment_Gateway
 		return !$order->has_status([
 			$settings->get('waiting_status', 'pending'), 
 			$settings->get('receipt_status', 'on-hold'),
+			'pix-receipt'
+		]);
+	}
+
+	/**
+	 * Order is not cancelled or waiting payment anymore.
+	 *
+	 * @param WC_Order $order
+	 * @since 2.0.19
+	 * @return boolean
+	 */
+	public static function order_waiting_payment ( WC_Order $order ) : bool
+	{
+		/** @var KeyingBucket $gatewaySettings */
+		$settings = CoreConnector::settings()->get('orders', new KeyingBucket());
+
+		return $order->has_status([
+			$settings->get('waiting_status', 'pending'), 
+			$settings->get('receipt_status', 'on-hold'),
+			'pending',
+			'on-hold',
 			'pix-receipt'
 		]);
 	}

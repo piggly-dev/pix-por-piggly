@@ -43,7 +43,14 @@ class Api extends Initiable
 			'api_rest_prepare', 
 			99, 
 			2
-		);	
+		);
+
+		// Pix webhook legacy
+		WP::add_action(
+			'woocommerce_api_pgly-pix', 
+			$this, 
+			'api_callback'
+		);
 
 		// Pix webhook
 		WP::add_action(
@@ -176,8 +183,7 @@ class Api extends Initiable
 	 */
 	public function api_callback ()
 	{ 
-		do_action('pgly_wc_piggly_pix_webhook', CoreConnector::settings()->get('account')->get('bank', 0)); 
-		
+		do_action('pgly_wc_piggly_pix_webhook', CoreConnector::settings()->get('account')->get('bank', 0)); 	
 		wp_send_json_error(CoreConnector::__translate('Uso restrito ao administrativo.'));
 		die();
 	}

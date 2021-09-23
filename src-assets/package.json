@@ -1,6 +1,6 @@
 {
 	"name": "pix-por-piggly",
-	"version": "2.0.16",
+	"version": "2.0.19",
 	"description": "Implemente o Pix de uma forma simples e rápida em sua loja Woocommerce.",
 	"private": true,
 	"scripts": {
@@ -16,7 +16,7 @@
 	},
 	"dependencies": {
 		"@piggly/vue-pgly-wps-settings": "^0.1.5",
-		"axios": "^0.21.1",
+		"axios": "^0.21.4",
 		"direct-vuex": "^1.0.0-rc3",
 		"qs": "^6.10.1",
 		"tslib": "^2.3.1",
