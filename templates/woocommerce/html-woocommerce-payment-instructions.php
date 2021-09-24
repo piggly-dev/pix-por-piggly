@@ -41,6 +41,22 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 		</div>
 	</div>
 
+	<?php if ( !$pix->isType(PixEntity::TYPE_STATIC) ) : ?>
+	<div id="pgly-payment-detection">
+		<button 
+			id="pgly-payment-detect" 
+			class="pix-por-piggly--button">
+			Já realizei o pagamento
+		</button>
+		<svg 
+			id="pgly-payment-loader"
+			class="pgly-wps--spinner pgly-wps-is-black"
+			viewBox="0 0 50 50">
+			<circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+		</svg>
+	</div>
+	<?php endif; ?>
+
 	<?php if ( $shows_receipt === 'up' ) : ?>
 	<div style="padding: 28px 0; text-align: center">
 		<?php if ( $receipt_page ) : ?>

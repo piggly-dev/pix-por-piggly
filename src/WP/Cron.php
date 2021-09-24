@@ -63,12 +63,6 @@ class Cron extends Initiable
 			$this,
 			'processing'
 		);
-
-		WP::add_action(
-			'pgly_cron_wc_piggly_pix_cleaning',
-			$this,
-			'cleaning'
-		);
 	}
 
 	/**
@@ -122,7 +116,7 @@ class Cron extends Initiable
 		CoreConnector::debugger()->debug(CoreConnector::__translate('Iniciando a tarefa cron para limpeza dos Pix'));
 		
 		// Delete all expired, cancelled or order empty pixes
-		$wpdb->get_results("DELETE FROM $table_name WHERE `status` = 'expired' OR `status` = 'cancelled' OR `oid` IS NULL");
+		$wpdb->get_results("DELETE FROM $table_name WHERE `status` = 'cancelled' OR `oid` IS NULL");
 	}
 
 	/**
@@ -179,15 +173,15 @@ class Cron extends Initiable
 			'pgly_cron_wc_piggly_pix_processing' 
 		);
 
-		// --- Cronjob to do transactions
-		if ( wp_next_scheduled('pgly_cron_wc_piggly_pix_cleaning') )
-		{ wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_cleaning' ); }
+		// // --- Cronjob to do cleaning
+		// if ( wp_next_scheduled('pgly_cron_wc_piggly_pix_cleaning') )
+		// { wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_cleaning' ); }
 
-		wp_schedule_event(
-			current_time('timestamp'), 
-			$settings->get('cleaning_frequency', 'hourly'), 
-			'pgly_cron_wc_piggly_pix_cleaning' 
-		);
+		// wp_schedule_event(
+		// 	current_time('timestamp'), 
+		// 	$settings->get('cleaning_frequency', 'monthly'), 
+		// 	'pgly_cron_wc_piggly_pix_cleaning'
+		// );
 	}
 
 	/**

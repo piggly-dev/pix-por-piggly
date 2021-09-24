@@ -60,6 +60,8 @@ export interface IPglyPixWebhookOptions {
 export interface IPglyPixWebhook
 {
 	options: IPglyPixWebhookOptions;
+	running: boolean;
+	loading: boolean;
 	_init(): void;
 	_axios(): Promise<boolean>;
 }
@@ -91,13 +93,43 @@ function PglyPixWebhook ( this: IPglyPixWebhook, options: IPglyPixWebhookOptions
 	{ console.log('Options', options); }
 	
 	this.options = options;
+	this.running = false;
+	this.loading = false;
+
+	let pnl = document.getElementById('pgly-payment-detection');
+	let btn = document.getElementById('pgly-payment-detect');
+
+	if ( btn )
+	{
+		btn.addEventListener('click', (e) => {
+			if ( this.loading ) return;
+
+			this.running = false;
+			this.loading = true;
+
+			if ( pnl )
+			{ pnl.classList.add('loading'); }
+
+			setTimeout(() => {
+				this.running = true;
+				this._init();
+			}, 2000);
+		});
+	}
+
+	this.running = true;
 	this._init();
 }
 
 PglyPixWebhook.prototype._init = async function (this: IPglyPixWebhook) 
 {
 	for ( let i = 0; i < this.options.tries; i++ )
-	{ await this._axios(); }
+	{ 
+		await this._axios(); 
+
+		if ( !this.running )
+		{ break; }
+	}
 };
 
 PglyPixWebhook.prototype._axios = function (this: IPglyPixWebhook) 

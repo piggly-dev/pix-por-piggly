@@ -71,10 +71,11 @@ class Front extends Initiable
 		{
 			?>
 			<div class="woocommerce">
-			<div class="woocommerce-notices-wrapper"></div>
-				<ul class="woocommerce-error" role="alert">
-					<?=CoreConnector::__translate('Nenhum pedido solicitado.')?>
-				</ul>
+				<div class="woocommerce-notices-wrapper">
+					<div class="woocommerce-error" role="alert">
+						<?=CoreConnector::__translate('Nenhum pedido solicitado.')?>
+					</div>
+				</div>
 			</div>
 			<?php
 			return;
@@ -91,10 +92,11 @@ class Front extends Initiable
 		{
 			?>
 			<div class="woocommerce">
-			<div class="woocommerce-notices-wrapper"></div>
-				<ul class="woocommerce-error" role="alert">
-					<?=CoreConnector::__translate('Pedido indisponível.')?>
-				</ul>
+				<div class="woocommerce-notices-wrapper">
+					<div class="woocommerce-error" role="alert">
+						<?=CoreConnector::__translate('Pedido indisponível.')?>
+					</div>
+				</div>
 			</div>
 			<?php
 			return;
@@ -122,9 +124,9 @@ class Front extends Initiable
 			if ( !$order )
 			{
 				if ( $echo )
-				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('O pedido solicitado não foi encontrado. Entre em contato com o suporte.').'</ul></div>'; return null; }
+				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('O pedido solicitado não foi encontrado. Entre em contato com o suporte.').'</div></div></div>'; return null; }
 				else 
-				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('O pedido solicitado não foi encontrado. Entre em contato com o suporte.').'</ul></div>'; }	
+				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('O pedido solicitado não foi encontrado. Entre em contato com o suporte.').'</div></div></div>'; }	
 			}
 
 			$txid  = $order->get_meta('_pgly_wc_piggly_pix_latest_pix');
@@ -139,25 +141,25 @@ class Front extends Initiable
 				if ( empty($pix) )
 				{	
 					if ( $echo )
-					{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</ul></div>'; return null; }
+					{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</div></div></div>'; return null; }
 					else 
-					{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</ul></div>'; }	
+					{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</div></div></div>'; }	
 				}
 			}
 
 			if ( $pix->isExpired() || $pix->isStatus(PixEntity::STATUS_CANCELLED) || $order->has_status('cancelled') )
 			{
 				if ( $echo )
-				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</ul></div>'; return null; }
+				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</div></div></div>'; return null; }
 				else 
-				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</ul></div>'; }	
+				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</div></div></div>'; }	
 			}
 			else if ( $pix->isPaid() || PixGateway::order_not_waiting_payment($order) )
 			{
 				if ( $echo )
-				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-message" role="alert">'.CoreConnector::__translate('O pedido associado ao Pix já foi pago. Não há mais nada a ser feito.').'</ul></div>'; return null; }
+				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert">'.CoreConnector::__translate(\sprintf('O pagamento do Pix foi identificado com sucesso, <a href="%s">clique aqui</a> para ver mais detalhes sobre o seu pedido.'), $order->get_view_order_url()).'</div></div></div>'; return null; }
 				else 
-				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-message" role="alert">'.CoreConnector::__translate('O pedido associado ao Pix já foi pago. Não há mais nada a ser feito.').'</ul></div>'; }	
+				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert">'.CoreConnector::__translate(\sprintf('O pagamento do Pix foi identificado com sucesso, <a href="%s">clique aqui</a> para ver mais detalhes sobre o seu pedido.'), $order->get_view_order_url()).'</div></div></div>'; }	
 			}
 
 			$settings = CoreConnector::settings();
@@ -245,9 +247,9 @@ class Front extends Initiable
 			); 
 
 			if ( $echo )
-			{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Ocorreu um erro indeterminado. Entre em contato com o suporte.').'</ul></div>'; return null; }
+			{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Ocorreu um erro indeterminado. Entre em contato com o suporte.').'</div></div></div>'; return null; }
 			else 
-			{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Ocorreu um erro indeterminado. Entre em contato com o suporte.').'</ul></div>'; }
+			{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Ocorreu um erro indeterminado. Entre em contato com o suporte.').'</div></div></div>'; }
 		}
 	}
 
@@ -264,9 +266,9 @@ class Front extends Initiable
 			?>
 			<div class="woocommerce">
 			<div class="woocommerce-notices-wrapper"></div>
-				<ul class="woocommerce-error" role="alert">
+				<div class="woocommerce-error" role="alert">
 					<?=CoreConnector::__translate('Nenhum pedido solicitado.')?>
-				</ul>
+				</div>
 			</div>
 			<?php
 			return;
@@ -284,9 +286,9 @@ class Front extends Initiable
 			?>
 			<div class="woocommerce">
 			<div class="woocommerce-notices-wrapper"></div>
-				<ul class="woocommerce-error" role="alert">
+				<div class="woocommerce-error" role="alert">
 					<?=CoreConnector::__translate('Pedido indisponível.')?>
-				</ul>
+				</div>
 			</div>
 			<?php
 			return;
@@ -316,9 +318,9 @@ class Front extends Initiable
 			if ( !$order )
 			{
 				if ( $echo )
-				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('O pedido solicitado não foi encontrado. Entre em contato com o suporte.').'</ul></div>'; return null; }
+				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('O pedido solicitado não foi encontrado. Entre em contato com o suporte.').'</div></div></div>'; return null; }
 				else 
-				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('O pedido solicitado não foi encontrado. Entre em contato com o suporte.').'</ul></div>'; }	
+				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('O pedido solicitado não foi encontrado. Entre em contato com o suporte.').'</div></div></div>'; }	
 			}
 
 			$txid  = $order->get_meta('_pgly_wc_piggly_pix_latest_pix');
@@ -329,24 +331,24 @@ class Front extends Initiable
 			if ( empty($pix) )
 			{ 
 				if ( $echo )
-				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix não encontrado. Entre em contato com o suporte.').'</ul></div>'; return null; }
+				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix não encontrado. Entre em contato com o suporte.').'</div></div></div>'; return null; }
 				else 
-				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix não encontrado. Entre em contato com o suporte.').'</ul></div>'; }
+				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix não encontrado. Entre em contato com o suporte.').'</div></div></div>'; }
 			}
 
 			if ( $pix->isExpired() || $pix->isStatus(PixEntity::STATUS_CANCELLED) )
 			{
 				if ( $echo )
-				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</ul></div>'; return null; }
+				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</div></div></div>'; return null; }
 				else 
-				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</ul></div>'; }	
+				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Pix indisponível para pagamento, ele foi cancelado ou expirado.').'</div></div></div>'; }	
 			}
 			else if ( $pix->isPaid() )
 			{
 				if ( $echo )
-				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-message" role="alert">'.CoreConnector::__translate('O pagamento para o Pix já foi identificado, não é necessário o comprovante.').'</ul></div>'; return null; }
+				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert">'.CoreConnector::__translate('O pagamento para o Pix já foi identificado, não é necessário o comprovante.').'</div></div></div>'; return null; }
 				else 
-				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-message" role="alert">'.CoreConnector::__translate('O pagamento para o Pix já foi identificado, não é necessário o comprovante.').'</ul></div>'; }	
+				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert">'.CoreConnector::__translate('O pagamento para o Pix já foi identificado, não é necessário o comprovante.').'</div></div></div>'; }	
 			}
 
 			$data = [];
@@ -407,9 +409,9 @@ class Front extends Initiable
 			); 
 
 			if ( $echo )
-			{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Ocorreu um erro indeterminado. Entre em contato com o suporte.').'</ul></div>'; return null; }
+			{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Ocorreu um erro indeterminado. Entre em contato com o suporte.').'</div></div></div>'; return null; }
 			else 
-			{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div><ul class="woocommerce-error" role="alert">'.CoreConnector::__translate('Ocorreu um erro indeterminado. Entre em contato com o suporte.').'</ul></div>'; }
+			{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-error" role="alert">'.CoreConnector::__translate('Ocorreu um erro indeterminado. Entre em contato com o suporte.').'</div></div></div>'; }
 		}
 	}
 
@@ -446,19 +448,19 @@ class Front extends Initiable
 	 * @return void
 	 */
 	protected function wp_enqueue ()
-	{
+	{		
 		wp_enqueue_style(
 			'pix-por-piggly-front-css',
 			CoreConnector::plugin()->getUrl().'assets/css/pix-por-piggly.front.css',
 			[],
-			'2.0.19'
+			'2.0.20'
 		);
 
 		wp_enqueue_script(
 			'pix-por-piggly-front-js',
 			CoreConnector::plugin()->getUrl().'assets/js/pgly-pix-por-piggly.front.js',
 			[],
-			'2.0.19.3',
+			'2.0.20',
 			true
 		); 
 
