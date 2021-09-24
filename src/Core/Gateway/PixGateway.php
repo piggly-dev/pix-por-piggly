@@ -100,7 +100,7 @@ class PixGateway extends WC_Payment_Gateway
 
 		if ( $order->has_status(['cancelled']) )
 		{ return null; }
-
+		
 		// Save as last order transaction
 		$order->update_meta_data('_pgly_wc_piggly_pix_latest_pix', $pix->getTxid());
 		$order->save();

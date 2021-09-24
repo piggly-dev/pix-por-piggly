@@ -241,6 +241,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 ## Changelog ##
 
+### 2.0.20 ###
+
+* Melhorias nas mensagens de retorno de erro e sucesso.
+
 ### 2.0.19 ###
 
 * Correção de permissão de logs durante execução da cronjob;

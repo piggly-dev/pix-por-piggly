@@ -38,7 +38,7 @@
 	{ margin: 12px 0; }
 
 	.pix-por-piggly-logo 
-	{ display:table;max-width: 32px;margin: 12px auto; }
+	{ display:table; max-width: 32px; margin: 12px auto; }
 
 	.pix-por-piggly-title 
 	{ text-align:center; }
@@ -288,6 +288,63 @@
 	color: #000;
 	background-color: #3cf18d;
 }
+
+#pgly-payment-detection
+{
+	display: table;
+	width: 100%;
+
+	#pgly-payment-detect
+	{ display: table; margin: 0 auto; }
+
+	#pgly-payment-loader
+	{ display: none; }
+
+	&.loading
+	{
+		#pgly-payment-detect
+		{ display: none; }
+
+		#pgly-payment-loader
+		{ display: table; }
+	}
+
+	#pgly-payment-loader
+	{
+		width: 28px;
+		height: 28px;
+		margin: 0 auto;
+		
+		& .path 
+		{
+			stroke: #000;
+			stroke-linecap: round;
+			animation: dash-spinner 1.5s ease-in-out infinite;
+		}
+
+		&.light .path 
+		{ stroke: #FFF; }
+	}
+}
+
+@keyframes dash-spinner 
+{
+	0% {
+		stroke-dasharray: 1, 150;
+		stroke-dashoffset: 0;
+	}
+
+	50% {
+		stroke-dasharray: 90, 150;
+		stroke-dashoffset: -35;
+	}
+
+	100% {
+		stroke-dasharray: 90, 150;
+		stroke-dashoffset: -124;
+	}
+}
+ 
 
 @media screen and (max-width: 768px) 
 {
