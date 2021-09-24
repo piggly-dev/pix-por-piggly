@@ -123,6 +123,9 @@ class Woocommerce extends Initiable
 
 		$pix = (new PixRepo($this->_plugin))->byId($pix);
 
+		if ( empty($pix) )
+		{ return; }
+
 		if ( !$pix->isStatus(PixEntity::STATUS_PAID) )
 		{ $pix->updateStatus(PixEntity::STATUS_PAID); }
 	}

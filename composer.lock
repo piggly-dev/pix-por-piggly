@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9646c126a4a21ebb271f464ceaae63f7",
+    "content-hash": "eaeb99b345e0362aaf6fb7dc9aa9543b",
     "packages": [
         {
             "name": "chillerlan/php-qrcode",
@@ -420,16 +420,16 @@
     "packages-dev": [
         {
             "name": "php-stubs/woocommerce-stubs",
-            "version": "v5.7.0",
+            "version": "v5.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/woocommerce-stubs.git",
-                "reference": "9b752bd2492e24fb966b4c0076f0685e9a4bb348"
+                "reference": "8857cad4eaed5eead02f6adaaf197c46f93283b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/9b752bd2492e24fb966b4c0076f0685e9a4bb348",
-                "reference": "9b752bd2492e24fb966b4c0076f0685e9a4bb348",
+                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/8857cad4eaed5eead02f6adaaf197c46f93283b7",
+                "reference": "8857cad4eaed5eead02f6adaaf197c46f93283b7",
                 "shasum": ""
             },
             "require": {
@@ -458,9 +458,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
-                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v5.7.0"
+                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v5.7.1"
             },
-            "time": "2021-09-22T06:49:38+00:00"
+            "time": "2021-09-24T09:45:54+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",
