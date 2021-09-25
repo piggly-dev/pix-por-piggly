@@ -262,7 +262,7 @@ class PixEntity
 	 * @var DateTime
 	 * @since 2.0.0
 	 */
-	protected $update_at = null;
+	protected $updated_at = null;
 
 	/**
 	 * Created at.
@@ -998,7 +998,7 @@ class PixEntity
 	{
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'pgly_pix';
-		$this->update_at = new DateTime('now');
+		$this->updated_at = new DateTime('now', wp_timezone());
 
 		if ( $this->loaded )
 		{ 
@@ -1217,7 +1217,7 @@ class PixEntity
 			'discount' => $this->discount ?? 0,
 			'amount' => $this->amount ?? 0,
 			'expires_at' => empty($this->expires_at) ? null : $this->expires_at->format('Y-m-d H:i:s'),
-			'updated_at' => empty($this->expires_at) ? null : $this->expires_at->format('Y-m-d H:i:s')
+			'updated_at' => empty($this->updated_at) ? null : $this->updated_at->format('Y-m-d H:i:s')
 		];
 
 		foreach ( $remove as $key )
