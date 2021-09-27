@@ -112,15 +112,19 @@ class OrdersTable extends WP_List_Table
 		$query      = "SELECT * FROM $table_name";
 		$where      = [];
 
-		if ( !empty($search = filter_input( INPUT_POST, 's', \FILTER_SANITIZE_STRING )) ) 
-		{ $where[] = $wpdb->prepare("(txid LIKE '%%%s%%' OR e2eid LIKE '%%%s%%')", $search ); }
+		$search = filter_input( INPUT_GET, 's', \FILTER_SANITIZE_STRING );
+		$status = filter_input( INPUT_GET, 'status', \FILTER_SANITIZE_STRING );
+
+		if ( !empty($search) ) 
+		{ $where[] = $wpdb->prepare("(txid LIKE '%%%s%%' OR e2eid LIKE '%%%s%%')", $search, $search ); }
 
 		$status = filter_input( INPUT_POST, 'status', \FILTER_SANITIZE_STRING );
 
-		if ( !empty($status = filter_input( INPUT_POST, 'status', \FILTER_SANITIZE_STRING )) ) 
+		if ( !empty($status) && $status !== 'any' ) 
 		{ $where[] = $wpdb->prepare("(status = %s)", $status ); }
 
-		$query .= \sprintf(' %s ', \implode(' AND ', $where));
+		if ( !empty($where) )
+		{ $query .= \sprintf(' WHERE %s ', \implode(' AND ', $where)); }
 
 		//Parameters that are going to be used to order the result
 		$orderby = filter_input ( INPUT_GET, 'orderby', \FILTER_SANITIZE_STRING );

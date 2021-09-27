@@ -1002,7 +1002,7 @@ class PixEntity
 
 		if ( $this->loaded )
 		{ 
-			CoreConnector::debugger()->debug('Update to database', $this->export());
+			CoreConnector::debugger()->debug('Preparando para atualizar Pix no banco de dados', ['txid' => $this->getTxid()]);
 			$response = $wpdb->update($table_name, $this->export(['txid']), ['txid' => $this->txid]); 
 		}
 		else
@@ -1017,24 +1017,22 @@ class PixEntity
 			catch ( Exception $e )
 			{ $this->setTxid($this->generateTxid()); }
 
-			CoreConnector::debugger()->debug('Insert to database', $this->export());
+			CoreConnector::debugger()->debug('Preparando para criar um Pix no banco de dados', ['txid' => $this->getTxid()]);
 			$response = $wpdb->insert($table_name, $this->export());
 			$this->loaded = true;
 		}
 
 		if ( $response === false )
 		{ 
-			CoreConnector::debugger()->error(
-				CoreConnector::__translate(
-					\sprintf(
-						'Não foi possível salvar o pix %s no banco de dados: %s', 
-						$this->txid,
-						empty($wpdb->last_error) ? $wpdb->last_query : $wpdb->last_error
-					)
+			CoreConnector::debugger()->force()->error(
+				\sprintf(
+					'Não foi possível salvar o pix %s no banco de dados: %s', 
+					$this->txid,
+					empty($wpdb->last_error) ? $wpdb->last_query : $wpdb->last_error
 				)
 			);
 
-			throw new DatabaseException(CoreConnector::__translate(\sprintf('Não foi possível salvar a transação local no banco de dados.', $this->txid))); 
+			throw new DatabaseException(CoreConnector::__translate(\sprintf('Não foi possível salvar a transação %s no banco de dados.', $this->txid))); 
 		}
 
 		return $this;

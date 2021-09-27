@@ -180,7 +180,7 @@ class Core extends WordpressCore
 		
 		?>
 		<div class="error">
-			<p><?php CoreConnector::_etranslate('O plugin <strong>BDM Gateway</strong> necessita da última versão do Woocommerce para funcionar.'); ?></p>
+			<p><?php CoreConnector::_etranslate('O plugin <strong>Pix por Piggly</strong> necessita da última versão do Woocommerce para funcionar.'); ?></p>
 		
 			<?php if ( $is_installed && current_user_can( 'install_plugins' ) ) : ?>
 				<p><a href="<?php echo esc_url( wp_nonce_url( self_admin_url( 'plugins.php?action=activate&plugin=woocommerce/woocommerce.php&plugin_status=active' ), 'activate-plugin_woocommerce/woocommerce.php' ) ); ?>" class="button button-primary"><?php CoreConnector::_etranslate( 'Ativar WooCommerce' ); ?></a></p>

@@ -1,5 +1,7 @@
 # Pix por Piggly v2.0.0
 
+![Branch Lançamento](https://img.shields.io/badge/branch%2Fmaster%20v2.x.x-brightgreen?style=flat-square) ![Branch Desenvolvimento](https://img.shields.io/badge/branch%2Fdev-dev%20v2.x.x-orange?style=flat-square) ![Versão Atual](https://img.shields.io/badge/version-v2.0.22-brightgreen?style=flat-square) ![PHP](https://img.shields.io/badge/php-%5E7.2%20%7C%20%5E8.0-blue?style=flat-square) ![Software License](https://img.shields.io/badge/license-GPL%202.0-brightgreen?style=flat-square)
+
 **Importante**: Como a regra de versionamento de código manda, a versão 2.x será incompatível com a versão 1.x não tenha dúvidas disso. A versão 2.x foi projetada para ser totalmente compatível com as APIs do Pix, que atualizam automaticamente os pedidos, e essas APIs vão mudar sim o comportamento do Pix. Versões desatualizadas de MySQL e PHP podem ser o problema e dificultar a compatibilidade. E estamos nos esforçando para lançar micro-correções para essas necessidades. A qualquer momento é possível fazer o downgrade para a versão 1.x e continuar utilizando todos os recursos dela que já estão otimizados e não precisavam de atualização como uma versão 1.x.
 
 O melhor plugin para pagamentos via Pix no Woocommerce. Na versão 2.0.0 o plugin está melhor mais dinâmico e muito mais responsivo. Veja mais detalhes.
@@ -240,6 +242,12 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 **Preencha corretamente a sua chave Pix. Você pode testar nas configurações do plugin o funcionamento do Pix mesmo que o módulo esteja desativado.**
 
 ## Changelog ##
+
+### 2.0.22 ###
+
+* Limpeza dos logs;
+* Alerta de Modo Debug ativo;
+* Filtragem básica dos Pix criados.
 
 ### 2.0.21 ###
 
