@@ -80,8 +80,6 @@ class AdminPixCreated extends WC_Email
 
 		if ( !empty($order) )
 		{
-			CoreConnector::debugger()->debug(\sprintf('Disparo de e-mail %s para %s', $this->id, $order->get_billing_email()));
-
 			// Placeholders
 			$this->placeholders['{order_date}']   = wc_format_datetime( $order->get_date_created() );
 			$this->placeholders['{order_number}'] = $order->get_order_number();
@@ -90,6 +88,8 @@ class AdminPixCreated extends WC_Email
 
 			if ( $this->is_enabled() && $this->get_recipient() )
 			{
+				CoreConnector::debugger()->debug(\sprintf('Disparo de e-mail %s para %s', $this->id, $this->get_recipient()));
+	
 				$sent = $this->send(
 					$this->get_recipient(),
 					$this->get_subject(),
@@ -97,6 +97,9 @@ class AdminPixCreated extends WC_Email
 					$this->get_headers(),
 					$this->get_attachments()
 				);
+
+				if ( !$sent )
+				{ CoreConnector::debugger()->debug(\sprintf('Erro ao enviar e-mail %s para %s', $this->id, $this->get_recipient())); }
 			}
 		}
 		

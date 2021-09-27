@@ -45,6 +45,16 @@ class Admin extends Initiable
 			$this,
 			'plugin_action_links'
 		);
+
+		if ( CoreConnector::debugger()->isDebugging() )
+		{
+			// Debug notice
+			WP::add_action(
+				'admin_notices', 
+				$this,
+				'debug_notice' 
+			);
+		}
 	}
 
 	/**
@@ -322,5 +332,25 @@ class Admin extends Initiable
 		echo '<div id="pgly-wps-plugin" style="max-width: 720px" class="pgly-wps--settings">';
 		require_once(CoreConnector::plugin()->getTemplatePath().'admin/pages/import.php');
 		echo '</div>';
+	}
+
+	/**
+	 * Show debug notice.
+	 * 
+	 * @since 2.0.22
+	 * @return void
+	 */
+	public function debug_notice ()
+	{
+		?>
+		<div class="notice notice-warning">
+			<p>
+				O <strong>Modo Debug</strong> do plugin <strong>Pix por Piggly</strong>
+				está ativado, só mantenha este modo ativado para testes ou detecções de erros.
+				<a href="<?=admin_url('admin.php?page='.$this->_plugin->getDomain())?>">
+				Clique aqui</a> para ir para as configurações do plugin.
+			</p>
+		</div>
+		<?php
 	}
 }

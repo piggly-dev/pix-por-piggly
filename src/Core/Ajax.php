@@ -51,7 +51,8 @@ class Ajax extends Ajaxable
 			'pgly_wc_piggly_pix_upgrader',
 			'pgly_wc_piggly_pix_admin_import',
 			'pgly_wc_piggly_pix_admin_cron_process',
-			'pgly_wc_piggly_pix_admin_cron_cleaning'
+			'pgly_wc_piggly_pix_admin_cron_cleaning',
+			'pgly_wc_piggly_pix_admin_clean_logs'
 		];
 
 		foreach ( $priv as $action )
@@ -281,6 +282,30 @@ class Ajax extends Ajaxable
 		}
 		catch ( Exception $e )
 		{ $this->exceptionError($e); }
+	}
+
+	/**
+	 * Clean pix.
+	 * 
+	 *	@since 2.0.22
+	 * @return void
+	 */
+	public function pgly_wc_piggly_pix_admin_clean_logs ()
+	{
+		$this
+			->prepare('pgly_wc_piggly_pix_admin', 'xSecurity')
+			->need_capability('manage_woocommerce');
+
+		$path  = ABSPATH.'wp-content/pix-por-piggly/';
+		$files = [];
+		$files = glob($path.'*.log');
+
+		foreach ( $files as $file )
+		{ \unlink($file); }
+
+		$this->success([
+			'message'=>CoreConnector::__translate('Logs limpos com sucesso, atualize para continuar')
+		]);
 	}
 
 	/**

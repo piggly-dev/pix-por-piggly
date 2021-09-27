@@ -82,7 +82,7 @@ class Cron extends Initiable
 		$table_name = $wpdb->prefix . 'pgly_pix';
 		$gateway = new PixGateway();
 
-		CoreConnector::debugger()->debug(CoreConnector::__translate('Iniciando a tarefa cron para processamento dos Pix'));
+		CoreConnector::debugger()->debug('Iniciando a tarefa cron para processamento dos Pix');
 		
 		// All non-static pixs
 		$pixs = $wpdb->get_results("SELECT * FROM $table_name WHERE `status` = 'created' OR `status` = 'waiting'");
@@ -113,7 +113,7 @@ class Cron extends Initiable
 		$table_name = $wpdb->prefix . 'pgly_pix';
 		$gateway = new PixGateway();
 
-		CoreConnector::debugger()->debug(CoreConnector::__translate('Iniciando a tarefa cron para limpeza dos Pix'));
+		CoreConnector::debugger()->debug('Iniciando a tarefa cron para limpeza dos Pix');
 		
 		// Delete all expired, cancelled or order empty pixes
 		$wpdb->get_results("DELETE FROM $table_name WHERE `status` = 'cancelled' OR `oid` IS NULL");

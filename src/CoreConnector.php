@@ -166,7 +166,7 @@ class CoreConnector
 		if ( !wp_style_is('pgly-wps-settings-0-1-4-css') )
 		{
 			wp_enqueue_style(
-				'pgly-wps-settings-css',
+				'pgly-wps-settings-0-1-4-css',
 				static::plugin()->getUrl().'assets/vendor/css/pgly-wps-settings.v0.1.4.min.css',
 				[],
 				'0.1.4'
