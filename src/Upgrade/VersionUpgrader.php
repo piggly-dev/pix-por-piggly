@@ -277,13 +277,13 @@ class VersionUpgrader extends Internationalizable implements Runnable
 			}
 
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '".$table_name."'" ) != $table_name )
-			{ @\trigger_error(CoreConnector::__translate('Não foi possível criar o banco de dados')); return false; }
+			{ @\trigger_error('Não foi possível criar o banco de dados'); return false; }
 			
 			return true;
 		}
 		catch ( Exception $e )
 		{ 
-			$this->debug()->force()->error(\sprintf(CoreConnector::__translate('Não foi possível criar o banco de dados: %s'), $e->getMessage())); 
+			$this->debug()->force()->error(\sprintf('Não foi possível criar o banco de dados: %s', $e->getMessage())); 
 			return false;
 		}
 	}

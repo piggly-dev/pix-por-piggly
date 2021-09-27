@@ -1,6 +1,7 @@
 <?php
 namespace Piggly\WooPixGateway\Core\Gateway;
 
+use Exception;
 use Piggly\WooPixGateway\Core\Entities\PixEntity;
 use Piggly\WooPixGateway\Core\Repo\PixRepo;
 use Piggly\WooPixGateway\CoreConnector;
@@ -181,7 +182,7 @@ class PixGateway extends WC_Payment_Gateway
 	 */
 	public function process_pending ( PixEntity $pix ) : bool
 	{
-		CoreConnector::debugger()->debug(\sprintf(CoreConnector::__translate('Pix `%s` iniciando o processamento...'), $pix->getTxid()));
+		CoreConnector::debugger()->debug(\sprintf('Pix `%s` iniciando o processamento...', $pix->getTxid()));
 
 		$settings = CoreConnector::settings()->get('orders', new KeyingBucket());
 		$order = $pix->getOrder();
@@ -197,8 +198,14 @@ class PixGateway extends WC_Payment_Gateway
 					&& empty($pix->getMetadata()['notify_close_to_expires']) )
 			{ 
 				CoreConnector::debugger()->debug(\sprintf('O Pix %s está próximo de ser expirado.', $pix->getTxid()));
-				$pix->appendMetadata(['notify_close_to_expires'=>true]);
-				do_action('pgly_wc_piggly_pix_close_to_expires', $pix); 
+				
+				do_action('pgly_wc_piggly_pix_close_to_expires', $pix);
+				
+				try
+				{ $pix->appendMetadata(['notify_close_to_expires'=>true])->save(); }
+				catch ( Exception $e )
+				{}
+
 				return false;
 			}
 			
@@ -358,7 +365,6 @@ class PixGateway extends WC_Payment_Gateway
 	 */
 	public function process_admin_options ()
 	{ return false; }
-	
 
 	/**
 	 * Update a single option.

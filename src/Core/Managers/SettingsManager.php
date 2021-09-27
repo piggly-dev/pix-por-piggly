@@ -14,8 +14,8 @@ use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Settings\KeyingBucket;
 /**
  * Manages all plugin settings.
  * 
- * @package \Piggly\WpBDM
- * @subpackage \Piggly\WpBDM\Core\Managers
+ * @package \Piggly\WooPixGateway
+ * @subpackage \Piggly\WooPixGateway\Core\Managers
  * @version 2.0.0
  * @since 2.0.0
  * @category Managers
@@ -141,7 +141,7 @@ class SettingsManager
 	}
 
 	/**
-	 * Save wallet section.
+	 * Save global section.
 	 *
 	 * @param array $data
 	 * @since 2.0.0

@@ -40,6 +40,41 @@ if ( !empty(($get_file = \filter_input( INPUT_POST, 'log_path', FILTER_SANITIZE_
 	Pix por Piggly
 </h1>
 
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		new PglyWpsAsync({
+			container: '#pgly-wps-plugin',
+			responseContainer: 'pgly-wps--response',
+			url: wcPigglyPix.ajax_url,
+			x_security: wcPigglyPix.x_security,
+			messages: {
+				request_error: 'Ocorreu um erro ao processar a requisição',
+				invalid_fields: 'Campos inválidos'
+			},
+			debug: <?=CoreConnector::debugger()->isDebugging() ? 'true' : 'false';?>
+		});
+	});
+</script>
+
+<div class="pgly-wps--row">
+	<div class="pgly-wps--column">
+		<button 
+			class="pgly-wps--button pgly-async--behaviour pgly-wps-is-warning"
+			data-action="pgly_wc_piggly_pix_admin_clean_logs"
+			>
+			Limpar Logs
+			<svg 
+				class="pgly-wps--spinner pgly-wps-is-white"
+				viewBox="0 0 50 50">
+				<circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+			</svg>
+		</button>
+
+		<div class="pgly-wps--response" id="pgly-wps--response">
+		</div>
+	</div>
+</div>
+
 <form action="<?=admin_url('admin.php?page='.$plugin->getDomain().'-logs')?>" method="POST">
 	<div class="pgly-wps--row">
 		<div class="pgly-wps--column">
@@ -56,18 +91,24 @@ if ( !empty(($get_file = \filter_input( INPUT_POST, 'log_path', FILTER_SANITIZE_
 			</div>
 		</div>
 	</div>
-	<button 
-		class="pgly-wps--button pgly-wps-is-primary"
-		type="submit"
-		>
-		Abrir Log
-	</button>
+	<div class="pgly-wps--row">
+		<div class="pgly-wps--column">
+			<button 
+				class="pgly-wps--button pgly-wps-is-primary"
+				type="submit"
+				>
+				Abrir Log
+			</button>
+		</div>
+	</div>
 </form>
 
-<h3 class="pgly-wps--title"><?=$curr_file['label']?>)</h3>
+<div class="pgly-wps--row">
+	<div class="pgly-wps--column">
+		<h3 class="pgly-wps--title"><?=$curr_file['label']?>)</h3>
 
-<div class="pgly-wps--logger">
-	<pre>
-	<?php readfile($curr_file['path']); ?>
-	</pre>
+		<div class="pgly-wps--logger">
+			<pre><?php readfile($curr_file['path']); ?></pre>
+		</div>
+	</div>
 </div>
