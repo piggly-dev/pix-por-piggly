@@ -380,7 +380,7 @@ class PixGateway extends WC_Payment_Gateway
 		$settings = CoreConnector::settings()->get('gateway', new KeyingBucket());
 		
 		if ( $key === 'enabled' )
-		{ $value = \filter_var($value, \FILTER_VALIDATE_BOOL); }
+		{ $value = \filter_var($value, \FILTER_VALIDATE_BOOLEAN); }
 
 		$settings->set($key, $value);
 		
