@@ -51,6 +51,9 @@ class GelfMessageFormatter extends NormalizerFormatter
     private $logLevels = [Logger::DEBUG => 7, Logger::INFO => 6, Logger::NOTICE => 5, Logger::WARNING => 4, Logger::ERROR => 3, Logger::CRITICAL => 2, Logger::ALERT => 1, Logger::EMERGENCY => 0];
     public function __construct(?string $systemName = null, ?string $extraPrefix = null, string $contextPrefix = 'ctxt_', ?int $maxLength = null)
     {
+        if (!\class_exists(Message::class)) {
+            throw new \RuntimeException('Composer package graylog2/gelf-php is required to use Monolog\'s GelfMessageFormatter');
+        }
         parent::__construct('U.u');
         $this->systemName = \is_null($systemName) || $systemName === '' ? (string) \gethostname() : $systemName;
         $this->extraPrefix = \is_null($extraPrefix) ? '' : $extraPrefix;
