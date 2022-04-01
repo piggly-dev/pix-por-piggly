@@ -880,7 +880,7 @@ class PixEntity
 		if ( $this->status === static::STATUS_EXPIRED )
 		{ return true; }
 
-		if ( \is_null($this->expires_at) )
+		if ( \is_null($this->expires_at) || $this->isPaid() || $this->status === self::STATUS_CANCELLED )
 		{ return false; }
 
 		$now = new DateTime('now', wp_timezone());
@@ -925,7 +925,7 @@ class PixEntity
 		if ( $this->status === static::STATUS_EXPIRED )
 		{ return false; }
 
-		if ( \is_null($this->expires_at) )
+		if ( \is_null($this->expires_at) || $this->isPaid() || $this->status === self::STATUS_CANCELLED )
 		{ return false; }
 
 		// Get the minutes

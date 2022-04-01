@@ -12,6 +12,7 @@ declare (strict_types=1);
 namespace Piggly\WooPixGateway\Vendor\Monolog\Handler;
 
 use Piggly\WooPixGateway\Vendor\Monolog\Logger;
+use Piggly\WooPixGateway\Vendor\Monolog\Utils;
 use Piggly\WooPixGateway\Vendor\Monolog\Formatter\FormatterInterface;
 use Piggly\WooPixGateway\Vendor\Monolog\Formatter\LineFormatter;
 use Piggly\WooPixGateway\Vendor\Swift_Message;
@@ -76,7 +77,8 @@ class SwiftMailerHandler extends MailHandler
             $message = ($this->messageTemplate)($content, $records);
         }
         if (!$message instanceof Swift_Message) {
-            throw new \InvalidArgumentException('Could not resolve message as instance of Swift_Message or a callable returning it');
+            $record = \reset($records);
+            throw new \InvalidArgumentException('Could not resolve message as instance of Swift_Message or a callable returning it' . ($record ? Utils::getRecordMessageForException($record) : ''));
         }
         if ($records) {
             $subjectFormatter = $this->getSubjectFormatter($message->getSubject());

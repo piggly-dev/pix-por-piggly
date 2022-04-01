@@ -157,9 +157,9 @@ class Front extends Initiable
 			else if ( $pix->isPaid() || PixGateway::order_not_waiting_payment($order) )
 			{
 				if ( $echo )
-				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert">'.CoreConnector::__translate(\sprintf('O pagamento do Pix foi identificado com sucesso, <a href="%s">clique aqui</a> para ver mais detalhes sobre o seu pedido.'), $order->get_view_order_url()).'</div></div></div>'; return null; }
+				{ echo '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert">'.CoreConnector::__translate(\sprintf('O pagamento do Pix foi identificado com sucesso e seu pedido está aprovado, <a href="%s">clique aqui</a> para ver mais detalhes sobre o seu pedido.', $order->get_view_order_url())).'</div></div></div>'; return null; }
 				else 
-				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert">'.CoreConnector::__translate(\sprintf('O pagamento do Pix foi identificado com sucesso, <a href="%s">clique aqui</a> para ver mais detalhes sobre o seu pedido.'), $order->get_view_order_url()).'</div></div></div>'; }	
+				{ return '<div class="woocommerce"><div class="woocommerce-notices-wrapper"><div class="woocommerce-message" role="alert">'.CoreConnector::__translate(\sprintf('O pagamento do Pix foi identificado com sucesso e seu pedido está aprovado, <a href="%s">clique aqui</a> para ver mais detalhes sobre o seu pedido.', $order->get_view_order_url())).'</div></div></div>'; }	
 			}
 
 			$settings = CoreConnector::settings();

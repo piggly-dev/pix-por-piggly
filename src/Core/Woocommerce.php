@@ -85,8 +85,35 @@ class Woocommerce extends Initiable
 			$this,
 			'order_deleted'
 		);
+
+		WP::add_action(
+			'manage_shop_order_posts_custom_column', 
+			$this,
+			'pix_column', 
+			20, 
+			2
+		);
 	}
 
+	/**
+	 * Add column to Woocommerce Orders.
+	 * 
+	 * @since 2.0.23
+	 * @return void
+	 */
+	public function pix_column ( $column, $post_id )
+	{
+		if ( $column !== 'order_status' ) return;
+
+		$order = new WC_Order( $post_id );
+		
+		if ( $order->get_payment_method() !== CoreConnector::plugin()->getName() )
+		{ return; }
+
+		$pix = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc_piggly_pix_latest_pix'));
+		
+		printf('<mark class="order-status" style="margin-left: 8px; color: blue; background: #e6e6ff;"><span>Pix %s - Banco %s</span></mark>', $pix->isType(PixEntity::TYPE_STATIC) ? 'Estático' : 'Dinâmico', \str_pad($pix->getBank(), 3, '0', STR_PAD_LEFT));
+	}
 	/**
 	 * Add gateway to Woocommerce.
 	 * 
@@ -98,7 +125,7 @@ class Woocommerce extends Initiable
 		array_push( $gateways, PixGateway::class );
 		return $gateways;
 	}
-
+	
 	/**
 	 * Update pix to paid status when order is complete.
 	 *

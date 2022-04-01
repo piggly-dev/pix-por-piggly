@@ -109,7 +109,7 @@ class SlackRecord
             $message = $record['message'];
         }
         if ($this->useAttachment) {
-            $attachment = array('fallback' => $message, 'text' => $message, 'color' => $this->getAttachmentColor($record['level']), 'fields' => array(), 'mrkdwn_in' => array('fields'), 'ts' => $record['datetime']->getTimestamp());
+            $attachment = array('fallback' => $message, 'text' => $message, 'color' => $this->getAttachmentColor($record['level']), 'fields' => array(), 'mrkdwn_in' => array('fields'), 'ts' => $record['datetime']->getTimestamp(), 'footer' => $this->username, 'footer_icon' => $this->userIcon);
             if ($this->useShortAttachment) {
                 $attachment['title'] = $record['level_name'];
             } else {
