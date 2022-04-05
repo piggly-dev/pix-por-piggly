@@ -112,7 +112,9 @@ class Woocommerce extends Initiable
 
 		$pix = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc_piggly_pix_latest_pix'));
 		
-		printf('<mark class="order-status" style="margin-left: 8px; color: blue; background: #e6e6ff;"><span>Pix %s - Banco %s</span></mark>', $pix->isType(PixEntity::TYPE_STATIC) ? 'Estático' : 'Dinâmico', \str_pad($pix->getBank(), 3, '0', STR_PAD_LEFT));
+		if ( empty($pix) ) return; 
+
+		printf('<mark class="order-status" style="margin-left: 8px; color: blue; background: #e6e6ff;"><span>Pix de Verificação %s - Banco %s</span></mark>', $pix->isType(PixEntity::TYPE_STATIC) ? 'Manual' : 'Automático', \str_pad($pix->getBank(), 3, '0', STR_PAD_LEFT));
 	}
 	/**
 	 * Add gateway to Woocommerce.
