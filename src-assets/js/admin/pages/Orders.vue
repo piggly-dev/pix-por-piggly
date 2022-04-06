@@ -140,27 +140,6 @@
 			</pgly-basic-input>
 		</pgly-column>
 	</pgly-row>
-
-	<div class="pgly-wps--space"></div>
-	<h2 class="pgly-wps--title pgly-wps-is-6">Processamento</h2>
-
-	<pgly-row>
-		<pgly-column>
-			<pgly-basic-select
-				id="cron_frequency"
-				label="Período de Processamento dos Pix"
-				:options="fields.cron_frequency.options"
-				:error="fields.cron_frequency.error"
-				v-model="fields.cron_frequency.value">
-				<template v-slot:description>
-					Frequência de processamento dos Pix pendentes.
-					Essa tarefa irá expirar os Pix, cancelar os pedidos
-					ou marcar os Pix como pagos quando houver uma
-					API Pix conectada ao plugin.
-				</template>
-			</pgly-basic-select>
-		</pgly-column>
-	</pgly-row>
 	
 	<div class="pgly-wps--space"></div>
 	<h2 class="pgly-wps--title pgly-wps-is-6">Desconto</h2>
@@ -401,11 +380,6 @@ export default defineComponent({
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('orders').get('closest_lifetime', '').toString(),
 				},
-				cron_frequency: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('cron_frequency', ''),
-					options: CronFrequencyOptions
-				},
 				discount_value: {
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('discount').get('value', ''),
@@ -496,8 +470,7 @@ export default defineComponent({
 				cancel_when_expired: this.fields.cancel_when_expired.value,
 				show_expiration: this.fields.show_expiration.value,
 				expires_after: this.fields.expires_after.value,
-				closest_lifetime: this.fields.closest_lifetime.value,
-				cron_frequency: this.fields.cron_frequency.value
+				closest_lifetime: this.fields.closest_lifetime.value
 			});
 
 			return true;

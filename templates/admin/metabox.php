@@ -26,13 +26,59 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 	</div>
 <?php else: ?>
 	<?php if ( $pix->isType(PixEntity::TYPE_STATIC) ) : ?>
-		<h3 style="text-align: center" class="pgly-wps--title pgly-wps-is-7">Pix Estático</h3>
+		<h3 style="text-align: center" class="pgly-wps--title pgly-wps-is-7">Pix de Verificação Manual (Estático)</h3>
 	<?php else: ?>
-		<h3 style="text-align: center" class="pgly-wps--title pgly-wps-is-7">Pix Dinâmico</h3>
+		<h3 style="text-align: center" class="pgly-wps--title pgly-wps-is-7">Pix de Verificação Automática (Dinâmico)</h3>
+		<p style="margin: 16px auto; text-align: center; font-style: italic">Este Pix é verificado de forma automática a partir da API do Banco.</p>
+		<?php if (!$pix->isStatus(PixEntity::STATUS_PAID)) : ?>
+			<p style="margin: 16px auto; text-align: center;">Se o cliente já realizou o pagamento, clique no botão abaixo para validar:</p>
+			<button 
+				class="pgly-wps--button pgly-async--behaviour pgly-wps-is-primary"
+				data-action="pgly_wc_piggly_pix_admin_cron_process"
+				data-response-container="woo-bdm-gateway-tx-<?=$index;?>"
+				data-refresh="true"
+				data-tx="<?=$pix->getTxid();?>">
+				Verificar Pagamento
+				<svg 
+					class="pgly-wps--spinner pgly-wps-is-white"
+					viewBox="0 0 50 50">
+					<circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+				</svg>
+			</button>
+			
+			<div class="pgly-wps--response" id="pgly-pix-por-piggly-tx-<?=$index;?>"></div>
+			<div class="pgly-wps--space"></div>
+
+			<script>
+				document.addEventListener('DOMContentLoaded', () => {
+					new PglyWpsAsync({
+						container: '#pgly-pix-por-piggly',
+						responseContainer: 'pgly-pix-por-piggly--response',
+						url: wcPigglyPix .ajax_url,
+						x_security: wcPigglyPix .x_security,
+						messages: {
+							request_error: 'Ocorreu um erro ao processar a requisição',
+							invalid_fields: 'Campos inválidos'
+						},
+						debug: false
+					});
+				});
+			</script>
+		<?php endif; ?>
 	<?php endif; ?>
 	<?php if ( !empty($pix->getQrCode()['url']) ) : ?>
 	<div>
 		<img style="max-width:100%; height: auto;" src="<?=$pix->getQrCode()['url'];?>" alt="QR Code de Pagamento"/>
+	</div>
+	<?php endif; ?>
+	
+	<?php if ( $pix->isType(PixEntity::TYPE_STATIC) ) : ?>
+	<div class="pgly-wps--notification pgly-wps-is-danger">
+		O pagamento do Pix Estático não é verificado automaticamente.
+		Para atualizar o Pix automaticamente, é necessário
+		ter uma API do Pix conectada ao plugin.
+		Saiba mais em <strong>API do Pix</strong> no menu 
+		lateral "Pix por Piggly".
 	</div>
 	<?php endif; ?>
 

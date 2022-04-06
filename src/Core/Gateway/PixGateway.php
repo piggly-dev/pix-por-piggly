@@ -191,7 +191,8 @@ class PixGateway extends WC_Payment_Gateway
 		if ( empty($order) )
 		{ return false; }
 
-		if ( $pix->isStatus(PixEntity::STATUS_CREATED) )
+		if ( $pix->isStatus(PixEntity::STATUS_CREATED) || 
+				($pix->isStatus(PixEntity::STATUS_WAITING) && static::order_waiting_payment($order)) )
 		{
 			// Run action when closest to expires
 			if ( $pix->isClosestToExpires()

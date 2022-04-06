@@ -39,6 +39,7 @@ import api from "@/api/api";
 import Global from "@/pages/Global.vue";
 import Account from "@/pages/Account.vue";
 import Orders from "@/pages/Orders.vue";
+import Processing from "@/pages/Processing.vue";
 
 export default defineComponent({
 	name: 'App',
@@ -50,7 +51,8 @@ export default defineComponent({
 		PglyToaster,
 		Global,
 		Account,
-		Orders
+		Orders,
+		Processing
 	},
 
 	created () {
@@ -73,6 +75,10 @@ export default defineComponent({
 				{
 					key: 'orders',
 					label: 'Pedidos'
+				},
+				{
+					key: 'processing',
+					label: 'Processamento do Pix'
 				}
 			] as Array<INavigatorItem>
 		}
