@@ -164,24 +164,14 @@ class Cron extends Initiable
 		$settings = $plugin->settings()->bucket()->get('orders', new KeyingBucket());
 
 		// --- Cronjob to do transactions
-		if ( wp_next_scheduled('pgly_cron_wc_piggly_pix_processing') )
-		{ wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_processing' ); }
-
-		wp_schedule_event(
-			current_time('timestamp'), 
-			$settings->get('cron_frequency', 'everyfifteen'), 
-			'pgly_cron_wc_piggly_pix_processing' 
-		);
-
-		// // --- Cronjob to do cleaning
-		// if ( wp_next_scheduled('pgly_cron_wc_piggly_pix_cleaning') )
-		// { wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_cleaning' ); }
-
-		// wp_schedule_event(
-		// 	current_time('timestamp'), 
-		// 	$settings->get('cleaning_frequency', 'monthly'), 
-		// 	'pgly_cron_wc_piggly_pix_cleaning'
-		// );
+		if ( !wp_next_scheduled('pgly_cron_wc_piggly_pix_processing') )
+		{
+			wp_schedule_event(
+				current_time('timestamp'), 
+				$settings->get('cron_frequency', 'everyfifteen'), 
+				'pgly_cron_wc_piggly_pix_processing' 
+			);
+		}
 	}
 
 	/**
@@ -192,7 +182,6 @@ class Cron extends Initiable
 	 */
 	public static function destroy ()
 	{ 
-		wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_processing' );
-		wp_clear_scheduled_hook( 'pgly_cron_wc_piggly_pix_cleaning' );
+		wp_clear_scheduled_hook('pgly_cron_wc_piggly_pix_processing');
 	}
 }

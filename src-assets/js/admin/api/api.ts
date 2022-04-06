@@ -70,5 +70,27 @@ export default {
 			console.error(err);
 			throw err; 
 		}
+	},
+
+	recreateCron : async () : Promise<string> => {
+		console.log(`POST pgly_wc_piggly_pix_admin_cron_recreate ${window.wcPigglyPix.ajax_url}`);
+
+		try
+		{
+			const { data } = await axios.post(window.wcPigglyPix.ajax_url, qs.stringify({
+				action: 'pgly_wc_piggly_pix_admin_cron_recreate',
+				xSecurity: window.wcPigglyPix.x_security
+			})); 
+
+			if ( !data.success )
+			{ throw new Error(data.data.message); }
+
+			return data.data.message;
+		}
+		catch ( err )
+		{ 
+			console.error(err);
+			throw err; 
+		}
 	}
 }

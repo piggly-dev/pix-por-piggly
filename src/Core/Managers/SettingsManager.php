@@ -2,8 +2,8 @@
 namespace Piggly\WooPixGateway\Core\Managers;
 
 use Exception;
-use Piggly\Pix\Exceptions\InvalidPixKeyException;
-use Piggly\Pix\Exceptions\InvalidPixKeyTypeException;
+use Piggly\WooPixGateway\Vendor\Piggly\Pix\Exceptions\InvalidPixKeyException;
+use Piggly\WooPixGateway\Vendor\Piggly\Pix\Exceptions\InvalidPixKeyTypeException;
 use Piggly\WooPixGateway\Core\Woocommerce;
 use Piggly\WooPixGateway\CoreConnector;
 use Piggly\WooPixGateway\WP\Cron;
@@ -90,7 +90,8 @@ class SettingsManager
 
 		$settings->getAndCreate('runtime', [
 			'statuses' => $statusesOp,
-			'pages' => $pages
+			'pages' => $pages,
+			'cron_status' => wp_get_scheduled_event('pgly_cron_wc_piggly_pix_processing') !== false
 		]);
 		
 		return CoreConnector::settingsManager()->bucket()->export() ?? []; 

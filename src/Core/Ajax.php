@@ -51,6 +51,7 @@ class Ajax extends Ajaxable
 			'pgly_wc_piggly_pix_upgrader',
 			'pgly_wc_piggly_pix_admin_import',
 			'pgly_wc_piggly_pix_admin_cron_process',
+			'pgly_wc_piggly_pix_admin_cron_recreate',
 			'pgly_wc_piggly_pix_admin_cron_cleaning',
 			'pgly_wc_piggly_pix_admin_clean_logs'
 		];
@@ -255,6 +256,29 @@ class Ajax extends Ajaxable
 			(new Cron($this->_plugin))->processing(); 
 			$this->success([
 				'message'=>CoreConnector::__translate('Pix processados')
+			]);
+		}
+		catch ( Exception $e )
+		{ $this->exceptionError($e); }
+	}
+
+	/**
+	 * Process pix.
+	 * 
+	 *	@since 2.0.25
+	 * @return void
+	 */
+	public function pgly_wc_piggly_pix_admin_cron_recreate () 
+	{
+		$this
+			->prepare('pgly_wc_piggly_pix_admin', 'xSecurity')
+			->need_capability('manage_woocommerce');
+
+		try
+		{ 
+			(new Cron($this->_plugin))->create($this->_plugin); 
+			$this->success([
+				'message'=>CoreConnector::__translate('Cronjob recriada')
 			]);
 		}
 		catch ( Exception $e )
