@@ -139,95 +139,11 @@ export default defineComponent({
 			window: window,
 			cron_status: store.state.settings.get('runtime').get('cron_status', true),
 			fields: {
-				decrease_stock: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('decrease_stock', true),
-				},
-				waiting_status: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('waiting_status', ''),
-					options: store.state.settings.get('runtime').get('statuses')
-				},
-				receipt_status: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('receipt_status', ''),
-					options: store.state.settings.get('runtime').get('statuses')
-				},
-				paid_status: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('paid_status', ''),
-					options: store.state.settings.get('runtime').get('statuses')
-				},
-				cancel_when_expired: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('cancel_when_expired', false),
-				},
-				show_expiration: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('show_expiration', false),
-				},
-				expires_after: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('expires_after', '').toString(),
-				},
-				closest_lifetime: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('closest_lifetime', '').toString(),
-				},
 				cron_frequency: {
 					error: {state: false} as IErrorInput,
 					value: store.state.settings.get('orders').get('cron_frequency', ''),
 					options: CronFrequencyOptions
-				},
-				discount_value: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('discount').get('value', ''),
-				},
-				discount_type: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('discount').get('type', ''),
-					options: [
-						{ value: "PERCENT", label: "Porcentagem" },
-						{ value: "FIXED", label: "Valor Fixo" }
-					]
-				},
-				discount_label: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('discount').get('label', ''),
-				},
-				after_receipt: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('orders').get('after_receipt', 0).toString(),
-					options: store.state.settings.get('runtime').get('pages')
-				},
-				shows_receipt: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('receipts').get('shows_receipt', 'up'),
-					options: [
-						{ value: 'up', label: 'Acima do Pix' },
-						{ value: 'down', label: 'Abaixo do Pix' }
-					]
-				},
-				receipt_page: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('receipts').get('receipt_page', true),
-				},
-				whatsapp_number: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('receipts').get('whatsapp_number', ''),
-				},
-				whatsapp_message: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('receipts').get('whatsapp_message', ''),
-				},
-				telegram_number: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('receipts').get('telegram_number', ''),
-				},
-				telegram_message: {
-					error: {state: false} as IErrorInput,
-					value: store.state.settings.get('receipts').get('telegram_message', ''),
-				}				
+				},		
 			} as { [key: string]: IField }
 		}
 	},
@@ -239,13 +155,7 @@ export default defineComponent({
 		},
 
 		async submit () : Promise<boolean> {
-			if ( this.fields.expires_after.value.length === 0 )
-			{ this.fields.expires_after.value = '0'; }
-
-			if ( this.fields.closest_lifetime.value.length === 0 )
-			{ this.fields.closest_lifetime.value = '0'; }
-
-			await api.saveSettings('orders', {
+			await api.saveSettings('processing', {
 				cron_frequency: this.fields.cron_frequency.value
 			});
 
