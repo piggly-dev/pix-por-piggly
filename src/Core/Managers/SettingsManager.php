@@ -39,7 +39,8 @@ class SettingsManager
 		'orders',
 		'account',
 		'discount',
-		'receipts'
+		'receipts',
+		'processing'
 	];
 
 	/**
@@ -125,6 +126,9 @@ class SettingsManager
 				break;
 			case 'orders':
 				$this->saveOrders($data);
+				break;
+			case 'processing':
+				$this->saveProcessing($data);
 				break;
 			case 'account':
 				$this->saveAccount($data);
@@ -253,12 +257,36 @@ class SettingsManager
 				'show_expiration' => [ 'default' => false, 'sanitize' => \FILTER_VALIDATE_BOOLEAN ],
 				'expires_after' => [ 'default' => 24, 'sanitize' => \FILTER_VALIDATE_INT ],
 				'closest_lifetime' => [ 'default' => 60, 'sanitize' => \FILTER_VALIDATE_INT ],
+			]
+		);
+
+		Cron::create(CoreConnector::plugin());
+	}
+
+	/**
+	 * Save processing section.
+	 *
+	 * @param array $data
+	 * @since 2.0.0
+	 * @return void
+	 * @throws Exception
+	 */
+	protected function saveProcessing ( array $data )
+	{
+		/** @var KeyingBucket $settings */
+		$settings = CoreConnector::settings()->getAndCreate('orders', new KeyingBucket());
+
+		$this->prepare(
+			$settings,
+			$data,
+			[
 				'cron_frequency' => [ 'default' => 'everyfifteen', 'sanitize' => \FILTER_SANITIZE_STRING, 'allowed' => Cron::AVAILABLE_FREQUENCIES ],
 			]
 		);
 
 		Cron::create(CoreConnector::plugin());
 	}
+
 
 	/**
 	 * Save account section.

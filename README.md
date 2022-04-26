@@ -1,4 +1,4 @@
-# Pix por Piggly v2.0.25
+# Pix por Piggly v2.0.26
 
 ![Branch Lançamento](https://img.shields.io/badge/branch%2Fmaster%20v2.x.x-brightgreen?style=flat-square) ![Branch Desenvolvimento](https://img.shields.io/badge/branch%2Fdev-dev%20v2.x.x-orange?style=flat-square) ![Versão Atual](https://img.shields.io/badge/version-v2.0.25-brightgreen?style=flat-square) ![PHP](https://img.shields.io/badge/php-%5E7.2%20%7C%20%5E8.0-blue?style=flat-square) ![Software License](https://img.shields.io/badge/license-GPL%202.0-brightgreen?style=flat-square)
 
@@ -241,6 +241,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 **Preencha corretamente a sua chave Pix. Você pode testar nas configurações do plugin o funcionamento do Pix mesmo que o módulo esteja desativado.**
 
 ## Changelog ##
+
+### 2.0.26 ###
+
+* Correção de problema na atualização de configuração do Pix.
 
 ### 2.0.25 ###
 
