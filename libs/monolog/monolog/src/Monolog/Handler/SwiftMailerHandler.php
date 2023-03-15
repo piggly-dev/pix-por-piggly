@@ -23,6 +23,7 @@ use Piggly\WooPixGateway\Vendor\Swift;
  * @author Gyula Sallai
  *
  * @phpstan-import-type Record from \Monolog\Logger
+ * @deprecated Since Monolog 2.6. Use SymfonyMailerHandler instead.
  */
 class SwiftMailerHandler extends MailHandler
 {
@@ -39,6 +40,7 @@ class SwiftMailerHandler extends MailHandler
     public function __construct(\Piggly\WooPixGateway\Vendor\Swift_Mailer $mailer, $message, $level = Logger::ERROR, bool $bubble = \true)
     {
         parent::__construct($level, $bubble);
+        @\trigger_error('The SwiftMailerHandler is deprecated since Monolog 2.6. Use SymfonyMailerHandler instead.', \E_USER_DEPRECATED);
         $this->mailer = $mailer;
         $this->messageTemplate = $message;
     }

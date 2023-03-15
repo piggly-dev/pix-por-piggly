@@ -229,7 +229,7 @@ class Upgrader extends Internationalizable implements Runnable
 		<div class="notice notice-success">
 			<p>
 				O <strong>Pix por Piggly</strong> atualizou, recomendamos
-				que você revise as suas configurações <a href="<?=admin_url('admin.php?page='.$this->_plugin->getDomain())?>">
+				que você revise as suas configurações <a href="<?php echo admin_url('admin.php?page='.$this->_plugin->getDomain())?>">
 				clicando aqui</a>.
 			</p>
 		</div>

@@ -5,8 +5,7 @@ use Piggly\WooPixGateway\CoreConnector;
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 $plugin = CoreConnector::plugin();
-
-$path  = ABSPATH.'wp-content/pix-por-piggly/';
+$path = $plugin->getAbspath().'logs/';
 $files = [];
 $files = glob($path.'*.log');
 
@@ -51,7 +50,7 @@ if ( !empty(($get_file = \filter_input( INPUT_POST, 'log_path', FILTER_SANITIZE_
 				request_error: 'Ocorreu um erro ao processar a requisição',
 				invalid_fields: 'Campos inválidos'
 			},
-			debug: <?=CoreConnector::debugger()->isDebugging() ? 'true' : 'false';?>
+			debug: <?php echo CoreConnector::debugger()->isDebugging() ? 'true' : 'false';?>
 		});
 	});
 </script>
@@ -75,7 +74,7 @@ if ( !empty(($get_file = \filter_input( INPUT_POST, 'log_path', FILTER_SANITIZE_
 	</div>
 </div>
 
-<form action="<?=admin_url('admin.php?page='.$plugin->getDomain().'-logs')?>" method="POST">
+<form action="<?php echo admin_url('admin.php?page='.$plugin->getDomain().'-logs')?>" method="POST">
 	<div class="pgly-wps--row">
 		<div class="pgly-wps--column">
 			<div class="pgly-wps--field">
@@ -105,7 +104,7 @@ if ( !empty(($get_file = \filter_input( INPUT_POST, 'log_path', FILTER_SANITIZE_
 
 <div class="pgly-wps--row">
 	<div class="pgly-wps--column">
-		<h3 class="pgly-wps--title"><?=$curr_file['label']?>)</h3>
+		<h3 class="pgly-wps--title"><?php echo $curr_file['label']?>)</h3>
 
 		<div class="pgly-wps--logger">
 			<pre><?php readfile($curr_file['path']); ?></pre>

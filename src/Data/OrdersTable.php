@@ -207,31 +207,31 @@ class OrdersTable extends WP_List_Table
 							<td class="column column-pix">
 								<div class="pgly-wps--row">
 									<div class="pgly-wps--column pgly-wps-col--6">
-										<div class="<?=$style?>">
+										<div class="<?php echo $style?>">
 											<strong>ID da Transação</strong>
-											<span><?=$pix->getTxid();?></span>
+											<span><?php echo $pix->getTxid();?></span>
 										</div>
-										<div class="<?=$style?>">
+										<div class="<?php echo $style?>">
 											<strong>Tipo</strong>
-											<span><?=$pix->getTypeLabel();?></span>
+											<span><?php echo $pix->getTypeLabel();?></span>
 										</div>
-										<div class="<?=$style?>">
+										<div class="<?php echo $style?>">
 											<strong>Status</strong>
-											<div style="margin-top: 4px" class="pgly-wps--badge pgly-wps-is-<?=$pix->getStatusColor()?>"><?=$pix->getStatusLabel();?></div>
+											<div style="margin-top: 4px" class="pgly-wps--badge pgly-wps-is-<?php echo $pix->getStatusColor()?>"><?php echo $pix->getStatusLabel();?></div>
 										</div>
-										<div class="<?=$style?>">
+										<div class="<?php echo $style?>">
 											<strong>Chave Pix</strong>
-											<span><?=$pix->getPixKeyValue();?> (<?=Parser::getAlias($pix->getPixKeyType());?>)</span>
+											<span><?php echo $pix->getPixKeyValue();?> (<?php echo Parser::getAlias($pix->getPixKeyType());?>)</span>
 										</div>
-										<div class="<?=$style?>">
+										<div class="<?php echo $style?>">
 											<strong>Valor do Pix</strong>
-											<span><?=\wc_price($pix->getAmount());?></span>
+											<span><?php echo \wc_price($pix->getAmount());?></span>
 										</div>
 										
 										<?php if ( !empty($_pix->oid) ) : ?>
 										<a 
 											class="pgly-wps--button pgly-wps-is-success pgly-wps-is-primary"
-											href="<?=get_edit_post_link($_pix->oid);?>"
+											href="<?php echo get_edit_post_link($_pix->oid);?>"
 											target="_blank">
 											Ver Pedido
 										</a>
@@ -240,22 +240,22 @@ class OrdersTable extends WP_List_Table
 										<?php if ( !empty($pix->getReceipt()['url']) ) : ?>
 										<a 
 											class="pgly-wps--button pgly-wps-is-success pgly-wps-is-regular"
-											href="<?=$pix->getReceipt()['url'];?>"
+											href="<?php echo $pix->getReceipt()['url'];?>"
 											target="_blank">
 											Visualizar Comprovante
 										</a>
 										<?php endif; ?>
 									</div>
 									<div class="pgly-wps--column pgly-wps-col--3">
-										<div class="<?=$style?>">
+										<div class="<?php echo $style?>">
 											<strong>Criado em</strong>
-											<span><?=$pix->getCreatedAt()->format('d/m/Y H:i:s');?></span>
+											<span><?php echo $pix->getCreatedAt()->format('d/m/Y H:i:s');?></span>
 										</div>
 									</div>
 									<div class="pgly-wps--column pgly-wps-col--3">
-										<div class="<?=$style?>">
+										<div class="<?php echo $style?>">
 											<strong>Atualizado em</strong>
-											<span><?=$pix->getUpdatedAt()->format('d/m/Y H:i:s');?></span>
+											<span><?php echo $pix->getUpdatedAt()->format('d/m/Y H:i:s');?></span>
 										</div>
 									</div>
 								</div>
