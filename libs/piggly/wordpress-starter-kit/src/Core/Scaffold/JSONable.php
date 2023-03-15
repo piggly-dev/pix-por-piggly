@@ -85,7 +85,7 @@ abstract class JSONable extends Initiable
     {
         $options = \array_merge(['nonce_name' => 'x_security', 'nonce_action' => static::nonceAction(), 'capability' => static::capability()], $options);
         if (!empty($options['nonce_name'])) {
-            if (empty($body[$options['nonce_name']]) || !\Piggly\WooPixGateway\Vendor\wp_verify_nonce($body[$options['nonce_name']], $options['nonce_action'])) {
+            if (empty($body[$options['nonce_name']]) || !\wp_verify_nonce($body[$options['nonce_name']], $options['nonce_action'])) {
                 $this->status(401)->error(new Exception('O nonce para o envio do formulário é inválido.', 401));
             }
         }

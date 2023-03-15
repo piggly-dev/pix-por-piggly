@@ -31,7 +31,7 @@ class WoocommerceRequirement implements RequirementInterface
      */
     public static function run(array $params = [])
     {
-        require_once \Piggly\WooPixGateway\Vendor\ABSPATH . '/wp-admin/includes/plugin.php';
+        require_once \ABSPATH . '/wp-admin/includes/plugin.php';
         if (!is_plugin_active('woocommerce/woocommerce.php')) {
             throw new Exception($params['custom_response'] ?? 'Woocommerce must be activated to this plugin works.');
         }

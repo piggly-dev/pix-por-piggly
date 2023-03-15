@@ -103,9 +103,9 @@ abstract class CustomPostType extends Initiable implements PostTypeInterface
      */
     public function enqueue_scripts()
     {
-        \Piggly\WooPixGateway\Vendor\wp_enqueue_media();
-        \Piggly\WooPixGateway\Vendor\wp_enqueue_script(\sprintf('pgly-wps-settings-%s-js', $this->js_version), Connector::plugin()->getUrl() . '/assets/vendor/js/pgly-wps-settings.js', null, Connector::plugin()->getVersion(), \true);
-        \Piggly\WooPixGateway\Vendor\wp_enqueue_style(\sprintf('pgly-wps-settings-%s-css', $this->js_version), Connector::plugin()->getUrl() . '/assets/vendor/css/pgly-wps-settings.css', null, Connector::plugin()->getVersion(), 'all');
+        \wp_enqueue_media();
+        \wp_enqueue_script(\sprintf('pgly-wps-settings-%s-js', $this->js_version), Connector::plugin()->getUrl() . '/assets/vendor/js/pgly-wps-settings.js', null, Connector::plugin()->getVersion(), \true);
+        \wp_enqueue_style(\sprintf('pgly-wps-settings-%s-css', $this->js_version), Connector::plugin()->getUrl() . '/assets/vendor/css/pgly-wps-settings.css', null, Connector::plugin()->getVersion(), 'all');
     }
     /**
      * Load page to view table listing.
@@ -219,7 +219,7 @@ abstract class CustomPostType extends Initiable implements PostTypeInterface
         $body = $requestBody->body();
         $parsed = BodyValidator::validate($body, SchemaExtractor::extract($this->form()->fields()), $prefix);
         /* Verify the nonce before proceeding. */
-        if (empty($body[$prefix . 'nonce']) || !\Piggly\WooPixGateway\Vendor\wp_verify_nonce($body[$prefix . 'nonce'], $prefix . 'save')) {
+        if (empty($body[$prefix . 'nonce']) || !\wp_verify_nonce($body[$prefix . 'nonce'], $prefix . 'save')) {
             throw new Exception('O nonce para o envio do formulário é inválido.');
         }
         $this->entity = static::entityModel()::fromBody($parsed);
@@ -265,7 +265,7 @@ abstract class CustomPostType extends Initiable implements PostTypeInterface
      */
     protected function redirectTo($id)
     {
-        $url = \Piggly\WooPixGateway\Vendor\add_query_arg(['id' => $id, 'action' => 'edit'], \Piggly\WooPixGateway\Vendor\admin_url('admin.php?page=' . static::getSlug() . '-content'));
+        $url = \add_query_arg(['id' => $id, 'action' => 'edit'], \admin_url('admin.php?page=' . static::getSlug() . '-content'));
         ?>
 <script lang="javascript">
 	setTimeout(function() {
@@ -284,7 +284,7 @@ abstract class CustomPostType extends Initiable implements PostTypeInterface
      */
     protected function redirectToTable()
     {
-        $url = \Piggly\WooPixGateway\Vendor\admin_url('admin.php?page=' . static::getSlug());
+        $url = \admin_url('admin.php?page=' . static::getSlug());
         ?>
 <script lang="javascript">
 	setTimeout(function() {
