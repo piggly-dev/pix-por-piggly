@@ -29,7 +29,7 @@ class UrlInputField extends TextInputField
             if (empty($value)) {
                 return null;
             }
-            return \Piggly\WooPixGateway\Vendor\esc_url($value);
+            return \esc_url($value);
         };
     }
 }

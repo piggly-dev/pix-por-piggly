@@ -47,7 +47,7 @@ class CreateTableRunner implements Runnable
         if ($this->database::installedVersion() !== '0' || $this->database::tableExists()) {
             return;
         }
-        if (!\function_exists('Piggly\\WooPixGateway\\Vendor\\dbDelta')) {
+        if (!\function_exists('dbDelta')) {
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         }
         try {

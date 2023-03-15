@@ -40,13 +40,13 @@ class DateInputField extends TextInputField
             if ($value instanceof DateTimeImmutable) {
                 return \esc_attr($value->format('Y-m-d'));
             }
-            return \esc_attr((new DateTimeImmutable($value, \Piggly\WooPixGateway\Vendor\wp_timezone()))->format('Y-m-d'));
+            return \esc_attr((new DateTimeImmutable($value, \wp_timezone()))->format('Y-m-d'));
         };
         $this->_options['transform'] = function ($value) {
             if (empty($value)) {
                 return null;
             }
-            return new DateTimeImmutable($value, \Piggly\WooPixGateway\Vendor\wp_timezone());
+            return new DateTimeImmutable($value, \wp_timezone());
         };
     }
 }

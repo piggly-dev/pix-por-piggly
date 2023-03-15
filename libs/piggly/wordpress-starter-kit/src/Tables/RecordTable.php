@@ -4,7 +4,7 @@ namespace Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Tables;
 
 use Exception;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Post\Interfaces\PostTypeInterface;
-use Piggly\WooPixGateway\Vendor\WP_List_Table;
+use WP_List_Table;
 /**
  * Record table manipulation.
  *
@@ -170,7 +170,7 @@ abstract class RecordTable extends WP_List_Table
     {
         switch ($column_name) {
             case 'priority':
-                return \Piggly\WooPixGateway\Vendor\esc_html($item->priority);
+                return \esc_html($item->priority);
             default:
                 return 'Desconhecida';
         }
@@ -259,8 +259,8 @@ abstract class RecordTable extends WP_List_Table
     public function get_links($item)
     {
         $url = admin_url('admin.php?page=' . $this->postType::getSlug());
-        $edit_link = \Piggly\WooPixGateway\Vendor\esc_url(\Piggly\WooPixGateway\Vendor\add_query_arg(['id' => $item->id, 'action' => 'edit'], $url . '-content'));
-        $remove_link = \Piggly\WooPixGateway\Vendor\esc_url(\Piggly\WooPixGateway\Vendor\add_query_arg(['id' => $item->id, 'action' => 'remove'], $url . '-content'));
+        $edit_link = \esc_url(\add_query_arg(['id' => $item->id, 'action' => 'edit'], $url . '-content'));
+        $remove_link = \esc_url(\add_query_arg(['id' => $item->id, 'action' => 'remove'], $url . '-content'));
         return [$edit_link, $remove_link];
     }
 }

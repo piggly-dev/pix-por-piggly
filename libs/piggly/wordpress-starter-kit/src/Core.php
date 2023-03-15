@@ -143,7 +143,7 @@ class Core extends Initiable
                 if (isset($_GET['activate'])) {
                     unset($_GET['activate']);
                 }
-                \Piggly\WooPixGateway\Vendor\deactivate_plugins(\Piggly\WooPixGateway\Vendor\plugin_basename(__FILE__));
+                \deactivate_plugins(\plugin_basename(__FILE__));
             });
             return \false;
         }

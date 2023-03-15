@@ -176,7 +176,7 @@ abstract class AbstractModel
     protected function _prepare() : array
     {
         $fields = $this->_fields;
-        $fields['updated_at'] = (new DateTime('now', \Piggly\WooPixGateway\Vendor\wp_timezone()))->format('Y-m-d\\TH:i:s');
+        $fields['updated_at'] = (new DateTime('now', \wp_timezone()))->format('Y-m-d\\TH:i:s');
         return $fields;
     }
     /**

@@ -112,12 +112,12 @@ abstract class AsyncCustomPostType extends JSONable implements PostTypeInterface
      */
     public function enqueue_scripts()
     {
-        \Piggly\WooPixGateway\Vendor\wp_enqueue_media();
+        \wp_enqueue_media();
         $name = \sprintf('pgly-wps-settings-%s', $this->js_version);
-        \Piggly\WooPixGateway\Vendor\wp_enqueue_script('axios', 'https://unpkg.com/axios/dist/axios.min.js', null, '0.27.2', \true);
-        \Piggly\WooPixGateway\Vendor\wp_enqueue_script($name, Connector::plugin()->getUrl() . 'assets/vendor/js/pgly-wps-settings.js', ['axios'], $this->js_version, \true);
-        \Piggly\WooPixGateway\Vendor\wp_enqueue_style($name, Connector::plugin()->getUrl() . 'assets/vendor/css/pgly-wps-settings.min.css', null, $this->js_version, 'all');
-        \Piggly\WooPixGateway\Vendor\wp_localize_script($name, Connector::plugin()->getName(), ['ajax_url' => admin_url('admin-ajax.php'), 'x_security' => \Piggly\WooPixGateway\Vendor\wp_create_nonce(static::nonceAction()), 'plugin_url' => admin_url('admin.php?page=' . static::getSlug()), 'assets_url' => Connector::plugin()->getUrl()]);
+        \wp_enqueue_script('axios', 'https://unpkg.com/axios/dist/axios.min.js', null, '0.27.2', \true);
+        \wp_enqueue_script($name, Connector::plugin()->getUrl() . 'assets/vendor/js/pgly-wps-settings.js', ['axios'], $this->js_version, \true);
+        \wp_enqueue_style($name, Connector::plugin()->getUrl() . 'assets/vendor/css/pgly-wps-settings.min.css', null, $this->js_version, 'all');
+        \wp_localize_script($name, Connector::plugin()->getName(), ['ajax_url' => admin_url('admin-ajax.php'), 'x_security' => \wp_create_nonce(static::nonceAction()), 'plugin_url' => admin_url('admin.php?page=' . static::getSlug()), 'assets_url' => Connector::plugin()->getUrl()]);
     }
     /**
      * Load page to view table listing.
