@@ -93,7 +93,7 @@ class VersionUpgrader extends Internationalizable implements Runnable
 			<p>
 				O plugin <strong>Pix por Piggly</strong> sofreu
 				uma atualização muito importante e requer a sua
-				atenção para continuar funcionando. <a href="<?=admin_url('admin.php?page='.CoreConnector::domain())?>">
+				atenção para continuar funcionando. <a href="<?php echo admin_url('admin.php?page='.CoreConnector::domain())?>">
 				Clique aqui</a> para verificar.
 			</p>
 		</div>

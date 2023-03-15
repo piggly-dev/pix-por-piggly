@@ -73,7 +73,7 @@ class Front extends Initiable
 			<div class="woocommerce">
 				<div class="woocommerce-notices-wrapper">
 					<div class="woocommerce-error" role="alert">
-						<?=CoreConnector::__translate('Nenhum pedido solicitado.')?>
+						<?php echo CoreConnector::__translate('Nenhum pedido solicitado.')?>
 					</div>
 				</div>
 			</div>
@@ -94,7 +94,7 @@ class Front extends Initiable
 			<div class="woocommerce">
 				<div class="woocommerce-notices-wrapper">
 					<div class="woocommerce-error" role="alert">
-						<?=CoreConnector::__translate('Pedido indisponível.')?>
+						<?php echo CoreConnector::__translate('Pedido indisponível.')?>
 					</div>
 				</div>
 			</div>
@@ -174,12 +174,12 @@ class Front extends Initiable
 					new PglyPixWebhook({
 						tries: 60,
 						each: 2000,
-						txid: '<?=$pix->getTxid()?>',
-						redirect_to: '<?=$order->get_checkout_order_received_url()?>',
+						txid: '<?php echo $pix->getTxid()?>',
+						redirect_to: '<?php echo $order->get_checkout_order_received_url()?>',
 						action: 'pgly_wc_piggly_pix_webhook',
 						url: wcPigglyPix.ajax_url,
 						x_security: wcPigglyPix.x_security,
-						debug: <?=CoreConnector::debugger()->isDebugging() ? 'true' : 'false';?>
+						debug: <?php echo CoreConnector::debugger()->isDebugging() ? 'true' : 'false';?>
 					});
 				});
 			</script>
@@ -267,7 +267,7 @@ class Front extends Initiable
 			<div class="woocommerce">
 			<div class="woocommerce-notices-wrapper"></div>
 				<div class="woocommerce-error" role="alert">
-					<?=CoreConnector::__translate('Nenhum pedido solicitado.')?>
+					<?php echo CoreConnector::__translate('Nenhum pedido solicitado.')?>
 				</div>
 			</div>
 			<?php
@@ -287,7 +287,7 @@ class Front extends Initiable
 			<div class="woocommerce">
 			<div class="woocommerce-notices-wrapper"></div>
 				<div class="woocommerce-error" role="alert">
-					<?=CoreConnector::__translate('Pedido indisponível.')?>
+					<?php echo CoreConnector::__translate('Pedido indisponível.')?>
 				</div>
 			</div>
 			<?php
@@ -353,8 +353,13 @@ class Front extends Initiable
 
 			$data = [];
 
-			$data['sent']      = $_SERVER['REQUEST_METHOD'] === 'POST';
-			$data['link']      = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";		
+			$SERVER_METHOD = \strtoupper(\sanitize_text_field($_SERVER['REQUEST_METHOD']));
+			$SERVER_HTTPS  = \sanitize_text_field($_SERVER['HTTPS'] ?? 'off') === 'on' ? 'https' : 'http';
+			$SERVER_HOST   = \sanitize_text_field($_SERVER['HTTP_HOST']);
+			$SERVER_URI    = \sanitize_text_field($_SERVER['REQUEST_URI']);
+
+			$data['sent']      = $SERVER_METHOD === 'POST';
+			$data['link']      = $SERVER_HTTPS . '://' . $SERVER_HOST . $SERVER_URI;		
 			$data['error']     = false;
 			$data['permalink'] = false;
 			$data['pix']       = $pix;

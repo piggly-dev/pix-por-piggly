@@ -2,8 +2,10 @@
 
 namespace Piggly\WooPixGateway\Vendor\Piggly\Wordpress;
 
+use Exception;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Interfaces\Runnable;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Initiable;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Settings\KeyingBucket;
 /**
  * The Core class startup all plugin business
  * logic, it is the first startup point to plugin.
@@ -18,7 +20,7 @@ use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Initiable;
  * @license MIT
  * @copyright 2021 Piggly Lab <dev@piggly.com.br>
  */
-abstract class Core extends Initiable
+class Core extends Initiable
 {
     /**
      * Startup plugin core with an activator,
@@ -32,13 +34,28 @@ abstract class Core extends Initiable
      * @since 1.0.3 Plugin as param.
      * @return void
      */
-    public function __construct(Plugin $plugin, Runnable $activator, Runnable $deactivator, Runnable $upgrader)
+    public function __construct(Plugin $plugin, Runnable $activator = null, Runnable $deactivator = null, Runnable $upgrader = null)
     {
         $this->plugin($plugin);
-        // Runnable classes
-        $this->activator($activator);
-        $this->deactivator($deactivator);
-        $this->upgrader($upgrader);
+        if ($activator) {
+            $this->activator($activator);
+        }
+        if ($deactivator) {
+            $this->deactivator($deactivator);
+        }
+        if ($upgrader) {
+            $this->upgrader($upgrader);
+        }
+    }
+    /**
+     * Startup method with all actions and
+     * filter to run.
+     *
+     * @since 1.0.12
+     * @return void
+     */
+    public function startup()
+    {
     }
     /**
      * Add a Runnable object as activator to
@@ -88,5 +105,83 @@ abstract class Core extends Initiable
     public function initiable(string $initiable)
     {
         $initiable::init($this->_plugin);
+    }
+    /**
+     * Init a bunch of initiable classes.
+     *
+     * @param array<string> $initiables
+     * @since 1.0.12
+     * @return void
+     */
+    public function initiables(array $initiables)
+    {
+        foreach ($initiables as $initiable) {
+            $initiable::init($this->_plugin);
+        }
+    }
+    /**
+     * Apply requirements and if all meet return true.
+     *
+     * @param string $response
+     * @param array $requirements
+     * @since 1.0.12
+     * @return bool
+     */
+    public static function requirements(string $response, array $requirements) : bool
+    {
+        try {
+            foreach ($requirements as $class => $params) {
+                $class::run($params);
+            }
+            return \true;
+        } catch (Exception $e) {
+            \add_action('admin_notices', function () use($e, $response) {
+                $html = '<div class="notice notice-error">';
+                $html .= "<p>{$response}</p>";
+                $html .= "<p>{$e->getMessage()}</p>";
+                $html .= "</div>";
+                if (isset($_GET['activate'])) {
+                    unset($_GET['activate']);
+                }
+                \deactivate_plugins(\plugin_basename(__FILE__));
+            });
+            return \false;
+        }
+    }
+    /**
+     * Create a new application core and startup it.
+     * All $options available are:
+     *
+     * plugin_file (*)
+     * version (*)
+     * db_version
+     * min_php_version
+     *
+     * activator class name
+     * deactivator class name
+     * upgrader class name
+     *
+     * @param string $domain
+     * @param string $name
+     * @param KeyingBucket|null $settings
+     * @param array $options
+     * @return Core
+     */
+    public static function create(string $domain, string $name, KeyingBucket $settings = null, array $options = [])
+    {
+        if (empty($options['plugin_file']) || empty($options['plugin_version'])) {
+            throw new Exception('Plugin __FILE__ and plugin version are both required...');
+        }
+        $plugin = (new Plugin($domain, $name . '_settings', $settings))->abspath($options['plugin_file'])->url($options['plugin_file'])->basename($options['plugin_file'])->name($name)->version($options['plugin_version'])->notices($name . '_notices');
+        if (!empty($options['db_version'])) {
+            $plugin->dbVersion($options['db_version']);
+        }
+        if (!empty($options['db_version'])) {
+            $plugin->minPhpVersion($options['db_version']);
+        }
+        $core = new Core($plugin, $options['activator'] ? new $options['activator']($plugin) : null, $options['deactivator'] ? new $options['deactivator']($plugin) : null, $options['upgrader'] ? new $options['upgrader']($plugin) : null);
+        Connector::setInstance($core);
+        $core->startup();
+        return $core;
     }
 }

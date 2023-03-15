@@ -59,10 +59,13 @@ class ReceiptProcessor
 	 */
 	protected function new ( PixEntity $pix ) : ?array
 	{
-		$expName = \explode('.', $_FILES['pgly_pix_receipt']['name']);
+		$FILE_NAME = \sanitize_file_name($_FILES['pgly_pix_receipt']['name']);
+		$FILE_TMPNAME =  \sanitize_file_name($_FILES['pgly_pix_receipt']['tmp_name']);
+
+		$expName = \explode('.', $FILE_NAME);
 
 		// Extension
-		$pathExt = pathinfo(basename($_FILES['pgly_pix_receipt']['name']),PATHINFO_EXTENSION);
+		$pathExt = pathinfo(basename($FILE_NAME),PATHINFO_EXTENSION);
 		$nameExt = is_array( $expName ) ? $expName[count($expName)-1] : 'unknown';
 
 		// Cannot validate mime type
@@ -73,7 +76,7 @@ class ReceiptProcessor
 		try
 		{
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
-			$mime = finfo_file($finfo, $_FILES['pgly_pix_receipt']['tmp_name']);
+			$mime = finfo_file($finfo, $FILE_TMPNAME );
 			finfo_close($finfo);
 			
 			// Validate mime type
@@ -82,7 +85,7 @@ class ReceiptProcessor
 		}
 		catch ( Exception $e )
 		{ 
-			CoreConnector::debugger()->force()->error(\sprintf(CoreConnector::__translate('O usuário tentou realizar o upload, mas o arquivo não foi encontrado em `%s`. Verifique as configurações do PHP e as permissões da pasta. Verifique, ainda, a biblioteca MAGIC e a extensão file do PHP.'), $_FILES['pgly_pix_receipt']['tmp_name']));
+			CoreConnector::debugger()->force()->error(\sprintf(CoreConnector::__translate('O usuário tentou realizar o upload, mas o arquivo não foi encontrado em `%s`. Verifique as configurações do PHP e as permissões da pasta. Verifique, ainda, a biblioteca MAGIC e a extensão file do PHP.'), $FILE_TMPNAME ));
 			throw new Exception(CoreConnector::__translate('O arquivo não pode ser enviado no momento. Tente novamente mais tarde.')); 
 		}
 
@@ -92,7 +95,7 @@ class ReceiptProcessor
 			{
 				$mime = $_FILES['pgly_pix_receipt']['type'];
 				// Trust in browser, but do a system alert...
-				CoreConnector::debugger()->force()->info(\sprintf(CoreConnector::__translate('O arquivo `%s` enviado não é confiável...'), $_FILES['pgly_pix_receipt']['tmp_name']));
+				CoreConnector::debugger()->force()->info(\sprintf(CoreConnector::__translate('O arquivo `%s` enviado não é confiável...'), $FILE_TMPNAME ));
 				$mimeValidation = \in_array($mime, ['image/jpg','image/jpeg','image/png','application/pdf']);
 				$trusted = false;
 			}
@@ -125,9 +128,9 @@ class ReceiptProcessor
 		if ( !\file_exists( $uploadPath ) ) 
 		{ wp_mkdir_p($uploadPath); }
 
-		if ( !\move_uploaded_file($_FILES['pgly_pix_receipt']['tmp_name'], $file) )
+		if ( !\move_uploaded_file($FILE_TMPNAME , $file) )
 		{ 
-			CoreConnector::debugger()->force()->error(\sprintf(CoreConnector::__translate('Não foi mover o arquivo de upload de `%s` para `%s`.'), $_FILES['pgly_pix_receipt']['tmp_name'], $file));
+			CoreConnector::debugger()->force()->error(\sprintf(CoreConnector::__translate('Não foi mover o arquivo de upload de `%s` para `%s`.'), $FILE_TMPNAME , $file));
 			throw new Exception(CoreConnector::__translate('Não foi possível enviar o comprovante agora.')); 
 		}
 		

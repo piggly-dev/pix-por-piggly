@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 </h1>
 
 <div class="pgly-wps--space"></div>
-<h2 class="pgly-wps--title pgly-wps-is-5">Versão <?=CoreConnector::plugin()->getVersion();?></h2>
+<h2 class="pgly-wps--title pgly-wps-is-5">Versão <?php echo CoreConnector::plugin()->getVersion();?></h2>
 
 <div class="pgly-wps--row">
 	<div class="pgly-wps--column">
