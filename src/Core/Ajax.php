@@ -320,7 +320,7 @@ class Ajax extends Ajaxable
 			->prepare('pgly_wc_piggly_pix_admin', 'xSecurity')
 			->need_capability('manage_woocommerce');
 
-		$path  = ABSPATH.'wp-content/pix-por-piggly/';
+		$path = CoreConnector::plugin()->getAbspath().'logs/';
 		$files = [];
 		$files = glob($path.'*.log');
 

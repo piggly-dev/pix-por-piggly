@@ -26,7 +26,7 @@ $table->prepare_items();
 				request_error: 'Ocorreu um erro ao processar a requisição',
 				invalid_fields: 'Campos inválidos'
 			},
-			debug: <?=CoreConnector::debugger()->isDebugging() ? 'true' : 'false';?>
+			debug: <?php echo CoreConnector::debugger()->isDebugging() ? 'true' : 'false';?>
 		});
 	});
 </script>
@@ -62,7 +62,7 @@ $table->prepare_items();
 	</div>
 </div>
 
-<form method="GET" action="<?=admin_url('admin.php?page='.CoreConnector::domain().'-orders')?>">
+<form method="GET" action="<?php echo admin_url('admin.php?page='.CoreConnector::domain().'-orders')?>">
 	<div class="pgly-wps--row">
 		<div class="pgly-wps--column pgly-wps-col--6">
 			<div class="pgly-wps--field">
@@ -78,11 +78,11 @@ $table->prepare_items();
 					name="status"
 					id="status">
 					<option value="any">Todos os Status</option>
-					<option value="<?=PixEntity::STATUS_CREATED;?>">Aguardando Pagamento</option>
-					<option value="<?=PixEntity::STATUS_WAITING;?>">Comprovante Enviado</option>
-					<option value="<?=PixEntity::STATUS_EXPIRED;?>">Expirado</option>
-					<option value="<?=PixEntity::STATUS_PAID;?>">Pago</option>
-					<option value="<?=PixEntity::STATUS_CANCELLED;?>">Cancelado</option>
+					<option value="<?php echo PixEntity::STATUS_CREATED;?>">Aguardando Pagamento</option>
+					<option value="<?php echo PixEntity::STATUS_WAITING;?>">Comprovante Enviado</option>
+					<option value="<?php echo PixEntity::STATUS_EXPIRED;?>">Expirado</option>
+					<option value="<?php echo PixEntity::STATUS_PAID;?>">Pago</option>
+					<option value="<?php echo PixEntity::STATUS_CANCELLED;?>">Cancelado</option>
 				</select>
 			</div>
 		</div>

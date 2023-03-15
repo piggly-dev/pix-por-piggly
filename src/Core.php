@@ -203,7 +203,7 @@ class Core extends WordpressCore
 	 */
 	protected function logger ()
 	{
-		$path = ABSPATH.'wp-content/pix-por-piggly/';
+		$path = CoreConnector::plugin()->getAbspath().'logs/';
 
 		if ( !\is_dir($path) )
 		{ wp_mkdir_p($path); }

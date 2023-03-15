@@ -37,12 +37,12 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 		
 		<div class="pgly-wps--explorer pgly-wps-is-compact">
 			<strong>Sua versão do plugin</strong> 
-			<span><?=get_option('wc_piggly_pix_version', '?');?></span>
+			<span><?php echo get_option('wc_piggly_pix_version', '?');?></span>
 		</div>
 		
 		<div class="pgly-wps--explorer pgly-wps-is-compact">
 			<strong>Sua versão do banco de dados</strong> 
-			<span><?=get_option('wc_piggly_pix_dbversion', '?');?></span>
+			<span><?php echo get_option('wc_piggly_pix_dbversion', '?');?></span>
 		</div>
 
 		<br>

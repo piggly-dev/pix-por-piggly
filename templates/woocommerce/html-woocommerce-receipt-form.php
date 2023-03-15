@@ -16,35 +16,35 @@ if ( $sent && $error === false ) :
 	</div>
 
 	<?php if ( $permalink !== false ) : ?>
-		<script>setTimeout(function () { location.href="<?=$permalink?>"; }, 1500);</script>
+		<script>setTimeout(function () { location.href="<?php echo $permalink?>"; }, 1500);</script>
 	<?php endif; ?>
 <?php else : ?>
 	<?php if ( $error !== false ) : ?>
 	<div class="woocommerce">
 	<div class="woocommerce-notices-wrapper"></div>
 		<ul class="woocommerce-error" role="alert">
-			<?=$error;?>	
+			<?php echo $error;?>	
 		</ul>
 	</div>
 	<?php endif ?>
 	<div id="pix-por-piggly">
-		<form class="pix-por-piggly-form" method="POST" action="<?=$link?>" enctype="multipart/form-data">
+		<form class="pix-por-piggly-form" method="POST" action="<?php echo $link?>" enctype="multipart/form-data">
 			<div class="pix-por-piggly--item">
 				<span class="pix-por-piggly--label">Número do Pedido</span>
 				<span class="pix-por-piggly--data">
-					<span><?=$pix->getOrder()->get_order_number();?></span>
+					<span><?php echo $pix->getOrder()->get_order_number();?></span>
 				</span>
 			</div>
 			<div class="pix-por-piggly--item">
 				<span class="pix-por-piggly--label">E-mail Associado</span>
 				<span class="pix-por-piggly--data">
-					<span><?=$pix->getOrder()->get_billing_email();?></span>
+					<span><?php echo $pix->getOrder()->get_billing_email();?></span>
 				</span>
 			</div>
 			<div class="pix-por-piggly--item">
 				<span class="pix-por-piggly--label">Identificador Pix</span>
 				<span class="pix-por-piggly--data">
-					<span><?=$pix->getTxid();?></span>
+					<span><?php echo $pix->getTxid();?></span>
 				</span>
 			</div>
 				
@@ -54,7 +54,7 @@ if ( $sent && $error === false ) :
 				<p class="pix-por-piggly--description">Anexe uma imagem JPG, PNG ou um arquivo PDF.</p>
 			</div>
 
-			<input type="hidden" name="pgly_pix_nonce" value="<?=$_nonce?>" />
+			<input type="hidden" name="pgly_pix_nonce" value="<?php echo $_nonce?>" />
 			<input type="submit" value="Enviar Comprovante"/>
 		</form>
 	</div>

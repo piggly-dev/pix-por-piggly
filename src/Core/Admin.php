@@ -347,7 +347,7 @@ class Admin extends Initiable
 			<p>
 				O <strong>Modo Debug</strong> do plugin <strong>Pix por Piggly</strong>
 				está ativado, só mantenha este modo ativado para testes ou detecções de erros.
-				<a href="<?=admin_url('admin.php?page='.$this->_plugin->getDomain())?>">
+				<a href="<?php echo admin_url('admin.php?page='.$this->_plugin->getDomain())?>">
 				Clique aqui</a> para ir para as configurações do plugin.
 			</p>
 		</div>
