@@ -17,10 +17,10 @@ echo "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n";
 echo esc_html( wp_strip_all_tags( $email_heading ) );
 echo "\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 
-echo sprintf( esc_html__( 'Olá %s,', $domain ), esc_html( $order->get_billing_first_name() ) ) . "\n\n";
-echo sprintf( esc_html__( 'O pagamento do seu pedido #%s irá expirar em %s e o seu Pix ainda não foi confirmado.', $domain ), esc_html( $order->get_order_number() ), $pix->getExpiresAt()->format('d/m/Y H:i:s') ) . "\n\n";
-echo sprintf(__( 'Caso você já tenha pago seu pedido, <a href="%s">clique aqui</a> para enviar o comprovante e continuar com o processo de aprovação do pedido.', $domain ), Endpoints::getReceiptUrl($order)) . "\n\n";
-echo sprintf(__( 'Ou se preferir, <a href="%s">clique aqui</a> para visualizar o Pix e efetuar um novo pagamento.', $domain ), Endpoints::getPaymentUrl($order)) . "\n\n";
+echo sprintf( esc_html__( 'Olá %s,', 'wc-piggly-pix' ), esc_html( $order->get_billing_first_name() ) ) . "\n\n";
+echo sprintf( esc_html__( 'O pagamento do seu pedido #%s irá expirar em %s e o seu Pix ainda não foi confirmado.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ), $pix->getExpiresAt()->format('d/m/Y H:i:s') ) . "\n\n";
+echo sprintf(__( 'Caso você já tenha pago seu pedido, <a href="%s">clique aqui</a> para enviar o comprovante e continuar com o processo de aprovação do pedido.', 'wc-piggly-pix' ), Endpoints::getReceiptUrl($order)) . "\n\n";
+echo sprintf(__( 'Ou se preferir, <a href="%s">clique aqui</a> para visualizar o Pix e efetuar um novo pagamento.', 'wc-piggly-pix' ), Endpoints::getPaymentUrl($order)) . "\n\n";
 
 echo "\n\n----------------------------------------\n\n";
 

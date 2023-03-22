@@ -104,7 +104,7 @@ if ( !empty(($get_file = \filter_input( INPUT_POST, 'log_path', FILTER_SANITIZE_
 
 <div class="pgly-wps--row">
 	<div class="pgly-wps--column">
-		<h3 class="pgly-wps--title"><?php echo $curr_file['label']?>)</h3>
+		<h3 class="pgly-wps--title"><?php echo esc_html($curr_file['label'])?>)</h3>
 
 		<div class="pgly-wps--logger">
 			<pre><?php readfile($curr_file['path']); ?></pre>

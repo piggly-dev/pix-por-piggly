@@ -16,7 +16,7 @@ echo esc_html( wp_strip_all_tags( $email_heading ) );
 echo "\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 
 echo "Olá,\n\n";
-echo sprintf( esc_html__( 'O pagamento do pedido #%s via Pix no valor de %s foi concluído com sucesso.', $domain ), esc_html( $order->get_order_number() ), \wc_price($pix->getAmount()) ) . "\n\n";
+echo sprintf( esc_html__( 'O pagamento do pedido #%s via Pix no valor de %s foi concluído com sucesso.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ), \wc_price($pix->getAmount()) ) . "\n\n";
 
 echo "\n\n----------------------------------------\n\n";
 

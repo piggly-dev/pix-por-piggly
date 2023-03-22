@@ -108,6 +108,14 @@ class PixEntity
 	 * @var string
 	 * @since 2.0.0
 	 */
+	protected $txid = null;
+
+	/**
+	 * Pix id.
+	 *
+	 * @var string
+	 * @since 2.0.0
+	 */
 	protected $pixid = null;
 
 	/**
