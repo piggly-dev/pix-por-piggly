@@ -16,8 +16,8 @@ echo esc_html( wp_strip_all_tags( $email_heading ) );
 echo "\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 
 echo "Olá,\n\n";
-echo sprintf( esc_html__( 'O consumidor enviou o comprovante de pagamento para o pedido #%s.', $domain ), esc_html( $order->get_order_number() ) ) . "\n\n";
-echo sprintf(__( '<a href="%s">Clique aqui</a> para visualizar o comprovante', $domain ), $order->get_edit_order_url()) . "\n\n";
+echo sprintf( esc_html__( 'O consumidor enviou o comprovante de pagamento para o pedido #%s.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ) ) . "\n\n";
+echo sprintf(__( '<a href="%s">Clique aqui</a> para visualizar o comprovante', 'wc-piggly-pix' ), $order->get_edit_order_url()) . "\n\n";
 
 echo "\n\n----------------------------------------\n\n";
 

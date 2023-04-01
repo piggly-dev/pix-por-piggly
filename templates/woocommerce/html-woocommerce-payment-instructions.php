@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 					Data de Expiração
 				</span>
 				<span class="pix-por-piggly--data">
-					<?php echo $pix->getExpiresAt()->format('d/m/Y H:i:s')?>
+					<?php echo ($pix->getExpiresAt()->format('d/m/Y H:i:s'))?>
 				</span>
 				<?php endif; ?>
 			</div>
@@ -89,7 +89,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 				Leia o <strong>QRCode</strong> abaixo com o aplicativo
 				<strong>do seu banco</strong> e realize o pagamento do Pix:
 			</p>
-			<img src="<?php echo $pix->getQrCode()['url'];?>"/>
+			<img src="<?php echo esc_url($pix->getQrCode()['url']);?>"/>
 		</div>
 	</div>
 	<?php endif; ?>
@@ -112,12 +112,12 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 			</p>
 			<div class="pix-por-piggly--item">
 				<span class="pix-por-piggly--data">
-					<span><?php echo $pix->getBrCode()?></span>
+					<span><?php echo esc_html($pix->getBrCode())?></span>
 				</span>
 				<button
 					id="pix-copy-pix"
 					class="pix-por-piggly--copy"
-					onclick="pixCopyText('<?php echo $pix->getBrCode()?>', 'pix-copy-pix');">
+					onclick="pixCopyText('<?php echo esc_html($pix->getBrCode())?>', 'pix-copy-pix');">
 					Copiar Pix
 				</button>
 			</div>
@@ -153,18 +153,18 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 					Para a Chave Pix
 				</span>
 				<span class="pix-por-piggly--data">
-					<span><?php echo $pix->getPixKeyValue()?></span>
+					<span><?php echo esc_html($pix->getPixKeyValue())?></span>
 				</span>
 				<span class="pix-por-piggly--label">
 					Tipo da Chave
 				</span>
 				<span class="pix-por-piggly--data">
-					<span><?php echo $pix->getPixKeyAlias()?></span>
+					<span><?php echo esc_html($pix->getPixKeyAlias())?></span>
 				</span>
 				<button
 					id="pix-copy-key"
 					class="pix-por-piggly--copy"
-					onclick="pixCopyText('<?php echo $pix->getPixKeyValue()?>', 'pix-copy-key');">
+					onclick="pixCopyText('<?php echo esc_html($pix->getPixKeyValue())?>', 'pix-copy-key');">
 					Copiar Chave
 				</button>
 			</div>

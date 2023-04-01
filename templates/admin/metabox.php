@@ -35,9 +35,9 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 			<button 
 				class="pgly-wps--button pgly-async--behaviour pgly-wps-is-primary"
 				data-action="pgly_wc_piggly_pix_admin_cron_process"
-				data-response-container="woo-bdm-gateway-tx-<?php echo $index;?>"
+				data-response-container="woo-bdm-gateway-tx-<?php echo esc_attr($index);?>"
 				data-refresh="true"
-				data-tx="<?php echo $pix->getTxid();?>">
+				data-tx="<?php echo esc_attr($pix->getTxid());?>">
 				Verificar Pagamento
 				<svg 
 					class="pgly-wps--spinner pgly-wps-is-white"
@@ -46,7 +46,7 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 				</svg>
 			</button>
 			
-			<div class="pgly-wps--response" id="pgly-pix-por-piggly-tx-<?php echo $index;?>"></div>
+			<div class="pgly-wps--response" id="pgly-pix-por-piggly-tx-<?php echo esc_attr($index);?>"></div>
 			<div class="pgly-wps--space"></div>
 
 			<script>
@@ -68,7 +68,7 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 	<?php endif; ?>
 	<?php if ( !empty($pix->getQrCode()['url']) ) : ?>
 	<div>
-		<img style="max-width:100%; height: auto;" src="<?php echo $pix->getQrCode()['url'];?>" alt="QR Code de Pagamento"/>
+		<img style="max-width:100%; height: auto;" src="<?php echo esc_url($pix->getQrCode()['url']);?>" alt="QR Code de Pagamento"/>
 	</div>
 	<?php endif; ?>
 	
@@ -84,27 +84,27 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Identificador</strong>
-		<span><?php echo $pix->getTxid();?></span>
+		<span><?php echo esc_html($pix->getTxid());?></span>
 	</div>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Nome do Titular do Pix</strong>
-		<span><?php echo $pix->getMerchantName();?></span>
+		<span><?php echo esc_html($pix->getMerchantName());?></span>
 	</div>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Cidade do Titular do Pix</strong>
-		<span><?php echo $pix->getMerchantCity();?></span>
+		<span><?php echo esc_html($pix->getMerchantCity());?></span>
 	</div>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Banco</strong>
-		<span>CÓDIGO <?php echo $pix->getBank();?></span>
+		<span>CÓDIGO <?php echo esc_html($pix->getBank());?></span>
 	</div>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Status</strong>
-		<div style="margin-top: 4px" class="pgly-wps--badge pgly-wps-is-<?php echo $pix->getStatusColor()?>"><?php echo $pix->getStatusLabel();?></div>
+		<div style="margin-top: 4px" class="pgly-wps--badge pgly-wps-is-<?php echo esc_attr($pix->getStatusColor())?>"><?php echo esc_html($pix->getStatusLabel());?></div>
 	</div>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Chave Pix</strong>
-		<span><?php echo $pix->getPixKeyValue();?> (<?php echo Parser::getAlias($pix->getPixKeyType());?>)</span>
+		<span><?php echo esc_html($pix->getPixKeyValue());?> (<?php echo esc_html(Parser::getAlias($pix->getPixKeyType()));?>)</span>
 	</div>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Valor do Pix</strong>
@@ -118,7 +118,7 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 	<?php endif; ?>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Pix Copia & Cola</strong>
-		<span><?php echo $pix->getBrCode();?></span>
+		<span><?php echo esc_html($pix->getBrCode());?></span>
 	</div>
 
 	<?php if ( $pix->isStatus(PixEntity::STATUS_CREATED) && !empty($pix->getExpiresAt()) ) : ?>
@@ -131,7 +131,7 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 	<?php if ( !$pix->isType(PixEntity::TYPE_STATIC) ) : ?>
 		<div class="pgly-wps--explorer pgly-wps-is-compact">
 			<strong>ID do Pagamento</strong>
-			<span><?php echo $pix->getE2eid() ?? $order->get_transaction_id() ?? 'Não Processado';?></span>
+			<span><?php echo esc_html($pix->getE2eid() ?? $order->get_transaction_id() ?? 'Não Processado');?></span>
 		</div>
 	<?php endif; ?>
 
@@ -140,11 +140,11 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 		<h4 style="text-align: center" class="pgly-wps--title pgly-wps-is-8">Comprovante Pix</h4>
 		<div class="pgly-wps--explorer pgly-wps-is-compact">
 			<strong>Verificação do Arquivo</strong>
-			<span><?php echo $pix->getReceipt()['trusted'] ? 'Arquivo Verificado' : 'O arquivo não pode ser verificado';?></span>
+			<span><?php echo esc_html($pix->getReceipt()['trusted'] ? 'Arquivo Verificado' : 'O arquivo não pode ser verificado');?></span>
 		</div>
 		<a 
 			class="pgly-wps--button pgly-wps-is-success pgly-wps-is-expanded"
-			href="<?php echo $pix->getReceipt()['url'];?>"
+			href="<?php echo esc_url($pix->getReceipt()['url']);?>"
 			target="_blank">
 			Visualizar Comprovante
 		</a>

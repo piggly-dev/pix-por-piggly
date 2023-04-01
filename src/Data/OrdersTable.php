@@ -207,23 +207,23 @@ class OrdersTable extends WP_List_Table
 							<td class="column column-pix">
 								<div class="pgly-wps--row">
 									<div class="pgly-wps--column pgly-wps-col--6">
-										<div class="<?php echo $style?>">
+										<div class="<?php echo \esc_attr($style)?>">
 											<strong>ID da Transação</strong>
-											<span><?php echo $pix->getTxid();?></span>
+											<span><?php echo \esc_html($pix->getTxid());?></span>
 										</div>
-										<div class="<?php echo $style?>">
+										<div class="<?php echo \esc_attr($style)?>">
 											<strong>Tipo</strong>
-											<span><?php echo $pix->getTypeLabel();?></span>
+											<span><?php echo \esc_html($pix->getTypeLabel());?></span>
 										</div>
-										<div class="<?php echo $style?>">
+										<div class="<?php echo \esc_attr($style)?>">
 											<strong>Status</strong>
-											<div style="margin-top: 4px" class="pgly-wps--badge pgly-wps-is-<?php echo $pix->getStatusColor()?>"><?php echo $pix->getStatusLabel();?></div>
+											<div style="margin-top: 4px" class="pgly-wps--badge pgly-wps-is-<?php echo \esc_attr($pix->getStatusColor())?>"><?php echo \esc_html($pix->getStatusLabel());?></div>
 										</div>
-										<div class="<?php echo $style?>">
+										<div class="<?php echo \esc_attr($style)?>">
 											<strong>Chave Pix</strong>
-											<span><?php echo $pix->getPixKeyValue();?> (<?php echo Parser::getAlias($pix->getPixKeyType());?>)</span>
+											<span><?php echo \esc_html($pix->getPixKeyValue());?> (<?php echo Parser::getAlias($pix->getPixKeyType());?>)</span>
 										</div>
-										<div class="<?php echo $style?>">
+										<div class="<?php echo \esc_attr($style)?>">
 											<strong>Valor do Pix</strong>
 											<span><?php echo \wc_price($pix->getAmount());?></span>
 										</div>
@@ -240,20 +240,20 @@ class OrdersTable extends WP_List_Table
 										<?php if ( !empty($pix->getReceipt()['url']) ) : ?>
 										<a 
 											class="pgly-wps--button pgly-wps-is-success pgly-wps-is-regular"
-											href="<?php echo $pix->getReceipt()['url'];?>"
+											href="<?php echo \esc_url($pix->getReceipt()['url']);?>"
 											target="_blank">
 											Visualizar Comprovante
 										</a>
 										<?php endif; ?>
 									</div>
 									<div class="pgly-wps--column pgly-wps-col--3">
-										<div class="<?php echo $style?>">
+										<div class="<?php echo \esc_attr($style)?>">
 											<strong>Criado em</strong>
 											<span><?php echo $pix->getCreatedAt()->format('d/m/Y H:i:s');?></span>
 										</div>
 									</div>
 									<div class="pgly-wps--column pgly-wps-col--3">
-										<div class="<?php echo $style?>">
+										<div class="<?php echo \esc_attr($style)?>">
 											<strong>Atualizado em</strong>
 											<span><?php echo $pix->getUpdatedAt()->format('d/m/Y H:i:s');?></span>
 										</div>

@@ -327,7 +327,7 @@ class PixGateway extends WC_Payment_Gateway
 			$description = $this->get_description();
 
 			if ( $description ) 
-			{ echo wpautop( wptexturize( $description ) ); }
+			{ echo esc_html( $description ); }
 
 			return;
 		}

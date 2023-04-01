@@ -87,7 +87,7 @@ function pgly_pix_gateway_requirements () : bool
 				?>
 				<div class="notice notice-error">
 					<p>Não é possível habilitar o plugin <strong>Pix por Piggly</strong> no momento, certifique-se de atender os seguintes requisitos:</p>
-					<p><?php echo $e->getMessage();?>.</p>
+					<p><?php echo esc_html($e->getMessage());?>.</p>
 				</div>
 				<?php
 

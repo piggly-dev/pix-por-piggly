@@ -18,9 +18,9 @@ if ( !defined('ABSPATH') ) { exit; }
 
 <?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
-<p><?php printf( esc_html__( 'Olá %s,', $domain ), esc_html( $order->get_billing_first_name() ) ); ?></p>
-<p><?php printf( esc_html__( 'O pagamento do seu pedido #%s expirou em %s e o seu pedido foi cancelado.', $domain ), esc_html( $order->get_order_number() ), $pix->getExpiresAt()->format('d/m/Y H:i:s') ); ?></p>
-<p><?php __( 'Caso você tenha pago seu pedido, entre em contato com o suporte.', $domain ); ?></p>
+<p><?php printf( esc_html__( 'Olá %s,', 'wc-piggly-pix' ), esc_html( $order->get_billing_first_name() ) ); ?></p>
+<p><?php printf( esc_html__( 'O pagamento do seu pedido #%s expirou em %s e o seu pedido foi cancelado.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ), $pix->getExpiresAt()->format('d/m/Y H:i:s') ); ?></p>
+<p><?php __( 'Caso você tenha pago seu pedido, entre em contato com o suporte.', 'wc-piggly-pix' ); ?></p>
 
 <?php
 /**

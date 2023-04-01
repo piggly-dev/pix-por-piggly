@@ -27,9 +27,9 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 		Se você está enfrentando algum problema, siga as recomendações abaixo 👇
 		<div class="pgly-wps--notification pgly-wps-is-warning">
 			Antes de continuar é importante habilitar o <strong>Modo Debug</strong>
-			nas <a href="<?php echo $plugin_page?>">Configurações do Plugin</a>. Esse modo registrará
+			nas <a href="<?php echo esc_url($plugin_page)?>">Configurações do Plugin</a>. Esse modo registrará
 			todos os eventos e erros gerados pelo plugin nos arquivos de log localizados
-			no menu <a href="<?php echo $plugin_page?>-logs">Logs</a>.
+			no menu <a href="<?php echo esc_url($plugin_page.'-logs')?>">Logs</a>.
 		</div>
 	</div>
 </div>
@@ -60,7 +60,7 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 
 <div class="pgly-wps--row">
 	<div class="pgly-wps--column">
-		Ative o Modo Debug, reproduza o erro e acesse os <a href="<?php echo $plugin_page?>-logs">Logs</a>
+		Ative o Modo Debug, reproduza o erro e acesse os <a href="<?php echo esc_url($plugin_page.'-logs')?>">Logs</a>
 		do plugin. Depois disso, compartilhe as últimas linhas do log que estejam marcadas com 
 		<strong>ERROR</strong> no <a href="https://wordpress.org/support/plugin/pix-por-piggly/">fórum oficial do plugin</a>.
 		Caso não encontre nenhum erro, provavelmente o erro esta relacionado
@@ -82,7 +82,7 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 		Se o plugin está gerando o Pix para pagamento, não há problemas
 		com o plugin. Entretanto, como há irregularidades de leituras
 		entre bancos você deve verificar atentamente os dados que foram
-		preenchidos por você nas <a href="<?php echo $plugin_page?>">Configurações do Plugin</a>
+		preenchidos por você nas <a href="<?php echo esc_url($plugin_page)?>">Configurações do Plugin</a>
 		em <strong>Conta Pix</strong>.
 	</div>
 </div>
@@ -106,7 +106,7 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 	Tenha certeza que os dados da sua Conta Pix estão preenchidos
 	corretamente, se mesmo assim não funcionar recomendamos que
 	utilize a ferramenta <strong>Importador Pix</strong> nas
-	<a href="<?php echo $plugin_page?>">Configurações do Plugin</a> para
+	<a href="<?php echo esc_url($plugin_page)?>">Configurações do Plugin</a> para
 	extrair as informações de um código Pix válido criado
 	pelo seu banco.
 </div>

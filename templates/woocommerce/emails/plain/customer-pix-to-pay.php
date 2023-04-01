@@ -17,9 +17,9 @@ echo "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n";
 echo esc_html( wp_strip_all_tags( $email_heading ) );
 echo "\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 
-echo sprintf( esc_html__( 'Olá %s,', $domain ), esc_html( $order->get_billing_first_name() ) ) . "\n\n";
-echo esc_html__( 'Para darmos continuidade ao seu pedido, é necessário realizar o pagamento via Pix.', $domain ) . "\n\n";
-echo sprintf(__( '<a href="%s">Clique aqui</a> para realizar o pagamento.', $domain ), Endpoints::getPaymentUrl($order)) . "\n\n";
+echo sprintf( esc_html__( 'Olá %s,', 'wc-piggly-pix' ), esc_html( $order->get_billing_first_name() ) ) . "\n\n";
+echo esc_html__( 'Para darmos continuidade ao seu pedido, é necessário realizar o pagamento via Pix.', 'wc-piggly-pix' ) . "\n\n";
+echo sprintf(__( '<a href="%s">Clique aqui</a> para realizar o pagamento.', 'wc-piggly-pix' ), Endpoints::getPaymentUrl($order)) . "\n\n";
 
 echo "\n\n----------------------------------------\n\n";
 

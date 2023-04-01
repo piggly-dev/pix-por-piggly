@@ -2,7 +2,7 @@
 
 namespace Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Notices;
 
-use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Connector;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core;
 use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Notices\Entities\Notice;
 /**
  * The manager class to notices.
@@ -17,20 +17,8 @@ use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Notices\Entities\Notice;
  * @license MIT
  * @copyright 2021 Piggly Lab <dev@piggly.com.br>
  */
-class NoticeManager
+class Manager
 {
-    /**
-     * Echo notification in screen.
-     *
-     * @param string $message
-     * @param string $type
-     * @since 1.0.7
-     * @return void
-     */
-    public static function echoNotice(string $message, string $type = 'success')
-    {
-        echo "<div class=\"notice notice-{$type}\"><p>{$message}</p></div>";
-    }
     /**
      * Add a notice to admin.
      *
@@ -53,12 +41,12 @@ class NoticeManager
      */
     protected function displayTransient()
     {
-        $notices = get_transient(Connector::plugin()->getNotices()) ?? [];
+        $notices = get_transient(Core::getPlugin()->getNotices()) ?? [];
         foreach ($notices as $notice) {
             $notice = \unserialize($notice);
             echo $notice->export();
         }
-        delete_transient(Connector::plugin()->getNotices());
+        delete_transient(Core::getPlugin()->getNotices());
     }
     /**
      * Add a new notice to transient.
@@ -69,9 +57,9 @@ class NoticeManager
      */
     protected function _transient(Notice $notice)
     {
-        $notices = get_transient(Connector::plugin()->getNotices()) ?? [];
+        $notices = get_transient(Core::getPlugin()->getNotices()) ?? [];
         $notices[] = \serialize($notice);
-        set_transient(Connector::plugin()->getNotices(), $notice, 45);
+        set_transient(Core::getPlugin()->getNotices(), $notice, 45);
     }
     /**
      * Run notice immediate.

@@ -19,8 +19,8 @@ if ( !defined('ABSPATH') ) { exit; }
 <?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
 <p>Olá,</p>
-<p><?php printf( esc_html__( 'O consumidor enviou o comprovante de pagamento para o pedido #%s.', $domain ), esc_html( $order->get_order_number() ) ); ?></p>
-<p><?php printf(__( '<a href="%s">Clique aqui</a> para visualizar o comprovante', $domain ), $order->get_edit_order_url()); ?></p>
+<p><?php printf( esc_html__( 'O consumidor enviou o comprovante de pagamento para o pedido #%s.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ) ); ?></p>
+<p><?php printf(__( '<a href="%s">Clique aqui</a> para visualizar o comprovante', 'wc-piggly-pix' ), $order->get_edit_order_url()); ?></p>
 
 <?php
 /**

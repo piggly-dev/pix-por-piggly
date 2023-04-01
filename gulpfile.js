@@ -54,6 +54,8 @@ const plugin = {
 		'!**/doc',
 		'!**/docs/**',
 		'!**/docs',
+		'!**/logs/**',
+		'!**/logs',
 		'!php-scoper/**',
 		'!php-scoper',
 		'!**/node_modules/**',

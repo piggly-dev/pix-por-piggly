@@ -24,7 +24,7 @@ $data  = [];
 		data-action="pgly_wc_piggly_pix_admin_update"
 		data-response-container="pix-por-piggly--response"
 		data-refresh="true"
-		data-order="<?php echo $order->get_id();?>">
+		data-order="<?php echo esc_attr($order->get_id());?>">
 		Atualizar Versão
 		<svg 
 			class="pgly-wps--spinner pgly-wps-is-primary"
@@ -49,22 +49,22 @@ $data  = [];
 	</div>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Chave Pix</strong>
-		<span><?php echo $pix['key_value'];?></span>
+		<span><?php echo \esc_html($pix['key_value']);?></span>
 	</div>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Identificador</strong>
-		<span><?php echo $pix['identifier'];?></span>
+		<span><?php echo \esc_html($pix['identifier']);?></span>
 	</div>
 	<div class="pgly-wps--explorer pgly-wps-is-compact">
 		<strong>Pix Copia & Cola</strong>
-		<span><?php echo $pix['pix_code'];?></span>
+		<span><?php echo \esc_html($pix['pix_code']);?></span>
 	</div>
 
 	<?php
 	$receipt = $order->get_meta('_wc_piggly_pix_receipt');
 	if ( !empty($receipt) ) : ?>
 		<a 
-			href="<?php echo $receipt?>" 
+			href="<?php echo esc_url($receipt)?>" 
 			target="_blank" 
 			style="display: block; text-align: center; margin: 0 0 6px;" 
 			class="pgly-wps--button pgly-wps-is-expanded pgly-wps-is-success">

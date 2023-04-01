@@ -174,8 +174,8 @@ class Front extends Initiable
 					new PglyPixWebhook({
 						tries: 60,
 						each: 2000,
-						txid: '<?php echo $pix->getTxid()?>',
-						redirect_to: '<?php echo $order->get_checkout_order_received_url()?>',
+						txid: '<?php echo \esc_html($pix->getTxid())?>',
+						redirect_to: '<?php echo \esc_url($order->get_checkout_order_received_url())?>',
 						action: 'pgly_wc_piggly_pix_webhook',
 						url: wcPigglyPix.ajax_url,
 						x_security: wcPigglyPix.x_security,
