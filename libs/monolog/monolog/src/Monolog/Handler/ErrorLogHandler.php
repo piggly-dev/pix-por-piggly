@@ -14,7 +14,6 @@ namespace Piggly\WooPixGateway\Vendor\Monolog\Handler;
 use Piggly\WooPixGateway\Vendor\Monolog\Formatter\LineFormatter;
 use Piggly\WooPixGateway\Vendor\Monolog\Formatter\FormatterInterface;
 use Piggly\WooPixGateway\Vendor\Monolog\Logger;
-use Piggly\WooPixGateway\Vendor\Monolog\Utils;
 /**
  * Stores to PHP error_log() handler.
  *
@@ -57,7 +56,7 @@ class ErrorLogHandler extends AbstractProcessingHandler
         return new LineFormatter('[%datetime%] %channel%.%level_name%: %message% %context% %extra%');
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function write(array $record) : void
     {
@@ -67,8 +66,7 @@ class ErrorLogHandler extends AbstractProcessingHandler
         }
         $lines = \preg_split('{[\\r\\n]+}', (string) $record['formatted']);
         if ($lines === \false) {
-            $pcreErrorCode = \preg_last_error();
-            throw new \RuntimeException('Failed to preg_split formatted string: ' . $pcreErrorCode . ' / ' . Utils::pcreLastErrorMessage($pcreErrorCode));
+            throw new \RuntimeException('Failed to preg_split formatted string: ' . \preg_last_error() . ' / ' . \preg_last_error_msg());
         }
         foreach ($lines as $line) {
             \error_log($line, $this->messageType);

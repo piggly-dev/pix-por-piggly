@@ -41,7 +41,7 @@ class ElasticaFormatter extends NormalizerFormatter
         $this->type = $type;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function format(array $record)
     {

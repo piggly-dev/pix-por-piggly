@@ -56,7 +56,7 @@ class DynamoDbHandler extends AbstractProcessingHandler
         parent::__construct($level, $bubble);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function write(array $record) : void
     {
@@ -80,7 +80,7 @@ class DynamoDbHandler extends AbstractProcessingHandler
         });
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getDefaultFormatter() : FormatterInterface
     {

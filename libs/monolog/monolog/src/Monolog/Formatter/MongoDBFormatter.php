@@ -11,7 +11,6 @@ declare (strict_types=1);
  */
 namespace Piggly\WooPixGateway\Vendor\Monolog\Formatter;
 
-use MongoDB\BSON\Type;
 use MongoDB\BSON\UTCDateTime;
 use Piggly\WooPixGateway\Vendor\Monolog\Utils;
 /**
@@ -77,7 +76,7 @@ class MongoDBFormatter implements FormatterInterface
                 $array[$name] = $this->formatException($value, $nestingLevel + 1);
             } elseif (\is_array($value)) {
                 $array[$name] = $this->formatArray($value, $nestingLevel + 1);
-            } elseif (\is_object($value) && !$value instanceof Type) {
+            } elseif (\is_object($value)) {
                 $array[$name] = $this->formatObject($value, $nestingLevel + 1);
             }
         }

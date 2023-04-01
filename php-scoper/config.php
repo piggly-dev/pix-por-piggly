@@ -2,18 +2,19 @@
 
 use Symfony\Component\Finder\Finder as Finder;
 
-function pgly_phpscoper_get_list_of_files ( $path )
+function pgly_phpscoper_get_list_of_files($path)
 {
 	$files = [];
 	$dir = new RecursiveDirectoryIterator(__DIR__.'/'.$path);
-	
+
 	/** @var RecursiveDirectoryIterator $ite */
 	$ite = new RecursiveIteratorIterator($dir);
 
-	while ( $ite->valid() ) 
-	{
-		if ( $ite->isDot() || $ite->isDir() ) 
-		{ $ite->next(); continue; }
+	while ($ite->valid()) {
+		if ($ite->isDot() || $ite->isDir()) {
+			$ite->next();
+			continue;
+		}
 
 		$files[] = $ite->getPathname();
 
@@ -38,8 +39,8 @@ $config = [
 
 
 $_NAME = [
-	'*.php', 
-	'LICENSE', 
+	'*.php',
+	'LICENSE',
 	'composer.json'
 ];
 
@@ -56,7 +57,7 @@ $_EXCLUDE = [
 ];
 
 $_LIBS = [
-	'vendor/chillerlan/php-qrcode' => $_NAME, 
+	'vendor/chillerlan/php-qrcode' => $_NAME,
 	'vendor/chillerlan/php-settings-container' => $_NAME,
 	'vendor/monolog/monolog' => $_NAME,
 	'vendor/piggly/php-pix' => $_NAME,
@@ -65,26 +66,26 @@ $_LIBS = [
 ];
 
 // Finders
-foreach ( $_LIBS as $_lib => $_name )
-{ $config['finders'][] = Finder::create()->files()->ignoreVCS(true)->exclude($_EXCLUDE)->in($_lib)->name($_name); }
+foreach ($_LIBS as $_lib => $_name) {
+	$config['finders'][] = Finder::create()->files()->ignoreVCS(true)->exclude($_EXCLUDE)->in($_lib)->name($_name);
+}
 
 // Patches
 
 // Monolog
-$config['patchers'][] = function ( $file_path, $prefix, $content ) {
+$config['patchers'][] = function ($file_path, $prefix, $content) {
 	if (
-		strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/PHPConsoleHandler.php' ) !== false ||
-		strpos( $file_path, 'monolog/monolog/src/Monolog/Processor/IntrospectionProcessor.php' ) !== false ||
-		strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/BrowserConsoleHandler.php' ) !== false ||
-		strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/FilterHandler.php' ) !== false ||
-		strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/FingersCrossed/ChannelLevelActivationStrategy.php' ) !== false ||
-		strpos( $file_path, 'monolog/monolog/src/Monolog/Utils.php' ) !== false ||
-		strpos( $file_path, 'monolog/monolog/src/Monolog/Handler/TestHandler.php' ) !== false
-	) 
-	{
+		strpos($file_path, 'monolog/monolog/src/Monolog/Handler/PHPConsoleHandler.php') !== false ||
+		strpos($file_path, 'monolog/monolog/src/Monolog/Processor/IntrospectionProcessor.php') !== false ||
+		strpos($file_path, 'monolog/monolog/src/Monolog/Handler/BrowserConsoleHandler.php') !== false ||
+		strpos($file_path, 'monolog/monolog/src/Monolog/Handler/FilterHandler.php') !== false ||
+		strpos($file_path, 'monolog/monolog/src/Monolog/Handler/FingersCrossed/ChannelLevelActivationStrategy.php') !== false ||
+		strpos($file_path, 'monolog/monolog/src/Monolog/Utils.php') !== false ||
+		strpos($file_path, 'monolog/monolog/src/Monolog/Handler/TestHandler.php') !== false
+	) {
 		return str_replace(
 			'Monolog\\\\',
-			sprintf( '%s\\\\Monolog\\\\', addslashes( $prefix ) ),
+			sprintf('%s\\\\Monolog\\\\', addslashes($prefix)),
 			$content
 		);
 	}
@@ -93,12 +94,11 @@ $config['patchers'][] = function ( $file_path, $prefix, $content ) {
 };
 
 // Chillerlan
-$config['patchers'][] = function ( $file_path, $prefix, $content ) {
-	if ( strpos( $file_path, 'chillerlan/php-qrcode/public/qrcode.php' ) !== false ) 
-	{
+$config['patchers'][] = function ($file_path, $prefix, $content) {
+	if (strpos($file_path, 'chillerlan/php-qrcode/public/qrcode.php') !== false) {
 		return str_replace(
 			'chillerlan\\\\',
-			sprintf( '%s\\\\chillerlan\\\\', addslashes( $prefix ) ),
+			sprintf('%s\\\\chillerlan\\\\', addslashes($prefix)),
 			$content
 		);
 	}
@@ -107,9 +107,8 @@ $config['patchers'][] = function ( $file_path, $prefix, $content ) {
 };
 
 // Wordpress Starter Kit
-$config['patchers'][] = function ( $file_path, $prefix, $content ) {
-	if ( strpos( $file_path, 'piggly/wordpress-starter-kit' ) !== false ) 
-	{
+$config['patchers'][] = function ($file_path, $prefix, $content) {
+	if (strpos($file_path, 'piggly/wordpress-starter-kit') !== false) {
 		$content = str_replace("\\$prefix\\wp_send_json_success", '\\wp_send_json_success', $content);
 		$content = str_replace("\\$prefix\\wp_send_json_error", '\\wp_send_json_error', $content);
 		$content = str_replace("\\$prefix\\_n", '\\_n', $content);
@@ -132,6 +131,8 @@ $config['patchers'][] = function ( $file_path, $prefix, $content ) {
 		$content = str_replace("\\$prefix\\register_activation_hook", '\\register_activation_hook', $content);
 		$content = str_replace("\\$prefix\\register_deactivation_hook", '\\register_deactivation_hook', $content);
 		$content = str_replace("\\$prefix\\check_ajax_referer", '\\check_ajax_referer', $content);
+		$content = str_replace("\\$prefix\\sanitize_text_field", '\\sanitize_text_field', $content);
+		$content = str_replace("\\$prefix\\wp_unslash", '\\wp_unslash', $content);
 		$content = str_replace("\\$prefix\\current_user_can", '\\current_user_can', $content);
 		$content = str_replace("\\$prefix\\wp_verify_nonce", '\\wp_verify_nonce', $content);
 		$content = str_replace("\\$prefix\\wp_create_nonce", '\\wp_create_nonce', $content);
@@ -141,14 +142,32 @@ $config['patchers'][] = function ( $file_path, $prefix, $content ) {
 		$content = str_replace("\\$prefix\\esc_html", '\\esc_html', $content);
 		$content = str_replace("\\$prefix\\esc_url", '\\esc_url', $content);
 		$content = str_replace("\\$prefix\\esc_attr", '\\esc_attr', $content);
+		$content = str_replace("\\$prefix\\get_option", '\\get_option', $content);
+		$content = str_replace("\\$prefix\\update_option", '\\update_option', $content);
+		$content = str_replace("\\$prefix\\wp_json_encode", '\\wp_json_encode', $content);
 		$content = str_replace("\\$prefix\\ARRAY_A", '\\ARRAY_A', $content);
 		$content = str_replace("\\$prefix\\ABSPATH", '\\ABSPATH', $content);
+		$content = str_replace("\\$prefix\\DOING_AJAX", '\\DOING_AJAX', $content);
+		$content = str_replace("\\$prefix\\WP_DEBUG", '\\WP_DEBUG', $content);
+		$content = str_replace("\\$prefix\\SCRIPT_DEBUG", '\\SCRIPT_DEBUG', $content);
 		$content = str_replace("\\$prefix\\wp_enqueue_media", '\\wp_enqueue_media', $content);
 		$content = str_replace("\\$prefix\\wp_enqueue_script", '\\wp_enqueue_script', $content);
 		$content = str_replace("\\$prefix\\wp_enqueue_style", '\\wp_enqueue_style', $content);
 		$content = str_replace("\\$prefix\\wp_localize_script", '\\wp_localize_script', $content);
 		$content = str_replace("\\$prefix\\deactivate_plugins", '\\deactivate_plugins', $content);
 		$content = str_replace("\\$prefix\\plugin_basename", '\\plugin_basename', $content);
+		$content = str_replace("\\$prefix\\is_plugin_active", '\\is_plugin_active', $content);
+		$content = str_replace("\\$prefix\\apply_filters", '\\apply_filters', $content);
+		$content = str_replace("\\$prefix\\get_bloginfo", '\\get_bloginfo', $content);
+		$content = str_replace("\\$prefix\\wp_remote_get", '\\wp_remote_get', $content);
+		$content = str_replace("\\$prefix\\is_wp_error", '\\is_wp_error', $content);
+		$content = str_replace("\\$prefix\\wp_remote_retrieve_response_code", '\\wp_remote_retrieve_response_code', $content);
+		$content = str_replace("\\$prefix\\wp_remote_retrieve_body", '\\wp_remote_retrieve_body', $content);
+		$content = str_replace("\\$prefix\\DAY_IN_SECONDS", '\\DAY_IN_SECONDS', $content);
+		$content = str_replace("\\$prefix\\wp_remote_retrieve_body", '\\wp_remote_retrieve_body', $content);
+		$content = str_replace("\\$prefix\\plugin_dir_path", '\\plugin_dir_path', $content);
+		$content = str_replace("\\$prefix\\plugin_dir_url", '\\plugin_dir_url', $content);
+		$content = str_replace("Piggly\\WooPixGateway\\Vendor\\wpdb", 'wpdb', $content);
 		$content = str_replace("Piggly\\WooPixGateway\\Vendor\\WP_List_Table", 'WP_List_Table', $content);
 		$content = str_replace("Piggly\\\\WooPixGateway\\\\Vendor\\\\dbDelta", 'dbDelta', $content);
 		$content = str_replace("Piggly\\\\WooPixGateway\\\\Vendor\\\\WP_DEBUG", 'WP_DEBUG', $content);

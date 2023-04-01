@@ -80,7 +80,7 @@ class IntrospectionProcessor implements ProcessorInterface
         }
         $i += $this->skipStackFramesCount;
         // we should have the call source now
-        $record['extra'] = \array_merge($record['extra'], ['file' => isset($trace[$i - 1]['file']) ? $trace[$i - 1]['file'] : null, 'line' => isset($trace[$i - 1]['line']) ? $trace[$i - 1]['line'] : null, 'class' => isset($trace[$i]['class']) ? $trace[$i]['class'] : null, 'callType' => isset($trace[$i]['type']) ? $trace[$i]['type'] : null, 'function' => isset($trace[$i]['function']) ? $trace[$i]['function'] : null]);
+        $record['extra'] = \array_merge($record['extra'], ['file' => isset($trace[$i - 1]['file']) ? $trace[$i - 1]['file'] : null, 'line' => isset($trace[$i - 1]['line']) ? $trace[$i - 1]['line'] : null, 'class' => isset($trace[$i]['class']) ? $trace[$i]['class'] : null, 'function' => isset($trace[$i]['function']) ? $trace[$i]['function'] : null]);
         return $record;
     }
     /**

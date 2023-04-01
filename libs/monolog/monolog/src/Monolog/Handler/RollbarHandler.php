@@ -55,7 +55,7 @@ class RollbarHandler extends AbstractProcessingHandler
         parent::__construct($level, $bubble);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function write(array $record) : void
     {
@@ -85,14 +85,14 @@ class RollbarHandler extends AbstractProcessingHandler
         }
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function close() : void
     {
         $this->flush();
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function reset()
     {

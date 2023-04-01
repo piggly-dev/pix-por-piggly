@@ -52,7 +52,7 @@ class BufferHandler extends AbstractHandler implements ProcessableHandlerInterfa
         $this->flushOnOverflow = $flushOnOverflow;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handle(array $record) : bool
     {
@@ -95,7 +95,7 @@ class BufferHandler extends AbstractHandler implements ProcessableHandlerInterfa
         // GC'd until the end of the request
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function close() : void
     {
@@ -120,7 +120,7 @@ class BufferHandler extends AbstractHandler implements ProcessableHandlerInterfa
         }
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setFormatter(FormatterInterface $formatter) : HandlerInterface
     {
@@ -131,7 +131,7 @@ class BufferHandler extends AbstractHandler implements ProcessableHandlerInterfa
         throw new \UnexpectedValueException('The nested handler of type ' . \get_class($this->handler) . ' does not support formatters.');
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getFormatter() : FormatterInterface
     {

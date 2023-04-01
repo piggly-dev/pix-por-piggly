@@ -2,8 +2,11 @@
 
 namespace Piggly\WooPixGateway\Vendor\Piggly\Wordpress;
 
-use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Interfaces\Runnable;
-use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Initiable;
+use Exception;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Interfaces\RunnableInterface;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\AbstractInitiable;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Buckets\KeyingBucket;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Traits\HasPluginTrait;
 /**
  * The Core class startup all plugin business
  * logic, it is the first startup point to plugin.
@@ -18,75 +21,164 @@ use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Core\Scaffold\Initiable;
  * @license MIT
  * @copyright 2021 Piggly Lab <dev@piggly.com.br>
  */
-abstract class Core extends Initiable
+class Core extends AbstractInitiable
 {
+    use HasPluginTrait;
     /**
      * Startup plugin core with an activator,
      * a deactivator and a upgrader.
      *
      * @param Plugin $plugin Master plugin settings.
-     * @param Runnable $activator Run at register_activation_hook()
-     * @param Runnable $deactivator Run at register_deactivation_hook()
-     * @param Runnable $upgrader Manage updates logic.
+     * @param RunnableInterface $activator Run at register_activation_hook().
+     * @param RunnableInterface $deactivator Run at register_deactivation_hook().
+     * @param RunnableInterface $upgrader Manage updates logic.
      * @since 1.0.0
      * @since 1.0.3 Plugin as param.
      * @return void
      */
-    public function __construct(Plugin $plugin, Runnable $activator, Runnable $deactivator, Runnable $upgrader)
+    public function __construct(Plugin $plugin, RunnableInterface $activator = null, RunnableInterface $deactivator = null, RunnableInterface $upgrader = null)
     {
-        $this->plugin($plugin);
-        // Runnable classes
-        $this->activator($activator);
-        $this->deactivator($deactivator);
-        $this->upgrader($upgrader);
+        $this->setPlugin($plugin);
+        if ($activator) {
+            $this->activator($activator);
+        }
+        if ($deactivator) {
+            $this->deactivator($deactivator);
+        }
+        if ($upgrader) {
+            $this->upgrader($upgrader);
+        }
     }
     /**
-     * Add a Runnable object as activator to
+     * Startup method with all actions and
+     * filter to run.
+     *
+     * @since 1.0.12
+     * @return void
+     */
+    public function startup()
+    {
+    }
+    /**
+     * Add a RunnableInterface object as activator to
      * register_activation_hook().
      *
-     * @param Runnable $activator
+     * @param RunnableInterface $activator Activator to run.
      * @since 1.0.0
      * @return void
      */
-    public function activator(Runnable $activator)
+    public function activator(RunnableInterface $activator)
     {
-        // Plugin activation
-        register_activation_hook($this->_plugin->bucket()->get('filename'), array($activator, 'run'));
+        // Plugin activation.
+        \register_activation_hook($this->_plugin->bucket()->get('filename'), array($activator, 'run'));
     }
     /**
-     * Add a Runnable object as desactivator to
+     * Add a RunnableInterface object as deactivator to
      * register_deactivation_hook().
      *
-     * @param Runnable $desactivator
+     * @param RunnableInterface $deactivator Deactivator to run.
      * @since 1.0.0
      * @return void
      */
-    public function deactivator(Runnable $desactivator)
+    public function deactivator(RunnableInterface $deactivator)
     {
-        // Plugin desactivation
-        register_deactivation_hook($this->_plugin->bucket()->get('filename'), array($desactivator, 'run'));
+        // Plugin deactivation.
+        \register_deactivation_hook($this->_plugin->bucket()->get('filename'), array($deactivator, 'run'));
     }
     /**
-     * Add a Runnable object as the upgrader
+     * Add a RunnableInterface object as the upgrader
      * to manage updates and similar actions.
      *
-     * @param Runnable $upgrader
+     * @param RunnableInterface $upgrader Upgrader to run.
      * @since 1.0.0
      * @return void
      */
-    public function upgrader(Runnable $upgrader)
+    public function upgrader(RunnableInterface $upgrader)
     {
         $upgrader->run();
     }
     /**
-     * Init a initiable class.
+     * Apply requirements and if all meet return true.
      *
-     * @param string $initiable
-     * @since 1.0.0
-     * @return void
+     * @param string $response Message to show if requirements not meet.
+     * @param array $requirements Requirements to meet.
+     * @since 1.0.12
+     * @return bool
      */
-    public function initiable(string $initiable)
+    public static function requirements(string $response, array $requirements) : bool
     {
-        $initiable::init($this->_plugin);
+        try {
+            foreach ($requirements as $class => $params) {
+                $class::run($params);
+            }
+            return \true;
+        } catch (Exception $e) {
+            \add_action('admin_notices', function () use($e, $response) {
+                $response = \esc_html($response);
+                echo '<div class="notice notice-error">';
+                echo '<p>' . \esc_html($response) . '</p>';
+                echo '<p>' . \esc_html($e->getMessage()) . '</p>';
+                echo '</div>';
+                if (isset($_GET['activate'])) {
+                    unset($_GET['activate']);
+                }
+                \deactivate_plugins(\plugin_basename(__FILE__));
+            });
+            return \false;
+        }
+        //end try
+    }
+    /**
+     * Create a new application core and startup it.
+     * All $options available are:
+     *
+     * plugin_file (*)
+     * version (*)
+     * db_version
+     * min_php_version
+     *
+     * activator class name
+     * deactivator class name
+     * upgrader class name
+     *
+     * Plugin settings name will me $name . '_settings'.
+     * E.g.: 'my_plugin_settings'.
+     *
+     * @param string $domain Plugin domain for translations.
+     * @param string $name Plugin name for actions and filters.
+     * @param KeyingBucket|null $settings Plugin bucket of settings.
+     * @param array $options Plugin options.
+     * @since 1.0.0
+     * @throws Exception If plugin file or version are not set.
+     * @return Core
+     */
+    public static function create(string $domain, string $name, KeyingBucket $settings = null, array $options = []) : Core
+    {
+        if (empty($options['plugin_file']) || empty($options['plugin_version'])) {
+            throw new Exception('Plugin __FILE__ and plugin version are both required...');
+        }
+        $plugin = (new Plugin($domain, $name . '_settings', $settings))->changeAbsPath($options['plugin_file'])->changeUrl($options['plugin_file'])->changeBasename($options['plugin_file'])->changeName($name)->changeVersion($options['plugin_version']);
+        if (!empty($options['db_version'])) {
+            $plugin->dbVersion($options['db_version']);
+        }
+        if (!empty($options['php_version'])) {
+            $plugin->changeMinPhpVersion($options['php_version']);
+        }
+        $activator = null;
+        $deactivator = null;
+        $upgrader = null;
+        if ($options['activator'] instanceof RunnableInterface === \true) {
+            $activator = new $options['activator']($plugin);
+        }
+        if ($options['deactivator'] instanceof RunnableInterface === \true) {
+            $deactivator = new $options['deactivator']($plugin);
+        }
+        if ($options['upgrader'] instanceof RunnableInterface === \true) {
+            $upgrader = new $options['upgrader']($plugin);
+        }
+        $core = new Core($plugin, $activator, $deactivator, $upgrader);
+        Connector::setInstance($core);
+        $core->startup();
+        return $core;
     }
 }

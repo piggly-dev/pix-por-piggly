@@ -153,7 +153,7 @@ class ProcessHandler extends AbstractProcessingHandler
         \fwrite($this->pipes[0], $string);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function close() : void
     {

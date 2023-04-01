@@ -75,10 +75,10 @@ class PushoverHandler extends SocketHandler
      * @phpstan-param Level|LevelName|LogLevel::* $highPriorityLevel
      * @phpstan-param Level|LevelName|LogLevel::* $emergencyLevel
      */
-    public function __construct(string $token, $users, ?string $title = null, $level = Logger::CRITICAL, bool $bubble = \true, bool $useSSL = \true, $highPriorityLevel = Logger::CRITICAL, $emergencyLevel = Logger::EMERGENCY, int $retry = 30, int $expire = 25200, bool $persistent = \false, float $timeout = 0.0, float $writingTimeout = 10.0, ?float $connectionTimeout = null, ?int $chunkSize = null)
+    public function __construct(string $token, $users, ?string $title = null, $level = Logger::CRITICAL, bool $bubble = \true, bool $useSSL = \true, $highPriorityLevel = Logger::CRITICAL, $emergencyLevel = Logger::EMERGENCY, int $retry = 30, int $expire = 25200)
     {
         $connectionString = $useSSL ? 'ssl://api.pushover.net:443' : 'api.pushover.net:80';
-        parent::__construct($connectionString, $level, $bubble, $persistent, $timeout, $writingTimeout, $connectionTimeout, $chunkSize);
+        parent::__construct($connectionString, $level, $bubble);
         $this->token = $token;
         $this->users = (array) $users;
         $this->title = $title ?: (string) \gethostname();

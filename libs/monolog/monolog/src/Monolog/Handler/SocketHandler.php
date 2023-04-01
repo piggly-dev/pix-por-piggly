@@ -30,15 +30,15 @@ class SocketHandler extends AbstractProcessingHandler
     /** @var resource|null */
     private $resource;
     /** @var float */
-    private $timeout;
+    private $timeout = 0.0;
     /** @var float */
-    private $writingTimeout;
+    private $writingTimeout = 10.0;
     /** @var ?int */
     private $lastSentBytes = null;
-    /** @var ?int */
-    private $chunkSize;
+    /** @var int */
+    private $chunkSize = null;
     /** @var bool */
-    private $persistent;
+    private $persistent = \false;
     /** @var ?int */
     private $errno = null;
     /** @var ?string */
@@ -46,30 +46,13 @@ class SocketHandler extends AbstractProcessingHandler
     /** @var ?float */
     private $lastWritingAt = null;
     /**
-     * @param string     $connectionString  Socket connection string
-     * @param bool       $persistent        Flag to enable/disable persistent connections
-     * @param float      $timeout           Socket timeout to wait until the request is being aborted
-     * @param float      $writingTimeout    Socket timeout to wait until the request should've been sent/written
-     * @param float|null $connectionTimeout Socket connect timeout to wait until the connection should've been
-     *                                      established
-     * @param int|null   $chunkSize         Sets the chunk size. Only has effect during connection in the writing cycle
-     *
-     * @throws \InvalidArgumentException    If an invalid timeout value (less than 0) is passed.
+     * @param string $connectionString Socket connection string
      */
-    public function __construct(string $connectionString, $level = Logger::DEBUG, bool $bubble = \true, bool $persistent = \false, float $timeout = 0.0, float $writingTimeout = 10.0, ?float $connectionTimeout = null, ?int $chunkSize = null)
+    public function __construct(string $connectionString, $level = Logger::DEBUG, bool $bubble = \true)
     {
         parent::__construct($level, $bubble);
         $this->connectionString = $connectionString;
-        if ($connectionTimeout !== null) {
-            $this->validateTimeout($connectionTimeout);
-        }
-        $this->connectionTimeout = $connectionTimeout ?? (float) \ini_get('default_socket_timeout');
-        $this->persistent = $persistent;
-        $this->validateTimeout($timeout);
-        $this->timeout = $timeout;
-        $this->validateTimeout($writingTimeout);
-        $this->writingTimeout = $writingTimeout;
-        $this->chunkSize = $chunkSize;
+        $this->connectionTimeout = (float) \ini_get('default_socket_timeout');
     }
     /**
      * Connect (if necessary) and write to the socket
@@ -193,7 +176,7 @@ class SocketHandler extends AbstractProcessingHandler
     /**
      * Get current chunk size
      */
-    public function getChunkSize() : ?int
+    public function getChunkSize() : int
     {
         return $this->chunkSize;
     }
@@ -252,9 +235,6 @@ class SocketHandler extends AbstractProcessingHandler
     {
         if (!\is_resource($this->resource)) {
             throw new \LogicException('streamSetChunkSize called but $this->resource is not a resource');
-        }
-        if (null === $this->chunkSize) {
-            throw new \LogicException('streamSetChunkSize called but $this->chunkSize is not set');
         }
         return \stream_set_chunk_size($this->resource, $this->chunkSize);
     }

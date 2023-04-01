@@ -3,12 +3,12 @@
 	"description": "Implemente o Pix de uma forma simples e rápida em sua loja Woocommerce.",
 	"type": "wordpress-plugin",
 	"homepage": "https://github.com/piggly-dev/pix-por-piggly",
-	"license": "GPL-3.0-or-later",
+	"license": "GPL-2.0-or-later",
 	"minimum-stability": "stable",
 	"prefer-stable": true,
 	"config": {
-	  "preferred-install": "dist",
-	  "sort-packages": true
+		"preferred-install": "dist",
+		"sort-packages": true
 	},
 	"authors": [
 		{
@@ -34,13 +34,9 @@
 	},
 	"require": {
 		"php": ">=7.2",
-		"piggly/php-pix": "^2.0.1",
-		"piggly/wordpress-starter-kit": "1.0.6",
-		"monolog/monolog": "^2.3.0"
-	},
-	"require-dev": {
-	  "roave/security-advisories": "dev-master",
-	  "php-stubs/woocommerce-stubs": "^5.6"
+		"piggly/php-pix": "2.0.2",
+		"piggly/wordpress-starter-kit": "dev-release/v2.x.x",
+		"monolog/monolog": "2.3.0"
 	},
 	"scripts": {
 		"pre-install-cmd": "@create-libs-folder",
@@ -63,5 +59,5 @@
 			"@prefix-dependencies"
 		]
 	},
-	"version": "2.0.28"
+	"version": "3.0.0"
 }

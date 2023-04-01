@@ -5,12 +5,12 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
 Tested up to: 6.1
-Stable tag: 2.0.28
+Stable tag: 3.0.0
 License: GPLv2 or later
-Language: pt_BR 
+Language: pt_BR
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-== Pix por Piggly v2.0.0 ==
+== Pix por Piggly v3.0.0 ==
 
 **Importante**: Como a regra de versionamento de código manda, a versão 2.x será incompatível com a versão 1.x não tenha dúvidas disso. A versão 2.x foi projetada para ser totalmente compatível com as APIs do Pix, que atualizam automaticamente os pedidos, e essas APIs vão mudar sim o comportamento do Pix. Versões desatualizadas de MySQL e PHP podem ser o problema e dificultar a compatibilidade. E estamos nos esforçando para lançar micro-correções para essas necessidades. A qualquer momento é possível fazer o downgrade para a versão 1.x e continuar utilizando todos os recursos dela que já estão otimizados e não precisavam de atualização como uma versão 1.x.
 
@@ -157,10 +157,10 @@ Para permitir isso, nosso plugin segue todas as propostas do padrão EMV®1, imp
 Dessa forma, nosso plugin gera os três principais métodos de pagamento Pix:
 
 1. Um **QR Code** com o código Pix;
-2. O código Pix em formato de texto para utilização da função **Pix Copia & Cola**; 
+2. O código Pix em formato de texto para utilização da função **Pix Copia & Cola**;
 3. Pagamento manual com os dados Pix fornecidos.
 
-Nosso plugin gera de forma automática o código Pix com base nas informações do Pedido e nas informações preenchidas na configuração do plugin. 
+Nosso plugin gera de forma automática o código Pix com base nas informações do Pedido e nas informações preenchidas na configuração do plugin.
 
 > Não importa como você digita a chave Pix, ela será automaticamente convertida para os formatos apropriados, okay? Caso ela esteja inválida, de acordo com o formato escolhido, você será notificado.
 
@@ -205,7 +205,7 @@ Na página de configurações do Plugin, acesse **Pedidos** e insira um valor e 
 
 = Como conferir o pagamento Pix? =
 
-A conferência do Pix ainda é manual, assim como acontece em uma transferência eletrônica. Para facilitar, o plugin gera os Pix com um código identificador. Esse código possuí um valor estático de 25 caracteres. 
+A conferência do Pix ainda é manual, assim como acontece em uma transferência eletrônica. Para facilitar, o plugin gera os Pix com um código identificador. Esse código possuí um valor estático de 25 caracteres.
 
 Abra o pedido criado no Woocommerce e verifique o código identificador do Pix, ao abrir o aplicativo do seu banco, você poderá ver detalhes sobre o recebimento Pix e, na maioria dos bancos, o pagamento estará identificado com o código identificador do Pix.
 
@@ -266,16 +266,16 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Changelog ==
 
-= 2.0.25 = 
+= 2.0.25 =
 
 - Adição do menu "Processamento do Pix" para maior controle da cronjob e do processamento imediato do Pix.
 - Novos avisos adicionados e nomenclatura dos Pix alterada.
 
-= 2.0.24 = 
+= 2.0.24 =
 
 - Pequenas correções.
 
-= 2.0.23 = 
+= 2.0.23 =
 
 - Pequenas correções;
 - Prevenção de cancelamento automático.
@@ -574,7 +574,7 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 
 == Upgrade Notice ==
 
-= 2.0.25 = 
+= 2.0.25 =
 
 - Adição do menu "Processamento do Pix" para maior controle da cronjob e do processamento imediato do Pix.
 - Novos avisos adicionados e nomenclatura dos Pix alterada.

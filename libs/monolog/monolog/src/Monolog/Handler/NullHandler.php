@@ -40,14 +40,14 @@ class NullHandler extends Handler
         $this->level = Logger::toMonologLevel($level);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isHandling(array $record) : bool
     {
         return $record['level'] >= $this->level;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handle(array $record) : bool
     {

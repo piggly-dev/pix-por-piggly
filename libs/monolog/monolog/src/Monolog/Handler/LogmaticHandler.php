@@ -39,27 +39,27 @@ class LogmaticHandler extends SocketHandler
      *
      * @throws MissingExtensionException If SSL encryption is set to true and OpenSSL is missing
      */
-    public function __construct(string $token, string $hostname = '', string $appname = '', bool $useSSL = \true, $level = Logger::DEBUG, bool $bubble = \true, bool $persistent = \false, float $timeout = 0.0, float $writingTimeout = 10.0, ?float $connectionTimeout = null, ?int $chunkSize = null)
+    public function __construct(string $token, string $hostname = '', string $appname = '', bool $useSSL = \true, $level = Logger::DEBUG, bool $bubble = \true)
     {
         if ($useSSL && !\extension_loaded('openssl')) {
             throw new MissingExtensionException('The OpenSSL PHP extension is required to use SSL encrypted connection for LogmaticHandler');
         }
         $endpoint = $useSSL ? 'ssl://api.logmatic.io:10515' : 'api.logmatic.io:10514';
         $endpoint .= '/v1/';
-        parent::__construct($endpoint, $level, $bubble, $persistent, $timeout, $writingTimeout, $connectionTimeout, $chunkSize);
+        parent::__construct($endpoint, $level, $bubble);
         $this->logToken = $token;
         $this->hostname = $hostname;
         $this->appname = $appname;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function generateDataStream(array $record) : string
     {
         return $this->logToken . ' ' . $record['formatted'];
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getDefaultFormatter() : FormatterInterface
     {

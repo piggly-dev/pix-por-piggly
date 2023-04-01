@@ -184,7 +184,7 @@ class TestHandler extends AbstractProcessingHandler
         return \false;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function write(array $record) : void
     {

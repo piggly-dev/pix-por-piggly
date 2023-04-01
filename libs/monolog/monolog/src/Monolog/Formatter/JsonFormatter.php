@@ -36,12 +36,11 @@ class JsonFormatter extends NormalizerFormatter
     /**
      * @param self::BATCH_MODE_* $batchMode
      */
-    public function __construct(int $batchMode = self::BATCH_MODE_JSON, bool $appendNewline = \true, bool $ignoreEmptyContextAndExtra = \false, bool $includeStacktraces = \false)
+    public function __construct(int $batchMode = self::BATCH_MODE_JSON, bool $appendNewline = \true, bool $ignoreEmptyContextAndExtra = \false)
     {
         $this->batchMode = $batchMode;
         $this->appendNewline = $appendNewline;
         $this->ignoreEmptyContextAndExtra = $ignoreEmptyContextAndExtra;
-        $this->includeStacktraces = $includeStacktraces;
         parent::__construct();
     }
     /**
@@ -63,7 +62,7 @@ class JsonFormatter extends NormalizerFormatter
         return $this->appendNewline;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function format(array $record) : string
     {
@@ -85,7 +84,7 @@ class JsonFormatter extends NormalizerFormatter
         return $this->toJson($normalized, \true) . ($this->appendNewline ? "\n" : '');
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function formatBatch(array $records) : string
     {
@@ -98,12 +97,11 @@ class JsonFormatter extends NormalizerFormatter
         }
     }
     /**
-     * @return self
+     * @return void
      */
-    public function includeStacktraces(bool $include = \true) : self
+    public function includeStacktraces(bool $include = \true)
     {
         $this->includeStacktraces = $include;
-        return $this;
     }
     /**
      * Return a JSON-encoded array of records.
@@ -155,21 +153,11 @@ class JsonFormatter extends NormalizerFormatter
             }
             return $normalized;
         }
-        if (\is_object($data)) {
-            if ($data instanceof \DateTimeInterface) {
-                return $this->formatDate($data);
-            }
-            if ($data instanceof Throwable) {
-                return $this->normalizeException($data, $depth);
-            }
-            // if the object has specific json serializability we want to make sure we skip the __toString treatment below
-            if ($data instanceof \JsonSerializable) {
-                return $data;
-            }
-            if (\method_exists($data, '__toString')) {
-                return $data->__toString();
-            }
-            return $data;
+        if ($data instanceof \DateTimeInterface) {
+            return $this->formatDate($data);
+        }
+        if ($data instanceof Throwable) {
+            return $this->normalizeException($data, $depth);
         }
         if (\is_resource($data)) {
             return parent::normalize($data);

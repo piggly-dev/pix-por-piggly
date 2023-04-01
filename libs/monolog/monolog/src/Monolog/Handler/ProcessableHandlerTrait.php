@@ -28,7 +28,7 @@ trait ProcessableHandlerTrait
      */
     protected $processors = [];
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function pushProcessor(callable $callback) : HandlerInterface
     {
@@ -36,7 +36,7 @@ trait ProcessableHandlerTrait
         return $this;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function popProcessor() : callable
     {

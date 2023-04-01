@@ -41,7 +41,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
      * Minimum level for logs that are passed to handler
      *
      * @var int[]
-     * @phpstan-var array<Level, int>
+     * @phpstan-var Level[]
      */
     protected $acceptedLevels;
     /**
@@ -71,7 +71,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         }
     }
     /**
-     * @phpstan-return array<int, Level>
+     * @phpstan-return Level[]
      */
     public function getAcceptedLevels() : array
     {
@@ -99,14 +99,14 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         return $this;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isHandling(array $record) : bool
     {
         return isset($this->acceptedLevels[$record['level']]);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handle(array $record) : bool
     {
@@ -121,7 +121,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         return \false === $this->bubble;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handleBatch(array $records) : void
     {
@@ -155,7 +155,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         return $this->handler;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setFormatter(FormatterInterface $formatter) : HandlerInterface
     {
@@ -167,7 +167,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         throw new \UnexpectedValueException('The nested handler of type ' . \get_class($handler) . ' does not support formatters.');
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getFormatter() : FormatterInterface
     {

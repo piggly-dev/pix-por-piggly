@@ -24,7 +24,7 @@ use Throwable;
 class FallbackGroupHandler extends GroupHandler
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handle(array $record) : bool
     {
@@ -43,7 +43,7 @@ class FallbackGroupHandler extends GroupHandler
         return \false === $this->bubble;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handleBatch(array $records) : void
     {

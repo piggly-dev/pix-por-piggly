@@ -23,14 +23,14 @@ namespace Piggly\WooPixGateway\Vendor\Monolog\Handler;
 class NoopHandler extends Handler
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isHandling(array $record) : bool
     {
         return \true;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handle(array $record) : bool
     {

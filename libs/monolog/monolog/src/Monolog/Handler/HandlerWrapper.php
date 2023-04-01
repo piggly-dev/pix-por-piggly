@@ -41,35 +41,35 @@ class HandlerWrapper implements HandlerInterface, ProcessableHandlerInterface, F
         $this->handler = $handler;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isHandling(array $record) : bool
     {
         return $this->handler->isHandling($record);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handle(array $record) : bool
     {
         return $this->handler->handle($record);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handleBatch(array $records) : void
     {
         $this->handler->handleBatch($records);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function close() : void
     {
         $this->handler->close();
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function pushProcessor(callable $callback) : HandlerInterface
     {
@@ -80,7 +80,7 @@ class HandlerWrapper implements HandlerInterface, ProcessableHandlerInterface, F
         throw new \LogicException('The wrapped handler does not implement ' . ProcessableHandlerInterface::class);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function popProcessor() : callable
     {
@@ -90,7 +90,7 @@ class HandlerWrapper implements HandlerInterface, ProcessableHandlerInterface, F
         throw new \LogicException('The wrapped handler does not implement ' . ProcessableHandlerInterface::class);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setFormatter(FormatterInterface $formatter) : HandlerInterface
     {
@@ -101,7 +101,7 @@ class HandlerWrapper implements HandlerInterface, ProcessableHandlerInterface, F
         throw new \LogicException('The wrapped handler does not implement ' . FormattableHandlerInterface::class);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getFormatter() : FormatterInterface
     {

@@ -29,10 +29,10 @@ class WebProcessor implements ProcessorInterface
      *
      * @var array<string, string>
      */
-    protected $extraFields = ['url' => 'REQUEST_URI', 'ip' => 'REMOTE_ADDR', 'http_method' => 'REQUEST_METHOD', 'server' => 'SERVER_NAME', 'referrer' => 'HTTP_REFERER', 'user_agent' => 'HTTP_USER_AGENT'];
+    protected $extraFields = ['url' => 'REQUEST_URI', 'ip' => 'REMOTE_ADDR', 'http_method' => 'REQUEST_METHOD', 'server' => 'SERVER_NAME', 'referrer' => 'HTTP_REFERER'];
     /**
      * @param array<string, mixed>|\ArrayAccess<string, mixed>|null $serverData  Array or object w/ ArrayAccess that provides access to the $_SERVER data
-     * @param array<string, string>|array<string>|null              $extraFields Field names and the related key inside $serverData to be added (or just a list of field names to use the default configured $serverData mapping). If not provided it defaults to: [url, ip, http_method, server, referrer] + unique_id if present in server data
+     * @param array<string, string>|null                            $extraFields Field names and the related key inside $serverData to be added. If not provided it defaults to: url, ip, http_method, server, referrer
      */
     public function __construct($serverData = null, array $extraFields = null)
     {
@@ -43,22 +43,19 @@ class WebProcessor implements ProcessorInterface
         } else {
             throw new \UnexpectedValueException('$serverData must be an array or object implementing ArrayAccess.');
         }
-        $defaultEnabled = ['url', 'ip', 'http_method', 'server', 'referrer'];
         if (isset($this->serverData['UNIQUE_ID'])) {
             $this->extraFields['unique_id'] = 'UNIQUE_ID';
-            $defaultEnabled[] = 'unique_id';
         }
-        if (null === $extraFields) {
-            $extraFields = $defaultEnabled;
-        }
-        if (isset($extraFields[0])) {
-            foreach (\array_keys($this->extraFields) as $fieldName) {
-                if (!\in_array($fieldName, $extraFields)) {
-                    unset($this->extraFields[$fieldName]);
+        if (null !== $extraFields) {
+            if (isset($extraFields[0])) {
+                foreach (\array_keys($this->extraFields) as $fieldName) {
+                    if (!\in_array($fieldName, $extraFields)) {
+                        unset($this->extraFields[$fieldName]);
+                    }
                 }
+            } else {
+                $this->extraFields = $extraFields;
             }
-        } else {
-            $this->extraFields = $extraFields;
         }
     }
     /**

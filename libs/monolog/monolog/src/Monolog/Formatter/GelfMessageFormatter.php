@@ -42,10 +42,6 @@ class GelfMessageFormatter extends NormalizerFormatter
      */
     protected $maxLength;
     /**
-     * @var int
-     */
-    private $gelfVersion = 2;
-    /**
      * Translates Monolog log levels to Graylog2 log priorities.
      *
      * @var array<int, int>
@@ -55,17 +51,11 @@ class GelfMessageFormatter extends NormalizerFormatter
     private $logLevels = [Logger::DEBUG => 7, Logger::INFO => 6, Logger::NOTICE => 5, Logger::WARNING => 4, Logger::ERROR => 3, Logger::CRITICAL => 2, Logger::ALERT => 1, Logger::EMERGENCY => 0];
     public function __construct(?string $systemName = null, ?string $extraPrefix = null, string $contextPrefix = 'ctxt_', ?int $maxLength = null)
     {
-        if (!\class_exists(Message::class)) {
-            throw new \RuntimeException('Composer package graylog2/gelf-php is required to use Monolog\'s GelfMessageFormatter');
-        }
         parent::__construct('U.u');
         $this->systemName = \is_null($systemName) || $systemName === '' ? (string) \gethostname() : $systemName;
         $this->extraPrefix = \is_null($extraPrefix) ? '' : $extraPrefix;
         $this->contextPrefix = $contextPrefix;
         $this->maxLength = \is_null($maxLength) ? self::DEFAULT_MAX_LENGTH : $maxLength;
-        if (\method_exists(Message::class, 'setFacility')) {
-            $this->gelfVersion = 1;
-        }
     }
     /**
      * {@inheritDoc}
@@ -91,20 +81,16 @@ class GelfMessageFormatter extends NormalizerFormatter
         if ($len > $this->maxLength) {
             $message->setShortMessage(Utils::substr($record['message'], 0, $this->maxLength));
         }
-        if ($this->gelfVersion === 1) {
-            if (isset($record['channel'])) {
-                $message->setFacility($record['channel']);
-            }
-            if (isset($extra['line'])) {
-                $message->setLine($extra['line']);
-                unset($extra['line']);
-            }
-            if (isset($extra['file'])) {
-                $message->setFile($extra['file']);
-                unset($extra['file']);
-            }
-        } else {
-            $message->setAdditional('facility', $record['channel']);
+        if (isset($record['channel'])) {
+            $message->setFacility($record['channel']);
+        }
+        if (isset($extra['line'])) {
+            $message->setLine($extra['line']);
+            unset($extra['line']);
+        }
+        if (isset($extra['file'])) {
+            $message->setFile($extra['file']);
+            unset($extra['file']);
         }
         foreach ($extra as $key => $val) {
             $val = \is_scalar($val) || null === $val ? $val : $this->toJson($val);
@@ -124,13 +110,11 @@ class GelfMessageFormatter extends NormalizerFormatter
             }
             $message->setAdditional($this->contextPrefix . $key, $val);
         }
-        if ($this->gelfVersion === 1) {
-            /** @phpstan-ignore-next-line */
-            if (null === $message->getFile() && isset($context['exception']['file'])) {
-                if (\preg_match("/^(.+):([0-9]+)\$/", $context['exception']['file'], $matches)) {
-                    $message->setFile($matches[1]);
-                    $message->setLine($matches[2]);
-                }
+        /** @phpstan-ignore-next-line */
+        if (null === $message->getFile() && isset($context['exception']['file'])) {
+            if (\preg_match("/^(.+):([0-9]+)\$/", $context['exception']['file'], $matches)) {
+                $message->setFile($matches[1]);
+                $message->setLine($matches[2]);
             }
         }
         return $message;

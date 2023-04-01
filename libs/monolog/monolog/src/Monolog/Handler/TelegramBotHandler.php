@@ -13,7 +13,6 @@ namespace Piggly\WooPixGateway\Vendor\Monolog\Handler;
 
 use RuntimeException;
 use Piggly\WooPixGateway\Vendor\Monolog\Logger;
-use Piggly\WooPixGateway\Vendor\Monolog\Utils;
 /**
  * Handler send logs to Telegram using Telegram Bot API.
  *
@@ -37,10 +36,6 @@ class TelegramBotHandler extends AbstractProcessingHandler
      * The available values of parseMode according to the Telegram api documentation
      */
     private const AVAILABLE_PARSE_MODES = ['HTML', 'MarkdownV2', 'Markdown'];
-    /**
-     * The maximum number of characters allowed in a message according to the Telegram api documentation
-     */
-    private const MAX_MESSAGE_LENGTH = 4096;
     /**
      * Telegram bot access token provided by BotFather.
      * Create telegram bot with https://telegram.me/BotFather and use access token from it.
@@ -71,36 +66,17 @@ class TelegramBotHandler extends AbstractProcessingHandler
      */
     private $disableNotification;
     /**
-     * True - split a message longer than MAX_MESSAGE_LENGTH into parts and send in multiple messages.
-     * False - truncates a message that is too long.
-     * @var bool
-     */
-    private $splitLongMessages;
-    /**
-     * Adds 1-second delay between sending a split message (according to Telegram API to avoid 429 Too Many Requests).
-     * @var bool
-     */
-    private $delayBetweenMessages;
-    /**
-     * @param string $apiKey Telegram bot access token provided by BotFather
+     * @param string $apiKey  Telegram bot access token provided by BotFather
      * @param string $channel Telegram channel name
-     * @param bool $splitLongMessages Split a message longer than MAX_MESSAGE_LENGTH into parts and send in multiple messages
-     * @param bool $delayBetweenMessages Adds delay between sending a split message according to Telegram API
-     * @throws MissingExtensionException
      */
-    public function __construct(string $apiKey, string $channel, $level = Logger::DEBUG, bool $bubble = \true, string $parseMode = null, bool $disableWebPagePreview = null, bool $disableNotification = null, bool $splitLongMessages = \false, bool $delayBetweenMessages = \false)
+    public function __construct(string $apiKey, string $channel, $level = Logger::DEBUG, bool $bubble = \true, string $parseMode = null, bool $disableWebPagePreview = null, bool $disableNotification = null)
     {
-        if (!\extension_loaded('curl')) {
-            throw new MissingExtensionException('The curl extension is needed to use the TelegramBotHandler');
-        }
         parent::__construct($level, $bubble);
         $this->apiKey = $apiKey;
         $this->channel = $channel;
         $this->setParseMode($parseMode);
         $this->disableWebPagePreview($disableWebPagePreview);
         $this->disableNotification($disableNotification);
-        $this->splitLongMessages($splitLongMessages);
-        $this->delayBetweenMessages($delayBetweenMessages);
     }
     public function setParseMode(string $parseMode = null) : self
     {
@@ -121,28 +97,7 @@ class TelegramBotHandler extends AbstractProcessingHandler
         return $this;
     }
     /**
-     * True - split a message longer than MAX_MESSAGE_LENGTH into parts and send in multiple messages.
-     * False - truncates a message that is too long.
-     * @param bool $splitLongMessages
-     * @return $this
-     */
-    public function splitLongMessages(bool $splitLongMessages = \false) : self
-    {
-        $this->splitLongMessages = $splitLongMessages;
-        return $this;
-    }
-    /**
-     * Adds 1-second delay between sending a split message (according to Telegram API to avoid 429 Too Many Requests).
-     * @param bool $delayBetweenMessages
-     * @return $this
-     */
-    public function delayBetweenMessages(bool $delayBetweenMessages = \false) : self
-    {
-        $this->delayBetweenMessages = $delayBetweenMessages;
-        return $this;
-    }
-    /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handleBatch(array $records) : void
     {
@@ -175,16 +130,6 @@ class TelegramBotHandler extends AbstractProcessingHandler
      */
     protected function send(string $message) : void
     {
-        $messages = $this->handleMessageLength($message);
-        foreach ($messages as $key => $msg) {
-            if ($this->delayBetweenMessages && $key > 0) {
-                \sleep(1);
-            }
-            $this->sendCurl($msg);
-        }
-    }
-    protected function sendCurl(string $message) : void
-    {
         $ch = \curl_init();
         $url = self::BOT_API . $this->apiKey . '/SendMessage';
         \curl_setopt($ch, \CURLOPT_URL, $url);
@@ -199,18 +144,5 @@ class TelegramBotHandler extends AbstractProcessingHandler
         if ($result['ok'] === \false) {
             throw new RuntimeException('Telegram API error. Description: ' . $result['description']);
         }
-    }
-    /**
-     * Handle a message that is too long: truncates or splits into several
-     * @param string $message
-     * @return string[]
-     */
-    private function handleMessageLength(string $message) : array
-    {
-        $truncatedMarker = ' (...truncated)';
-        if (!$this->splitLongMessages && \strlen($message) > self::MAX_MESSAGE_LENGTH) {
-            return [Utils::substr($message, 0, self::MAX_MESSAGE_LENGTH - \strlen($truncatedMarker)) . $truncatedMarker];
-        }
-        return \str_split($message, self::MAX_MESSAGE_LENGTH);
     }
 }

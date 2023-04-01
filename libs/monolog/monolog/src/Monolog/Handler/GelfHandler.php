@@ -36,7 +36,7 @@ class GelfHandler extends AbstractProcessingHandler
         $this->publisher = $publisher;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function write(array $record) : void
     {

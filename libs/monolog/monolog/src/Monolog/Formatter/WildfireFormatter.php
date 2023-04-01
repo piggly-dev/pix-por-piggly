@@ -39,7 +39,7 @@ class WildfireFormatter extends NormalizerFormatter
         $this->removeJsonEncodeOption(\JSON_UNESCAPED_UNICODE);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return string
      */
@@ -84,7 +84,7 @@ class WildfireFormatter extends NormalizerFormatter
         return \sprintf('%d|%s|', \strlen($json), $json);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @phpstan-return never
      */
@@ -93,7 +93,7 @@ class WildfireFormatter extends NormalizerFormatter
         throw new \BadMethodCallException('Batch formatting does not make sense for the WildfireFormatter');
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @return null|scalar|array<array|scalar|null>|object
      */

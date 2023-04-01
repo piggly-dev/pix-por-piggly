@@ -76,7 +76,7 @@ abstract class AbstractSyslogHandler extends AbstractProcessingHandler
         $this->facility = $facility;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getDefaultFormatter() : FormatterInterface
     {

@@ -16,9 +16,8 @@ use Piggly\WooPixGateway\Vendor\Monolog\Utils;
 /**
  * Logs to Cube.
  *
- * @link https://github.com/square/cube/wiki
+ * @link http://square.github.com/cube/
  * @author Wan Chen <kami@kamisama.me>
- * @deprecated Since 2.8.0 and 3.2.0, Cube appears abandoned and thus we will drop this handler in Monolog 4
  */
 class CubeHandler extends AbstractProcessingHandler
 {
@@ -95,7 +94,7 @@ class CubeHandler extends AbstractProcessingHandler
         \curl_setopt($this->httpConnection, \CURLOPT_RETURNTRANSFER, \true);
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function write(array $record) : void
     {

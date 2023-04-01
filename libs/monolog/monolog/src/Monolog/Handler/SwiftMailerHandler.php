@@ -12,7 +12,6 @@ declare (strict_types=1);
 namespace Piggly\WooPixGateway\Vendor\Monolog\Handler;
 
 use Piggly\WooPixGateway\Vendor\Monolog\Logger;
-use Piggly\WooPixGateway\Vendor\Monolog\Utils;
 use Piggly\WooPixGateway\Vendor\Monolog\Formatter\FormatterInterface;
 use Piggly\WooPixGateway\Vendor\Monolog\Formatter\LineFormatter;
 use Piggly\WooPixGateway\Vendor\Swift_Message;
@@ -23,7 +22,6 @@ use Piggly\WooPixGateway\Vendor\Swift;
  * @author Gyula Sallai
  *
  * @phpstan-import-type Record from \Monolog\Logger
- * @deprecated Since Monolog 2.6. Use SymfonyMailerHandler instead.
  */
 class SwiftMailerHandler extends MailHandler
 {
@@ -40,12 +38,11 @@ class SwiftMailerHandler extends MailHandler
     public function __construct(\Piggly\WooPixGateway\Vendor\Swift_Mailer $mailer, $message, $level = Logger::ERROR, bool $bubble = \true)
     {
         parent::__construct($level, $bubble);
-        @\trigger_error('The SwiftMailerHandler is deprecated since Monolog 2.6. Use SymfonyMailerHandler instead.', \E_USER_DEPRECATED);
         $this->mailer = $mailer;
         $this->messageTemplate = $message;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function send(string $content, array $records) : void
     {
@@ -79,8 +76,7 @@ class SwiftMailerHandler extends MailHandler
             $message = ($this->messageTemplate)($content, $records);
         }
         if (!$message instanceof Swift_Message) {
-            $record = \reset($records);
-            throw new \InvalidArgumentException('Could not resolve message as instance of Swift_Message or a callable returning it' . ($record ? Utils::getRecordMessageForException($record) : ''));
+            throw new \InvalidArgumentException('Could not resolve message as instance of Swift_Message or a callable returning it');
         }
         if ($records) {
             $subjectFormatter = $this->getSubjectFormatter($message->getSubject());

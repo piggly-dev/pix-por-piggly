@@ -17,13 +17,7 @@ final class Utils
     public static function getClass(object $object) : string
     {
         $class = \get_class($object);
-        if (\false === ($pos = \strpos($class, "@anonymous\x00"))) {
-            return $class;
-        }
-        if (\false === ($parent = \get_parent_class($class))) {
-            return \substr($class, 0, $pos + 10);
-        }
-        return $parent . '@anonymous';
+        return 'c' === $class[0] && 0 === \strpos($class, "class@anonymous\x00") ? \get_parent_class($class) . '@anonymous' : $class;
     }
     public static function substr(string $string, int $start, ?int $length = null) : string
     {
@@ -118,21 +112,6 @@ final class Utils
         return $json;
     }
     /**
-     * @internal
-     */
-    public static function pcreLastErrorMessage(int $code) : string
-    {
-        if (\PHP_VERSION_ID >= 80000) {
-            return \preg_last_error_msg();
-        }
-        $constants = \get_defined_constants(\true)['pcre'];
-        $constants = \array_filter($constants, function ($key) {
-            return \substr($key, -6) == '_ERROR';
-        }, \ARRAY_FILTER_USE_KEY);
-        $constants = \array_flip($constants);
-        return $constants[$code] ?? 'UNDEFINED_ERROR';
-    }
-    /**
      * Throws an exception according to a given code with a customized message
      *
      * @param  int               $code return code of json_last_error function
@@ -180,61 +159,12 @@ final class Utils
     {
         if (\is_string($data) && !\preg_match('//u', $data)) {
             $data = \preg_replace_callback('/[\\x80-\\xFF]+/', function ($m) {
-                return \function_exists('mb_convert_encoding') ? \mb_convert_encoding($m[0], 'UTF-8', 'ISO-8859-1') : \utf8_encode($m[0]);
+                return \utf8_encode($m[0]);
             }, $data);
             if (!\is_string($data)) {
-                $pcreErrorCode = \preg_last_error();
-                throw new \RuntimeException('Failed to preg_replace_callback: ' . $pcreErrorCode . ' / ' . self::pcreLastErrorMessage($pcreErrorCode));
+                throw new \RuntimeException('Failed to preg_replace_callback: ' . \preg_last_error() . ' / ' . \preg_last_error_msg());
             }
             $data = \str_replace(['¤', '¦', '¨', '´', '¸', '¼', '½', '¾'], ['€', 'Š', 'š', 'Ž', 'ž', 'Œ', 'œ', 'Ÿ'], $data);
         }
-    }
-    /**
-     * Converts a string with a valid 'memory_limit' format, to bytes.
-     *
-     * @param string|false $val
-     * @return int|false Returns an integer representing bytes. Returns FALSE in case of error.
-     */
-    public static function expandIniShorthandBytes($val)
-    {
-        if (!\is_string($val)) {
-            return \false;
-        }
-        // support -1
-        if ((int) $val < 0) {
-            return (int) $val;
-        }
-        if (!\preg_match('/^\\s*(?<val>\\d+)(?:\\.\\d+)?\\s*(?<unit>[gmk]?)\\s*$/i', $val, $match)) {
-            return \false;
-        }
-        $val = (int) $match['val'];
-        switch (\strtolower($match['unit'] ?? '')) {
-            case 'g':
-                $val *= 1024;
-            case 'm':
-                $val *= 1024;
-            case 'k':
-                $val *= 1024;
-        }
-        return $val;
-    }
-    /**
-     * @param array<mixed> $record
-     */
-    public static function getRecordMessageForException(array $record) : string
-    {
-        $context = '';
-        $extra = '';
-        try {
-            if ($record['context']) {
-                $context = "\nContext: " . \json_encode($record['context']);
-            }
-            if ($record['extra']) {
-                $extra = "\nExtra: " . \json_encode($record['extra']);
-            }
-        } catch (\Throwable $e) {
-            // noop
-        }
-        return "\nThe exception occurred while attempting to log: " . $record['message'] . $context . $extra;
     }
 }

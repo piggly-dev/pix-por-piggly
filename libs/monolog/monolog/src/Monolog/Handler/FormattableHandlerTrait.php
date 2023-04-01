@@ -25,7 +25,7 @@ trait FormattableHandlerTrait
      */
     protected $formatter;
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function setFormatter(FormatterInterface $formatter) : HandlerInterface
     {
@@ -33,7 +33,7 @@ trait FormattableHandlerTrait
         return $this;
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getFormatter() : FormatterInterface
     {

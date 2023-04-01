@@ -41,14 +41,14 @@ class FleepHookHandler extends SocketHandler
      * @param  string                    $token  Webhook token
      * @throws MissingExtensionException
      */
-    public function __construct(string $token, $level = Logger::DEBUG, bool $bubble = \true, bool $persistent = \false, float $timeout = 0.0, float $writingTimeout = 10.0, ?float $connectionTimeout = null, ?int $chunkSize = null)
+    public function __construct(string $token, $level = Logger::DEBUG, bool $bubble = \true)
     {
         if (!\extension_loaded('openssl')) {
             throw new MissingExtensionException('The OpenSSL PHP extension is required to use the FleepHookHandler');
         }
         $this->token = $token;
         $connectionString = 'ssl://' . static::FLEEP_HOST . ':443';
-        parent::__construct($connectionString, $level, $bubble, $persistent, $timeout, $writingTimeout, $connectionTimeout, $chunkSize);
+        parent::__construct($connectionString, $level, $bubble);
     }
     /**
      * Returns the default formatter to use with this handler
@@ -70,7 +70,7 @@ class FleepHookHandler extends SocketHandler
         $this->closeSocket();
     }
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function generateDataStream(array $record) : string
     {
