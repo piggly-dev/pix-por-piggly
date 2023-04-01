@@ -35,7 +35,7 @@
 	"require": {
 		"php": ">=7.2",
 		"piggly/php-pix": "^2.0.1",
-		"piggly/wordpress-starter-kit": "^1.0.6",
+		"piggly/wordpress-starter-kit": "1.0.6",
 		"monolog/monolog": "^2.3.0"
 	},
 	"require-dev": {

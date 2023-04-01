@@ -16,9 +16,9 @@ echo esc_html( wp_strip_all_tags( $email_heading ) );
 echo "\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 
 echo "Olá,\n\n";
-echo sprintf( esc_html__( 'Você recebeu um novo pedido #%s via Pix no valor de %s.', $domain ), esc_html( $order->get_order_number() ), \wc_price($pix->getAmount()) ) . "\n\n";
-echo sprintf( esc_html__( 'Localize no aplicativo do seu banco, se disponível, um Pix com o identificador %s.', $domain ), $pix->getTxid() ) . "\n\n";
-echo sprintf(__( '<a href="%s">Clique aqui</a> para visualizar o pedido', $domain ), $order->get_edit_order_url()) . "\n\n";
+echo sprintf( esc_html__( 'Você recebeu um novo pedido #%s via Pix no valor de %s.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ), \wc_price($pix->getAmount()) ) . "\n\n";
+echo sprintf( esc_html__( 'Localize no aplicativo do seu banco, se disponível, um Pix com o identificador %s.', 'wc-piggly-pix' ), $pix->getTxid() ) . "\n\n";
+echo sprintf(__( '<a href="%s">Clique aqui</a> para visualizar o pedido', 'wc-piggly-pix' ), $order->get_edit_order_url()) . "\n\n";
 
 echo "\n\n----------------------------------------\n\n";
 

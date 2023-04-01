@@ -15,9 +15,9 @@ echo "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n";
 echo esc_html( wp_strip_all_tags( $email_heading ) );
 echo "\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 
-echo sprintf( esc_html__( 'Olá %s,', $domain ), esc_html( $order->get_billing_first_name() ) ) . "\n\n";
-echo sprintf( esc_html__( 'O pagamento do seu pedido #%s expirou em %s e o seu pedido foi cancelado.', $domain ), esc_html( $order->get_order_number() ), $pix->getExpiresAt()->format('d/m/Y H:i:s') ) . "\n\n";
-echo sprintf(__( 'Caso você tenha pago seu pedido, entre em contato com o suporte.', $domain )) . "\n\n";
+echo sprintf( esc_html__( 'Olá %s,', 'wc-piggly-pix' ), esc_html( $order->get_billing_first_name() ) ) . "\n\n";
+echo sprintf( esc_html__( 'O pagamento do seu pedido #%s expirou em %s e o seu pedido foi cancelado.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ), $pix->getExpiresAt()->format('d/m/Y H:i:s') ) . "\n\n";
+echo sprintf(__( 'Caso você tenha pago seu pedido, entre em contato com o suporte.', 'wc-piggly-pix' )) . "\n\n";
 
 echo "\n\n----------------------------------------\n\n";
 

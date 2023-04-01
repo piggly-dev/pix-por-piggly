@@ -19,7 +19,7 @@ if ( !defined('ABSPATH') ) { exit; }
 <?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
 <p>Olá,</p>
-<p><?php printf( esc_html__( 'O pagamento do pedido #%s via Pix no valor de %s foi concluído com sucesso.', $domain ), esc_html( $order->get_order_number() ), \wc_price($pix->getAmount()) ); ?></p>
+<p><?php printf( esc_html__( 'O pagamento do pedido #%s via Pix no valor de %s foi concluído com sucesso.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ), \wc_price($pix->getAmount()) ); ?></p>
 
 <?php
 /**

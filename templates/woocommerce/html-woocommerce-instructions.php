@@ -12,7 +12,7 @@ $banner = CoreConnector::plugin()->getUrl().'assets/images/banner-'.CoreConnecto
 	{ printf('<p class="pix-por-piggly--description">%s</p>', wptexturize( $description )); }
 	?>
 	
-	<img class="pix-por-piggly--img" src="<?php echo $banner?>" title="Pague via Pix" />
+	<img class="pix-por-piggly--img" src="<?php echo esc_url($banner)?>" title="Pague via Pix" />
 	<div class="pix-por-piggly--wrapper">
 		<div class="pix-por-piggly--step" data-step="1">
 			<p>

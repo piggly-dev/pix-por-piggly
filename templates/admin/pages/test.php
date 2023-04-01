@@ -24,7 +24,7 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 		<?php if ( empty($settings->get('account')->get('key_value')) ) : ?>
 		<div class="pgly-wps--notification pgly-wps-is-warning">
 			⚠ Antes de testar o Pix, lembre-se de preencher todos
-			os dados associados a sua Conta Pix nas <a href="<?php echo $plugin_page?>">Configurações
+			os dados associados a sua Conta Pix nas <a href="<?php echo esc_attr($plugin_page)?>">Configurações
 			do Plugin</a>.
 		</div>
 		<?php else: ?>
@@ -35,7 +35,7 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 
 		<div class="pgly-wps--notification pgly-wps-is-warning">
 			⚠ Caso tenha algum problema com o processamento do Pix, acesse o menu
-			<a href="<?php echo $plugin_page.'-support'?>">Suporte</a> para saber como proceder
+			<a href="<?php echo esc_url($plugin_page.'-support')?>">Suporte</a> para saber como proceder
 			antes de enviar uma notificação aos desenvolvedores.
 		</div>
 
@@ -133,35 +133,35 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 									
 									<div class="pgly-wps--explorer pgly-wps-is-compact">
 										<strong>Banco Origem</strong> 
-										<span><?php echo empty($bank) ? 'Nenhum' : 'CÓDIGO '.$bank;?></span>
+										<span><?php echo esc_html(empty($bank) ? 'Nenhum' : 'CÓDIGO '.$bank);?></span>
 									</div>
 									<div class="pgly-wps--explorer pgly-wps-is-compact">
 										<strong>Tipo da Chave</strong> 
-										<span><?php echo Parser::getAlias($settings->get('account')->get('key_type'))?></span>
+										<span><?php echo esc_html(Parser::getAlias($settings->get('account')->get('key_type')))?></span>
 									</div>
 									<div class="pgly-wps--explorer pgly-wps-is-compact">
 										<strong>Chave</strong> 
-										<span><?php echo $settings->get('account')->get('key_value')?></span>
+										<span><?php echo esc_html($settings->get('account')->get('key_value'))?></span>
 									</div>
 									<div class="pgly-wps--explorer pgly-wps-is-compact">
 										<strong>Titular</strong> 
-										<span><?php echo $settings->get('account')->get('merchant_name')?></span>
+										<span><?php echo esc_html($settings->get('account')->get('merchant_name'))?></span>
 									</div>
 									<div class="pgly-wps--explorer pgly-wps-is-compact">
 										<strong>Cidade</strong> 
-										<span><?php echo $settings->get('account')->get('merchant_city')?></span>
+										<span><?php echo esc_html($settings->get('account')->get('merchant_city'))?></span>
 									</div>
 									<div class="pgly-wps--explorer pgly-wps-is-compact">
 										<strong>Identificador</strong> 
-										<span><?php echo $identifier?></span>
+										<span><?php echo esc_html($identifier)?></span>
 									</div>
 									<div class="pgly-wps--explorer pgly-wps-is-compact">
 										<strong>Valor</strong> 
-										<span><?php echo $amount?></span>
+										<span><?php echo esc_html($amount)?></span>
 									</div>
 									<div class="pgly-wps--explorer pgly-wps-is-compact">
 										<strong>Código Pix</strong> 
-										<span><?php echo $pix->getPixCode()?></span>
+										<span><?php echo esc_html($pix->getPixCode())?></span>
 									</div>
 								</div>
 								<div class="pgly-wps--column pgly-wps-col--6">
@@ -175,11 +175,11 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 											<h4 class="pgly-wps--title pgly-wps-is-7">Whatsapp</h4>
 											<div class="pgly-wps--explorer pgly-wps-is-compact">
 												<strong>Link</strong> 
-												<span><?php echo $link?> (<a href="<?php echo $link?>" target="_blank">Abrir Link</a>)</span>
+												<span><?php echo esc_url($link)?> (<a href="<?php echo esc_url($link)?>" target="_blank">Abrir Link</a>)</span>
 											</div>
 											<div class="pgly-wps--explorer pgly-wps-is-compact">
 												<strong>Mensagem</strong> 
-												<span><?php echo $whatsapp_message?></span>
+												<span><?php echo esc_html($whatsapp_message)?></span>
 											</div>
 										<?php endif; ?>
 						
@@ -188,11 +188,11 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 											<h4 class="pgly-wps--title pgly-wps-is-7">Telegram</h4>
 											<div class="pgly-wps--explorer pgly-wps-is-compact">
 												<strong>Link</strong> 
-												<span><?php echo $link?> (<a href="<?php echo $link?>" target="_blank">Abrir Link</a>)</span>
+												<span><?php echo esc_url($link)?> (<a href="<?php echo esc_url($link)?>" target="_blank">Abrir Link</a>)</span>
 											</div>
 											<div class="pgly-wps--explorer pgly-wps-is-compact">
 												<strong>Mensagem</strong> 
-												<span><?php echo $telegram_message?></span>
+												<span><?php echo esc_html($telegram_message)?></span>
 											</div>
 										<?php endif; ?>	
 									<?php endif; ?>
@@ -210,7 +210,7 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 									<div class="pix-por-piggly--column">
 										<div class="pix-por-piggly--item">
 											<p class="pix-por-piggly--centered pix-por-piggly--space">
-												<?php echo wptexturize( $instructions ); ?>
+												<?php echo esc_html( $instructions ); ?>
 											</p>
 											
 											<span class="pix-por-piggly--label">
@@ -225,7 +225,7 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 
 								<div style="padding: 28px 0; text-align: center">
 									<?php if ( $settings->get('receipts')->get('receipt_page', true) ) : ?>
-									<a href="<?php echo $data->receipt_page_value?>" class="pix-por-piggly--button ">
+									<a href="<?php echo esc_url($data->receipt_page_value)?>" class="pix-por-piggly--button ">
 										<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9" fill="#000"/><line x1="10" x2="21" y1="14" y2="3" fill="#000"/></svg>
 										Enviar Comprovante
 									</a>
@@ -253,7 +253,7 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 											Leia o <strong>QRCode</strong> abaixo com o aplicativo
 											<strong>do seu banco</strong> e realize o pagamento do Pix:
 										</p>
-										<img src="<?php echo $pix->getQRCode();?>"/>
+										<img src="<?php echo ($pix->getQRCode());?>"/>
 									</div>
 								</div>
 								<?php endif; ?>
@@ -276,12 +276,12 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 										</p>
 										<div class="pix-por-piggly--item">
 											<span class="pix-por-piggly--data">
-												<span><?php echo $pix->getPixCode()?></span>
+												<span><?php echo ($pix->getPixCode())?></span>
 											</span>
 											<button
 												id="pix-copy-pix"
 												class="pix-por-piggly--copy"
-												onclick="pixCopyText('<?php echo $pix->getPixCode()?>', 'pix-copy-pix');">
+												onclick="pixCopyText('<?php echo ($pix->getPixCode())?>', 'pix-copy-pix');">
 												Copiar Pix
 											</button>
 										</div>
@@ -317,15 +317,15 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 												Para a Chave Pix
 											</span>
 											<span class="pix-por-piggly--data">
-												<span><?php echo $settings->get('account')->get('key_value')?></span>
+												<span><?php echo esc_html($settings->get('account')->get('key_value'))?></span>
 											</span>
 											<span class="pix-por-piggly--data">
-												<span><?php echo Parser::getAlias($settings->get('account')->get('key_type'))?></span>
+												<span><?php echo esc_html(Parser::getAlias($settings->get('account')->get('key_type')))?></span>
 											</span>
 											<button
 												id="pix-copy-key"
 												class="pix-por-piggly--copy"
-												onclick="pixCopyText('<?php echo $settings->get('account')->get('key_value')?>', 'pix-copy-key');">
+												onclick="pixCopyText('<?php echo esc_html($settings->get('account')->get('key_value'))?>', 'pix-copy-key');">
 												Copiar Chave
 											</button>
 										</div>
@@ -340,7 +340,7 @@ $plugin_page = admin_url('admin.php?page='.CoreConnector::domain());
 						{ 
 							?>
 							<div class="pgly-wps--notification pgly-wps-is-danger">
-								<strong>Um erro foi capturado, informe ao suporte: <code><?php echo $e->getMessage();?></code>
+								<strong>Um erro foi capturado, informe ao suporte: <code><?php echo esc_html($e->getMessage());?></code>
 							</div>
 							<?php
 						}

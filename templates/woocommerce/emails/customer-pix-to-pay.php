@@ -16,9 +16,9 @@ if ( !defined('ABSPATH') ) { exit; }
 
 <?php do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
-<p><?php printf( esc_html__( 'Olá %s,', $domain ), esc_html( $order->get_billing_first_name() ) ); ?></p>
-<p><?php printf( esc_html__( 'Para darmos continuidade ao seu pedido, é necessário realizar o pagamento via Pix.', $domain ), esc_html( $order->get_order_number() ) ); ?></p>
-<p><?php printf(__( '<a href="%s">Clique aqui</a> para realizar o pagamento.', $domain ), Endpoints::getPaymentUrl($order)); ?></p>
+<p><?php printf( esc_html__( 'Olá %s,', 'wc-piggly-pix' ), esc_html( $order->get_billing_first_name() ) ); ?></p>
+<p><?php printf( esc_html__( 'Para darmos continuidade ao seu pedido, é necessário realizar o pagamento via Pix.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ) ); ?></p>
+<p><?php printf(__( '<a href="%s">Clique aqui</a> para realizar o pagamento.', 'wc-piggly-pix' ), Endpoints::getPaymentUrl($order)); ?></p>
 
 <?php
 /**

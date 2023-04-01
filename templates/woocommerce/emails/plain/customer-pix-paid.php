@@ -15,9 +15,9 @@ echo "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n";
 echo esc_html( wp_strip_all_tags( $email_heading ) );
 echo "\n=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 
-echo sprintf( esc_html__( 'Olá %s,', $domain ), esc_html( $order->get_billing_first_name() ) ) . "\n\n";
-echo sprintf( esc_html__( 'O pagamento do seu pedido #%s no valor de %s foi concluído com sucesso.', $domain ), esc_html( $order->get_order_number() ), \wc_price($pix->getAmount()) ) . "\n\n";
-echo sprintf(__( '<a href="%s">Clique aqui</a> para visualizar seu pedido', $domain ), $order->get_view_order_url()) . "\n\n";
+echo sprintf( esc_html__( 'Olá %s,', 'wc-piggly-pix' ), esc_html( $order->get_billing_first_name() ) ) . "\n\n";
+echo sprintf( esc_html__( 'O pagamento do seu pedido #%s no valor de %s foi concluído com sucesso.', 'wc-piggly-pix' ), esc_html( $order->get_order_number() ), \wc_price($pix->getAmount()) ) . "\n\n";
+echo sprintf(__( '<a href="%s">Clique aqui</a> para visualizar seu pedido', 'wc-piggly-pix' ), $order->get_view_order_url()) . "\n\n";
 
 echo "\n\n----------------------------------------\n\n";
 

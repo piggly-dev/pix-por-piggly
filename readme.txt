@@ -4,7 +4,7 @@ Contributors: pigglydev, caiquearaujo
 Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 4.0
 Requires PHP: 7.2
-Tested up to: 5.8
+Tested up to: 6.1
 Stable tag: 2.0.28
 License: GPLv2 or later
 Language: pt_BR 
