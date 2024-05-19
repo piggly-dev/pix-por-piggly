@@ -3,60 +3,99 @@
 /**
  * Class QRString
  *
- * @filesource   QRString.php
  * @created      05.12.2015
- * @package      chillerlan\QRCode\Output
  * @author       Smiley <smiley@chillerlan.net>
  * @copyright    2015 Smiley
  * @license      MIT
+ *
+ * @noinspection PhpComposerExtensionStubsInspection
  */
 namespace Piggly\WooPixGateway\Vendor\chillerlan\QRCode\Output;
 
-use Piggly\WooPixGateway\Vendor\chillerlan\QRCode\QRCode;
-use function implode, is_string, json_encode;
+use function implode, is_string, json_encode, max, min, sprintf;
+use const JSON_THROW_ON_ERROR;
 /**
  * Converts the matrix data into string types
+ *
+ * @deprecated 5.0.0 this class will be removed in future versions, use one of QRStringText or QRStringJSON instead
  */
 class QRString extends QROutputAbstract
 {
     /**
-     * @var string
+     * @inheritDoc
      */
-    protected $defaultMode = QRCode::OUTPUT_STRING_TEXT;
+    public static function moduleValueIsValid($value) : bool
+    {
+        return is_string($value);
+    }
     /**
      * @inheritDoc
      */
-    protected function setModuleValues() : void
+    protected function prepareModuleValue($value) : string
     {
-        foreach ($this::DEFAULT_MODULE_VALUES as $M_TYPE => $defaultValue) {
-            $v = $this->options->moduleValues[$M_TYPE] ?? null;
-            if (!is_string($v)) {
-                $this->moduleValues[$M_TYPE] = $defaultValue ? $this->options->textDark : $this->options->textLight;
-            } else {
-                $this->moduleValues[$M_TYPE] = $v;
-            }
-        }
+        return $value;
     }
     /**
-     * @return string
+     * @inheritDoc
+     */
+    protected function getDefaultModuleValue(bool $isDark) : string
+    {
+        return $isDark ? '██' : '░░';
+    }
+    /**
+     * @inheritDoc
+     */
+    public function dump(string $file = null) : string
+    {
+        switch ($this->options->outputType) {
+            case QROutputInterface::STRING_TEXT:
+                $data = $this->text();
+                break;
+            case QROutputInterface::STRING_JSON:
+            default:
+                $data = $this->json();
+        }
+        $this->saveToFile($data, $file);
+        return $data;
+    }
+    /**
+     * string output
      */
     protected function text() : string
     {
-        $str = [];
-        foreach ($this->matrix->matrix() as $row) {
+        $lines = [];
+        $linestart = $this->options->textLineStart;
+        for ($y = 0; $y < $this->moduleCount; $y++) {
             $r = [];
-            foreach ($row as $M_TYPE) {
-                $r[] = $this->moduleValues[$M_TYPE];
+            for ($x = 0; $x < $this->moduleCount; $x++) {
+                $r[] = $this->getModuleValueAt($x, $y);
             }
-            $str[] = implode('', $r);
+            $lines[] = $linestart . implode('', $r);
         }
-        return implode($this->options->eol, $str);
+        return implode($this->eol, $lines);
     }
     /**
-     * @return string
+     * JSON output
+     *
+     * @throws \JsonException
      */
     protected function json() : string
     {
-        return json_encode($this->matrix->matrix());
+        return json_encode($this->matrix->getMatrix($this->options->jsonAsBooleans), JSON_THROW_ON_ERROR);
+    }
+    //
+    /**
+     * a little helper to create a proper ANSI 8-bit color escape sequence
+     *
+     * @see https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
+     * @see https://en.wikipedia.org/wiki/Block_Elements
+     *
+     * @codeCoverageIgnore
+     */
+    public static function ansi8(string $str, int $color, bool $background = null) : string
+    {
+        $color = max(0, min($color, 255));
+        $background = $background === \true ? 48 : 38;
+        return sprintf("\x1b[%s;5;%sm%s\x1b[0m", $background, $color, $str);
     }
 }

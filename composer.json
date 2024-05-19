@@ -7,8 +7,8 @@
 	"minimum-stability": "stable",
 	"prefer-stable": true,
 	"config": {
-	  "preferred-install": "dist",
-	  "sort-packages": true
+		"preferred-install": "dist",
+		"sort-packages": true
 	},
 	"authors": [
 		{
@@ -33,14 +33,14 @@
 		]
 	},
 	"require": {
-		"php": ">=7.2",
-		"piggly/php-pix": "^2.0.1",
+		"php": ">=8.0",
+		"piggly/php-pix": "^3.0.0",
 		"piggly/wordpress-starter-kit": "1.0.6",
-		"monolog/monolog": "^2.3.0"
+		"monolog/monolog": "^2.9.3"
 	},
 	"require-dev": {
-	  "roave/security-advisories": "dev-master",
-	  "php-stubs/woocommerce-stubs": "^5.6"
+		"roave/security-advisories": "dev-master",
+		"php-stubs/woocommerce-stubs": "^8.9.0"
 	},
 	"scripts": {
 		"pre-install-cmd": "@create-libs-folder",

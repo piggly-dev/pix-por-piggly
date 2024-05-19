@@ -13,18 +13,17 @@
 		<strong>As configurações não foram salvas.</strong>
 		Salve antes de continuar.
 	</pgly-notification>
-		
-	<div 
-		v-if="loading" 
+
+	<div
+		v-if="loading"
 		style="margin: 48px auto; display: table">
-		<PglySpinner 
+		<PglySpinner
 			color="primary"/>
 	</div>
-	<component 
-		v-else 
+	<component
+		v-else
 		:is="currentTab">
 	</component>
-
 </template>
 
 <script lang="ts">
@@ -56,6 +55,7 @@ export default defineComponent({
 	},
 
 	created () {
+		// @ts-ignore
 		this.getPluginSettings();
 	},
 
@@ -63,15 +63,15 @@ export default defineComponent({
 		return {
 			loading: true,
 			currentTab: 'global',
-			navigator: [ 
+			navigator: [
 				{
 					key: 'global',
 					label: 'Principal'
-				}, 
+				},
 				{
 					key: 'account',
 					label: 'Conta Pix'
-				}, 
+				},
 				{
 					key: 'orders',
 					label: 'Pedidos'
@@ -96,15 +96,17 @@ export default defineComponent({
 
 	methods: {
 		async getPluginSettings () : Promise<void> {
+			// @ts-ignore
 			this.loading = true;
 
 			try
-			{ 
+			{
 				store.commit.LOAD_SETTINGS(await api.getSettings());
+				// @ts-ignore
 				this.loading = false;
 			}
 			catch ( err )
-			{ 
+			{
 				console.error(err);
 
 				store.commit.ADD_TOAST({
@@ -120,6 +122,7 @@ export default defineComponent({
 		},
 
 		onChangedNavigator ( key: string ) : void {
+			// @ts-ignore
 			if ( this.isEditing )
 			{
 				store.commit.ADD_TOAST({
@@ -131,6 +134,7 @@ export default defineComponent({
 				return;
 			}
 
+			// @ts-ignore
 			this.currentTab = key;
 		}
 	}

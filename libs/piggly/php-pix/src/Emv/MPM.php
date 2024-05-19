@@ -4,7 +4,7 @@ namespace Piggly\WooPixGateway\Vendor\Piggly\Pix\Emv;
 
 /**
  * Payload to EMV MPM Format.
- * 
+ *
  * @see https://www.emvco.com/wp-content/plugins/pmpro-customizations/oy-getfile.php?u=/wp-content/uploads/documents/EMVCo-Merchant-Presented-QR-Specification-v1.1.pdf
  * @package \Piggly\Pix
  * @subpackage \Piggly\Pix\Emv
@@ -21,7 +21,7 @@ class MPM
     /**
      * All emvs fields.
      *
-     * @var array<AbstractField>
+     * @var array<Field|MultiField>
      * @since 2.0.0
      */
     protected $emvs;
@@ -34,14 +34,14 @@ class MPM
     protected $code;
     /**
      * All default EMVS.
-     * 
+     *
      * @since 2.0.0
      * @return void
      */
     public function __construct()
     {
         $this->emvs = ['00' => new Field('00', 'Payload Format Indicator', 2, \true, '01'), '01' => new Field('01', 'Point of Initiation Method', 2, \false, '11'), '26' => new MultiField('26', 'Merchant Account Information', 99, \true, 0, 99), '52' => new Field('52', 'Merchant Category Code', 4, \true, '0000'), '53' => new Field('53', 'Transaction Currency', 3, \true, '986'), '54' => new Field('54', 'Transaction Amount', 13, \false), '58' => new Field('58', 'Country Code', 2, \true, 'BR'), '59' => new Field('59', 'Merchant Name', 25, \true), '60' => new Field('60', 'Merchant City', 15, \true), '61' => new Field('61', 'Postal Code', 10, \false), '62' => new MultiField('62', 'Additional Data Field Template', 99, \true, 0, 99)];
-        $this->emvs['26']->addField(new Field('00', 'Globally Unique Identifier', 32, \true, 'br.gov.bcb.pix'))->addField(new Field('01', 'Pix Key', 36, \false))->addField(new Field('02', 'Payment Description', 40, \false))->addField(new Field('25', 'Payment URL', 77, \false));
+        $this->emvs['26']->addField(new Field('00', 'Globally Unique Identifier', 14, \true, 'br.gov.bcb.pix'))->addField(new Field('01', 'Pix Key', 77, \false))->addField(new Field('02', 'Payment Description', 72, \false))->addField(new Field('05', 'Withdraw Service Facilitator', 8, \false))->addField(new Field('25', 'Payment URL', 77, \false));
         $this->emvs['62']->addField(new Field('05', 'Reference Label', 25, \false));
     }
     /**

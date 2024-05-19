@@ -33,7 +33,7 @@ abstract class AbstractPayload
     protected $mpm;
     /**
      * Create EMV MPM object.
-     * 
+     *
      * @since 2.0.0
      * @return void
      */
@@ -55,12 +55,28 @@ abstract class AbstractPayload
         return $this;
     }
     /**
-     * Set the current pix merchant name.
-     * Max length 25
-     * 
+     * Set the current pix withdraw service facilitator.
+     * Max length 8
+     *
      * It will auto remove acents and auto
      * cut to max length limit.
-     * 
+     *
+     * @param string $service Pix withdraw service facilitator.
+     * @since 3.0.0
+     * @return self
+     */
+    public function setWithdrawServiceFacilitator(string $service)
+    {
+        $this->mpm->getEmv('26')->getField('05')->setValue(Cast::upperStr(Cast::cleanStr($service)));
+        return $this;
+    }
+    /**
+     * Set the current pix merchant name.
+     * Max length 25
+     *
+     * It will auto remove acents and auto
+     * cut to max length limit.
+     *
      * @param string $merchantName Pix merchant name.
      * @since 2.0.0
      * @return self
@@ -73,10 +89,10 @@ abstract class AbstractPayload
     /**
      * Set the current pix merchant city.
      * Max length 15
-     * 
+     *
      * It will auto remove acents and auto
      * cut to max length limit.
-     * 
+     *
      * @param string $merchantCity Pix merchant city.
      * @since 2.0.0
      * @return self
@@ -89,10 +105,10 @@ abstract class AbstractPayload
     /**
      * Set the current pix postal code.
      * Max length 15
-     * 
+     *
      * It will auto remove acents and auto
      * cut to max length limit.
-     * 
+     *
      * @param string $postalCode Pix postal code.
      * @since 2.0.0
      * @return self
@@ -104,7 +120,7 @@ abstract class AbstractPayload
     }
     /**
      * Get the current pix code.
-     * 
+     *
      * @param bool $regenerate
      * @since 2.0.0
      * @return string
@@ -117,7 +133,7 @@ abstract class AbstractPayload
     /**
      * Return the qr code based in current pix code.
      * The qr code format is a base64 image/png.
-     * 
+     *
      * @param string $imageType Type of output image.
      * @param string $ecc QrCode ECC.
      * @since 2.0.0
@@ -145,12 +161,23 @@ abstract class AbstractPayload
     }
     /**
      * Return if php supports QR Code.
-     * 
+     *
      * @since 2.0.0
      * @return bool
+     * @deprecated 3.0.0 Use supportDependencies instead.
      */
     public static function supportQrCode() : bool
     {
-        return (float) \phpversion('Core') >= 7.2 && (\extension_loaded('gd') && \function_exists('gd_info'));
+        return (float) \phpversion('Core') >= 8.0 && (\extension_loaded('gd') && \function_exists('gd_info'));
+    }
+    /**
+     * Return if php supports all dependencies.
+     *
+     * @since 3.0.0
+     * @return bool
+     */
+    public static function supportDependencies() : bool
+    {
+        return (float) \phpversion('Core') >= 8.0 && (\extension_loaded('gd') && \function_exists('gd_info')) && (\extension_loaded('mbstring') && \function_exists('mb_substr'));
     }
 }
