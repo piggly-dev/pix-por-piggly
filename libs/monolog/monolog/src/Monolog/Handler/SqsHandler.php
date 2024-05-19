@@ -36,12 +36,12 @@ class SqsHandler extends AbstractProcessingHandler
         $this->queueUrl = $queueUrl;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function write(array $record) : void
     {
         if (!isset($record['formatted']) || 'string' !== \gettype($record['formatted'])) {
-            throw new \InvalidArgumentException('SqsHandler accepts only formatted records as a string');
+            throw new \InvalidArgumentException('SqsHandler accepts only formatted records as a string' . Utils::getRecordMessageForException($record));
         }
         $messageBody = $record['formatted'];
         if (\strlen($messageBody) >= static::MAX_MESSAGE_SIZE) {

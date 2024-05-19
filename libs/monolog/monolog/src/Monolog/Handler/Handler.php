@@ -19,7 +19,7 @@ namespace Piggly\WooPixGateway\Vendor\Monolog\Handler;
 abstract class Handler implements HandlerInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function handleBatch(array $records) : void
     {
@@ -28,7 +28,7 @@ abstract class Handler implements HandlerInterface
         }
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function close() : void
     {
@@ -44,6 +44,13 @@ abstract class Handler implements HandlerInterface
     public function __sleep()
     {
         $this->close();
-        return \array_keys(\get_object_vars($this));
+        $reflClass = new \ReflectionClass($this);
+        $keys = [];
+        foreach ($reflClass->getProperties() as $reflProp) {
+            if (!$reflProp->isStatic()) {
+                $keys[] = $reflProp->getName();
+            }
+        }
+        return $keys;
     }
 }

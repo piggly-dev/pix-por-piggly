@@ -47,7 +47,7 @@ class RequestBodyParser
      */
     public function __construct()
     {
-        $this->_method = \sanitize_text_field(\wp_unslash($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+        $this->_method = \strtoupper(\htmlentities($_SERVER['REQUEST_METHOD']));
         $this->_raw = \file_get_contents('php://input');
         $this->_body = $this->resolve();
     }
@@ -57,7 +57,7 @@ class RequestBodyParser
      * @since 1.0.9
      * @return boolean
      */
-    public function isPost() : bool
+    public function isPOST() : bool
     {
         return $this->_method === 'POST';
     }
@@ -67,19 +67,9 @@ class RequestBodyParser
      * @since 1.0.9
      * @return boolean
      */
-    public function isGet() : bool
+    public function isGET() : bool
     {
         return $this->_method === 'GET';
-    }
-    /**
-     * Return if request method is DELETE.
-     *
-     * @since 2.0.0
-     * @return boolean
-     */
-    public function isDelete() : bool
-    {
-        return $this->_method === 'DELETE';
     }
     /**
      * Get request method.
@@ -121,46 +111,46 @@ class RequestBodyParser
      */
     public function resolve() : array
     {
-        $content_type = 'application/x-www-form-urlencoded';
-        if (isset($_SERVER['CONTENT_TYPE'])) {
-            $content_type = \sanitize_text_field(\wp_unslash($_SERVER['CONTENT_TYPE']));
+        $content_type = $_SERVER["CONTENT_TYPE"] ?? 'application/x-www-form-urlencoded';
+        switch ($content_type) {
+            case 'application/x-www-form-urlencoded':
+                return $this->urlencode($this->_raw);
+            case 'application/json':
+                return $this->json($this->_raw);
+            default:
+                return $this->urlencode($this->_raw);
         }
-        if ($content_type === 'application/json') {
-            return $this->readFromJson($this->_raw);
-        }
-        return $this->readFromJson($this->_raw);
     }
     /**
      * Parse raw string input to an array
      * based in application/json
      * content type.
      *
-     * @param string $raw Raw body string.
+     * @param string $raw
      * @since 1.0.9
-     * @throws Exception If JSON is invalid.
      * @return array
      */
-    public function readFromJson(string $raw) : array
+    public function json(string $raw) : array
     {
         $data = \json_decode($raw, \true);
         if (\json_last_error() !== \JSON_ERROR_NONE) {
-            throw new Exception('Invalid JSON format.');
+            throw new Exception('Cannot parse request body to JSON...');
         }
-        return $data ?? [];
+        return $data ?: [];
     }
     /**
      * Parse raw string input to an array
      * based in application/x-www-form-urlencoded
      * content type.
      *
-     * @param string $raw Raw body string.
-     * @since 2.0.0
+     * @param string $raw
+     * @since 1.0.9
      * @return array
      */
-    public function readFromUrlEncode(string $raw) : array
+    public function urlencode(string $raw) : array
     {
         $data = [];
         \parse_str($raw, $data);
-        return $data ?? [];
+        return $data ?: [];
     }
 }

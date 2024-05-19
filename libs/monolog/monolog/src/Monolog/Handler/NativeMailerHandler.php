@@ -96,7 +96,7 @@ class NativeMailerHandler extends MailHandler
         return $this;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function send(string $content, array $records) : void
     {

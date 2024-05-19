@@ -43,7 +43,7 @@ class ZendMonitorHandler extends AbstractProcessingHandler
         parent::__construct($level, $bubble);
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function write(array $record) : void
     {
@@ -63,7 +63,7 @@ class ZendMonitorHandler extends AbstractProcessingHandler
         zend_monitor_custom_event($type, $message, $formatted, $severity);
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDefaultFormatter() : FormatterInterface
     {

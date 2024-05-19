@@ -26,7 +26,7 @@ class ChromePHPFormatter implements FormatterInterface
      */
     private $logLevels = [Logger::DEBUG => 'log', Logger::INFO => 'info', Logger::NOTICE => 'info', Logger::WARNING => 'warn', Logger::ERROR => 'error', Logger::CRITICAL => 'error', Logger::ALERT => 'error', Logger::EMERGENCY => 'error'];
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function format(array $record)
     {
@@ -49,7 +49,7 @@ class ChromePHPFormatter implements FormatterInterface
         return [$record['channel'], $message, $backtrace, $this->logLevels[$record['level']]];
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function formatBatch(array $records)
     {

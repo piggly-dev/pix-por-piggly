@@ -67,7 +67,7 @@ class ElasticaHandler extends AbstractProcessingHandler
         $this->bulkSend([$record['formatted']]);
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setFormatter(FormatterInterface $formatter) : HandlerInterface
     {
@@ -91,7 +91,7 @@ class ElasticaHandler extends AbstractProcessingHandler
         return new ElasticaFormatter($this->options['index'], $this->options['type']);
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function handleBatch(array $records) : void
     {

@@ -43,7 +43,7 @@ abstract class AbstractHandler extends Handler implements ResettableInterface
         $this->bubble = $bubble;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isHandling(array $record) : bool
     {

@@ -51,7 +51,7 @@ class RecordCollection
     /**
      * Start with base SQL string with select and join.
      *
-     * @param string $base_query Base query.
+     * @param string $base_query
      * @since 1.0.12
      */
     public function __construct(string $base_query)
@@ -61,7 +61,7 @@ class RecordCollection
     /**
      * Add a where expression.
      *
-     * @param string $expression Expression to add.
+     * @param string $expression
      * @since 1.0.12
      * @return self
      */
@@ -73,12 +73,12 @@ class RecordCollection
     /**
      * Order by column.
      *
-     * @param string $column Column name.
-     * @param string $order ASC or DESC.
+     * @param string $column
+     * @param string $order
      * @since 1.0.12
      * @return self
      */
-    public function orderBy(string $column, string $order = 'ASC')
+    public function order_by(string $column, string $order = 'ASC')
     {
         $this->_order_by[] = "{$column} {$order}";
         return $this;
@@ -86,19 +86,16 @@ class RecordCollection
     /**
      * Paginate current query.
      *
-     * @param integer $perpage Items per page.
-     * @param integer $page Current page.
+     * @param integer $perpage
+     * @param integer $page
      * @since 1.0.12
      * @return self
      */
     public function paginate(int $perpage, int $page = 1)
     {
         $this->_pagination = [];
-        /** @var \wpdb $wpdb */
-        $wpdb = $GLOBALS['wpdb'];
-        if ($page <= 0) {
-            $page = 1;
-        }
+        global $wpdb;
+        $page = empty($page) || !\is_numeric($page) || $page <= 0 ? 1 : $page;
         $totalitems = $wpdb->query($this->mount());
         $totalpages = \ceil($totalitems / $perpage);
         if (!empty($page) && !empty($perpage)) {
@@ -134,8 +131,7 @@ class RecordCollection
      */
     public function get() : array
     {
-        /** @var \wpdb $wpdb */
-        $wpdb = $GLOBALS['wpdb'];
+        global $wpdb;
         $results = $wpdb->get_results($this->mount());
         if (empty($results)) {
             return [];
@@ -148,15 +144,15 @@ class RecordCollection
      * @since 1.0.12
      * @return array
      */
-    public function paginationMetadata() : array
+    public function pagination_metadata() : array
     {
         return $this->_pagination;
     }
     /**
      * Get pagination html.
      *
-     * @param string $base_url Base url to pagination.
-     * @param int $maxpages Max pages to show.
+     * @param string $base_url
+     * @param int $maxpages Max pages to show
      * @since 1.0.12
      * @return string
      */
@@ -191,13 +187,7 @@ class RecordCollection
                 $html .= '<span class="pgly-wps--item">...</span>';
                 continue;
             }
-            $is_current = '';
-            if ($_page === $page) {
-                $is_current = 'pgly-wps-is-selected';
-            }
-            $base_url = \esc_url($base_url);
-            $_page = \esc_attr($_page);
-            $is_current = \esc_attr($is_current);
+            $is_current = $_page == $page ? 'pgly-wps-is-selected' : '';
             $html .= "<a href=\"{$base_url}&paged={$_page}\" title=\"Ir para a página {$_page}\" class=\"pgly-wps--item {$is_current}\">";
             $html .= $_page;
             $html .= '</a>';

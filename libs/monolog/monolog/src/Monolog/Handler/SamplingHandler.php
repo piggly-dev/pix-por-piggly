@@ -80,7 +80,7 @@ class SamplingHandler extends AbstractHandler implements ProcessableHandlerInter
      *
      * @return HandlerInterface
      */
-    public function getHandler(array $record = null)
+    public function getHandler(?array $record = null)
     {
         if (!$this->handler instanceof HandlerInterface) {
             $this->handler = ($this->handler)($record, $this);
@@ -91,7 +91,7 @@ class SamplingHandler extends AbstractHandler implements ProcessableHandlerInter
         return $this->handler;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setFormatter(FormatterInterface $formatter) : HandlerInterface
     {
@@ -103,7 +103,7 @@ class SamplingHandler extends AbstractHandler implements ProcessableHandlerInter
         throw new \UnexpectedValueException('The nested handler of type ' . \get_class($handler) . ' does not support formatters.');
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getFormatter() : FormatterInterface
     {

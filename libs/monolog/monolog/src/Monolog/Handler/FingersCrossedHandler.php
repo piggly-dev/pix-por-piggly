@@ -97,7 +97,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
         }
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isHandling(array $record) : bool
     {
@@ -115,7 +115,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
         $this->buffer = [];
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function handle(array $record) : bool
     {
@@ -137,7 +137,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
         return \false === $this->bubble;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function close() : void
     {
@@ -188,7 +188,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
      *
      * @phpstan-param Record $record
      */
-    public function getHandler(array $record = null)
+    public function getHandler(?array $record = null)
     {
         if (!$this->handler instanceof HandlerInterface) {
             $this->handler = ($this->handler)($record, $this);
@@ -199,7 +199,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
         return $this->handler;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setFormatter(FormatterInterface $formatter) : HandlerInterface
     {
@@ -211,7 +211,7 @@ class FingersCrossedHandler extends Handler implements ProcessableHandlerInterfa
         throw new \UnexpectedValueException('The nested handler of type ' . \get_class($handler) . ' does not support formatters.');
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getFormatter() : FormatterInterface
     {

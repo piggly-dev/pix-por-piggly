@@ -33,10 +33,10 @@
 		]
 	},
 	"require": {
-		"php": ">=7.2",
-		"piggly/php-pix": "2.0.2",
-		"piggly/wordpress-starter-kit": "dev-release/v2.x.x",
-		"monolog/monolog": "2.3.0"
+		"php": ">=8.0",
+		"piggly/php-pix": "3.0.0",
+		"piggly/wordpress-starter-kit": "1.1.2",
+		"monolog/monolog": "2.9.3"
 	},
 	"scripts": {
 		"pre-install-cmd": "@create-libs-folder",

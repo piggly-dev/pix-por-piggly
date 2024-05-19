@@ -53,7 +53,7 @@ class LogstashFormatter extends NormalizerFormatter
         $this->contextKey = $contextKey;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function format(array $record) : string
     {

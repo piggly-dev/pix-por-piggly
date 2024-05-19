@@ -12,6 +12,7 @@ declare (strict_types=1);
 namespace Piggly\WooPixGateway\Vendor\Monolog\Handler;
 
 use Piggly\WooPixGateway\Vendor\Monolog\Logger;
+use Piggly\WooPixGateway\Vendor\Monolog\Utils;
 /**
  * Logs to syslog service.
  *
@@ -43,19 +44,19 @@ class SyslogHandler extends AbstractSyslogHandler
         $this->logopts = $logopts;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function close() : void
     {
         \closelog();
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function write(array $record) : void
     {
         if (!\openlog($this->ident, $this->logopts, $this->facility)) {
-            throw new \LogicException('Can\'t open syslog for ident "' . $this->ident . '" and facility "' . $this->facility . '"');
+            throw new \LogicException('Can\'t open syslog for ident "' . $this->ident . '" and facility "' . $this->facility . '"' . Utils::getRecordMessageForException($record));
         }
         \syslog($this->logLevels[$record['level']], (string) $record['formatted']);
     }

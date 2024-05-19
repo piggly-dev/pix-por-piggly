@@ -78,7 +78,7 @@ class SlackRecord
     /**
      * @param string[] $excludeFields
      */
-    public function __construct(?string $channel = null, ?string $username = null, bool $useAttachment = \true, ?string $userIcon = null, bool $useShortAttachment = \false, bool $includeContextAndExtra = \false, array $excludeFields = array(), FormatterInterface $formatter = null)
+    public function __construct(?string $channel = null, ?string $username = null, bool $useAttachment = \true, ?string $userIcon = null, bool $useShortAttachment = \false, bool $includeContextAndExtra = \false, array $excludeFields = array(), ?FormatterInterface $formatter = null)
     {
         $this->setChannel($channel)->setUsername($username)->useAttachment($useAttachment)->setUserIcon($userIcon)->useShortAttachment($useShortAttachment)->includeContextAndExtra($includeContextAndExtra)->excludeFields($excludeFields)->setFormatter($formatter);
         if ($this->includeContextAndExtra) {
@@ -109,7 +109,7 @@ class SlackRecord
             $message = $record['message'];
         }
         if ($this->useAttachment) {
-            $attachment = array('fallback' => $message, 'text' => $message, 'color' => $this->getAttachmentColor($record['level']), 'fields' => array(), 'mrkdwn_in' => array('fields'), 'ts' => $record['datetime']->getTimestamp());
+            $attachment = array('fallback' => $message, 'text' => $message, 'color' => $this->getAttachmentColor($record['level']), 'fields' => array(), 'mrkdwn_in' => array('fields'), 'ts' => $record['datetime']->getTimestamp(), 'footer' => $this->username, 'footer_icon' => $this->userIcon);
             if ($this->useShortAttachment) {
                 $attachment['title'] = $record['level_name'];
             } else {

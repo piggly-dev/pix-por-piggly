@@ -1,11 +1,11 @@
 {
 	"name": "pix-por-piggly",
-	"version": "2.0.28",
+	"version": "3.0.0",
 	"description": "Implemente o Pix de uma forma simples e rápida em sua loja Woocommerce.",
 	"private": true,
 	"devDependencies": {
 		"del": "^6.0.0",
-		"gulp": "^4.0.2",
+		"gulp": "^5.0.0",
 		"gulp-clean": "^0.4.0",
 		"gulp-copy": "^4.0.1",
 		"gulp-debug": "^4.0.0",

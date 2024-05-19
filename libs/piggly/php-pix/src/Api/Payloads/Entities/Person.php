@@ -5,10 +5,11 @@ namespace Piggly\WooPixGateway\Vendor\Piggly\Pix\Api\Payloads\Entities;
 use Exception;
 use Piggly\WooPixGateway\Vendor\Piggly\Pix\Exceptions\InvalidFieldException;
 use Piggly\WooPixGateway\Vendor\Piggly\Pix\Parser;
+use Piggly\WooPixGateway\Vendor\Piggly\Pix\Utils\Helper;
 use RuntimeException;
 /**
  * Person entity to Cob payload.
- * 
+ *
  * @package \Piggly\Pix
  * @subpackage \Piggly\Pix\Api\Payloads\Entities
  * @version 2.0.0
@@ -22,130 +23,131 @@ use RuntimeException;
 class Person
 {
     /**
-     * Person type as "recebedor" . 
-     * 
+     * Person type as "recebedor" .
+     *
      * @var string
      * @since 2.0.0
      */
     const TYPE_RECEIVER = 'recebedor';
     /**
-     * Person type as "devedor" . 
-     * 
+     * Person type as "devedor" .
+     *
      * @var string
      * @since 2.0.0
      */
     const TYPE_DEBTOR = 'devedor';
     /**
      * All person types available.
-     * 
+     *
      * @var array<string>
      * @since 2.0.0
      */
     const TYPES = [self::TYPE_RECEIVER, self::TYPE_DEBTOR];
     /**
      * Person document.
-     * 
+     *
      * @since 2.0.0
      * @var string
      */
     protected $document;
     /**
      * Person document type.
-     * 
+     *
      * @since 2.0.0
      * @var string
      */
     protected $documentType;
     /**
      * Person name.
-     * 
+     *
      * @since 2.0.0
      * @var string
      */
     protected $name;
     /**
      * Person fantasy name.
-     * 
+     *
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $fantasyName;
+    protected $fantasyName = null;
     /**
      * Person street address.
-     * 
+     *
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $streetAddress;
+    protected $streetAddress = null;
     /**
      * Person city.
-     * 
+     *
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $city;
+    protected $city = null;
     /**
      * Person state.
-     * 
+     *
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $state;
+    protected $state = null;
     /**
      * Person zip code.
-     * 
+     *
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $zipCode;
+    protected $zipCode = null;
     /**
      * Person email.
-     * 
+     *
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $email;
+    protected $email = null;
     /**
      * Person type.
-     * 
+     *
      * @since 2.0.0
      * @var string
      */
     protected $type;
     /**
      * Create a person.
-     * 
-     * @param string $type 
+     *
+     * @param string $type
      * @since 2.0.0
+     * @since 3.0.0 Expect name and document as param.
      * @return self
      */
-    public function __construct(string $type = self::TYPE_DEBTOR)
+    public function __construct(string $type, string $name, string $document)
     {
-        $this->setType($type);
+        $this->setType($type, $name, $document);
     }
     /**
      * Get document to current person.
-     * 
+     *
      * @since 2.0.0
      * @return string
      */
-    public function getDocument() : ?string
+    public function getDocument() : string
     {
         return $this->document;
     }
     /**
      * Get document type to current person.
-     * 
+     *
      * @since 2.0.0
      * @return string
      */
-    public function getDocumentType() : ?string
+    public function getDocumentType() : string
     {
         return $this->documentType;
     }
     /**
      * Set CPF/CNPJ to current person.
-     * 
+     *
      * @param string $document
      * @since 2.0.0
      * @return self
@@ -169,17 +171,17 @@ class Person
     }
     /**
      * Get name to current person.
-     * 
+     *
      * @since 2.0.0
      * @return string
      */
-    public function getName() : ?string
+    public function getName() : string
     {
         return $this->name;
     }
     /**
      * Set name to current person.
-     * 
+     *
      * @param string $name
      * @since 2.0.0
      * @return self
@@ -191,9 +193,9 @@ class Person
     }
     /**
      * Get fantasy name to current person.
-     * 
+     *
      * @since 2.0.0
-     * @return string
+     * @return string|null
      */
     public function getFantasyName() : ?string
     {
@@ -201,7 +203,7 @@ class Person
     }
     /**
      * Set fantasy name to current person.
-     * 
+     *
      * @param string $fantasyName
      * @since 2.0.0
      * @return self
@@ -213,9 +215,9 @@ class Person
     }
     /**
      * Get street address to current person.
-     * 
+     *
      * @since 2.0.0
-     * @return string
+     * @return string|null
      */
     public function getStreetAddress() : ?string
     {
@@ -223,7 +225,7 @@ class Person
     }
     /**
      * Set street address to current person.
-     * 
+     *
      * @param string $streetAddress
      * @since 2.0.0
      * @return self
@@ -235,9 +237,9 @@ class Person
     }
     /**
      * Get city to current person.
-     * 
+     *
      * @since 2.0.0
-     * @return string
+     * @return string|null
      */
     public function getCity() : ?string
     {
@@ -245,7 +247,7 @@ class Person
     }
     /**
      * Set city to current person.
-     * 
+     *
      * @param string $city
      * @since 2.0.0
      * @return self
@@ -257,9 +259,9 @@ class Person
     }
     /**
      * Get state to current person.
-     * 
+     *
      * @since 2.0.0
-     * @return string
+     * @return string|null
      */
     public function getState() : ?string
     {
@@ -267,7 +269,7 @@ class Person
     }
     /**
      * Set state to current person.
-     * 
+     *
      * @param string $state
      * @since 2.0.0
      * @return self
@@ -282,9 +284,9 @@ class Person
     }
     /**
      * Get zipcode to current person.
-     * 
+     *
      * @since 2.0.0
-     * @return string
+     * @return string|null
      */
     public function getZipCode() : ?string
     {
@@ -292,7 +294,7 @@ class Person
     }
     /**
      * Set zipcode to current person.
-     * 
+     *
      * @param string $state
      * @since 2.0.0
      * @return self
@@ -303,14 +305,14 @@ class Person
         if (\strlen($_zipcode) > 8) {
             throw new InvalidFieldException('Pessoa.CEP', $zipcode, 'O CEP está inválido.');
         }
-        $this->zipcode = \substr($_zipcode, 0, 5) . '-' . \substr($_zipcode, 5, 3);
+        $this->zipCode = \substr($_zipcode, 0, 5) . '-' . \substr($_zipcode, 5, 3);
         return $this;
     }
     /**
      * Get email to current person.
-     * 
+     *
      * @since 2.0.0
-     * @return string
+     * @return string|null
      */
     public function getEmail() : ?string
     {
@@ -318,7 +320,7 @@ class Person
     }
     /**
      * Set email to current person.
-     * 
+     *
      * @param string $state
      * @since 2.0.0
      * @return self
@@ -330,7 +332,7 @@ class Person
     }
     /**
      * Get type to current person.
-     * 
+     *
      * @since 2.0.0
      * @return string
      */
@@ -340,12 +342,15 @@ class Person
     }
     /**
      * Set type to current person.
-     * 
+     *
      * @param string $type
+     * @param string|null $name
+     * @param string|null $document
      * @since 2.0.0
+     * @since 3.0.0 Expect name and document as param.
      * @return self
      */
-    public function setType(string $type)
+    public function setType(string $type, ?string $name = null, ?string $document = null)
     {
         try {
             static::validateType($type);
@@ -353,11 +358,17 @@ class Person
             throw new InvalidFieldException('Pessoa.Tipo', $type, $e->getMessage());
         }
         $this->type = $type;
+        if (empty($name) === \false) {
+            $this->setName($name);
+        }
+        if (empty($document) === \false) {
+            $this->setDocument($document);
+        }
         return $this;
     }
     /**
      * Export this object to an array.
-     * 
+     *
      * @since 2.0.0
      * @return array
      */
@@ -392,7 +403,7 @@ class Person
     }
     /**
      * Import data to array.
-     * 
+     *
      * @param string $type Person type
      * @param array $data
      * @since 2.0.0
@@ -400,13 +411,21 @@ class Person
      */
     public function import(array $data)
     {
-        $importable = ['nome' => 'setName', 'nomeFantasia' => 'setFantasyName', 'cpf' => 'setDocument', 'cnpj' => 'setDocument', 'logradouro' => 'setStreetAddress', 'cidade' => 'setCity', 'cep' => 'setZipCode', 'uf' => 'setState', 'email' => 'setEmail'];
-        foreach ($importable as $field => $method) {
-            if (isset($data[$field])) {
-                $this->{$method}($data[$field]);
-            }
-        }
+        Helper::fill($data, $this, ['nomeFantasia' => 'setFantasyName', 'logradouro' => 'setStreetAddress', 'cidade' => 'setCity', 'cep' => 'setZipCode', 'uf' => 'setState', 'email' => 'setEmail']);
         return $this;
+    }
+    /**
+     * Create a new entity.
+     *
+     * @param string $type
+     * @param array $data
+     * @since 3.0.0
+     * @return Person
+     */
+    public static function create(string $type, array $data)
+    {
+        $e = new Person($type, $data['name'], $data['cpf'] ?? $data['cnpj']);
+        return $e->import($data);
     }
     /**
      * Throw an exception if $type is a invalid type.

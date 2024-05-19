@@ -3,92 +3,66 @@
 /**
  * Interface SettingsContainerInterface
  *
- * @filesource   SettingsContainerInterface.php
  * @created      28.08.2018
- * @package      chillerlan\Settings
  * @author       Smiley <smiley@chillerlan.net>
  * @copyright    2018 Smiley
  * @license      MIT
  */
+declare (strict_types=1);
 namespace Piggly\WooPixGateway\Vendor\chillerlan\Settings;
 
-use JsonSerializable;
+use JsonSerializable, Serializable;
 /**
  * a generic container with magic getter and setter
  */
-interface SettingsContainerInterface extends JsonSerializable
+interface SettingsContainerInterface extends JsonSerializable, Serializable
 {
     /**
      * Retrieve the value of $property
      *
-     * @param string $property
-     *
-     * @return mixed
+     * @return mixed|null
      */
-    public function __get(string $property);
+    public function __get(string $property) : mixed;
     /**
      * Set $property to $value while avoiding private and non-existing properties
-     *
-     * @param string $property
-     * @param mixed  $value
-     *
-     * @return void
      */
-    public function __set(string $property, $value) : void;
+    public function __set(string $property, mixed $value) : void;
     /**
      * Checks if $property is set (aka. not null), excluding private properties
-     *
-     * @param string $property
-     *
-     * @return bool
      */
     public function __isset(string $property) : bool;
     /**
      * Unsets $property while avoiding private and non-existing properties
-     *
-     * @param string $property
-     *
-     * @return void
      */
     public function __unset(string $property) : void;
     /**
-     * @see SettingsContainerInterface::toJSON()
-     *
-     * @return string
+     * @see \chillerlan\Settings\SettingsContainerInterface::toJSON()
      */
     public function __toString() : string;
     /**
      * Returns an array representation of the settings object
      *
-     * @return array
+     * The values will be run through the magic __get(), which may also call custom getters.
      */
     public function toArray() : array;
     /**
      * Sets properties from a given iterable
      *
-     * @param iterable $properties
-     *
-     * @return \chillerlan\Settings\SettingsContainerInterface
+     * The values will be run through the magic __set(), which may also call custom setters.
      */
-    public function fromIterable(iterable $properties) : SettingsContainerInterface;
+    public function fromIterable(iterable $properties) : static;
     /**
      * Returns a JSON representation of the settings object
      * @see \json_encode()
-     *
-     * @param int|null $jsonOptions
-     *
-     * @return string
+     * @see \chillerlan\Settings\SettingsContainerInterface::toArray()
      */
-    public function toJSON(int $jsonOptions = null) : string;
+    public function toJSON(int|null $jsonOptions = null) : string;
     /**
      * Sets properties from a given JSON string
      *
-     * @param string $json
-     *
-     * @return \chillerlan\Settings\SettingsContainerInterface
-     *
      * @throws \Exception
      * @throws \JsonException
+     * @see \chillerlan\Settings\SettingsContainerInterface::fromIterable()
      */
-    public function fromJSON(string $json) : SettingsContainerInterface;
+    public function fromJSON(string $json) : static;
 }

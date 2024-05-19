@@ -41,7 +41,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
      * Minimum level for logs that are passed to handler
      *
      * @var int[]
-     * @phpstan-var Level[]
+     * @phpstan-var array<Level, int>
      */
     protected $acceptedLevels;
     /**
@@ -71,7 +71,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         }
     }
     /**
-     * @phpstan-return Level[]
+     * @phpstan-return array<int, Level>
      */
     public function getAcceptedLevels() : array
     {
@@ -99,14 +99,14 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         return $this;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isHandling(array $record) : bool
     {
         return isset($this->acceptedLevels[$record['level']]);
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function handle(array $record) : bool
     {
@@ -121,7 +121,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         return \false === $this->bubble;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function handleBatch(array $records) : void
     {
@@ -144,7 +144,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
      *
      * @phpstan-param Record $record
      */
-    public function getHandler(array $record = null)
+    public function getHandler(?array $record = null)
     {
         if (!$this->handler instanceof HandlerInterface) {
             $this->handler = ($this->handler)($record, $this);
@@ -155,7 +155,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         return $this->handler;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setFormatter(FormatterInterface $formatter) : HandlerInterface
     {
@@ -167,7 +167,7 @@ class FilterHandler extends Handler implements ProcessableHandlerInterface, Rese
         throw new \UnexpectedValueException('The nested handler of type ' . \get_class($handler) . ' does not support formatters.');
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getFormatter() : FormatterInterface
     {

@@ -39,7 +39,7 @@ class ElasticsearchFormatter extends NormalizerFormatter
         $this->type = $type;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function format(array $record)
     {

@@ -3,8 +3,7 @@
 namespace Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Requirements;
 
 use Exception;
-use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Connector;
-use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Interfaces\RequirementInterface;
+use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Requirements\Interfaces\RequirementInterface;
 /**
  * The runner validates if current php
  * version is similar to expected.
@@ -28,20 +27,14 @@ class PHPVersionRequirement implements RequirementInterface
      * required_version
      * custom_response
      *
-     * @param array $params Requirements params.
+     * @param $params
      * @since 1.0.12
-     * @throws Exception If current php version is lower than required.
      * @return void
      */
     public static function run(array $params = [])
     {
-        $version = $params['required_version'] ?? '7.0.0';
-        $response = \sprintf('The minimum required version for PHP is: %s', $params['required_version'] ?? '7.0.0');
-        if (isset($params['custom_response'])) {
-            $response = $params['custom_response'];
-        }
-        if (\version_compare(\phpversion(), $version, '<')) {
-            throw new Exception($response);
+        if (\version_compare(\phpversion(), $params['required_version'], '<')) {
+            throw new Exception($params['custom_response'] ?? 'The minimum required version for PHP is: ' . $params['required_version']);
         }
     }
 }

@@ -44,7 +44,7 @@ class MandrillHandler extends MailHandler
         $this->apiKey = $apiKey;
     }
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function send(string $content, array $records) : void
     {

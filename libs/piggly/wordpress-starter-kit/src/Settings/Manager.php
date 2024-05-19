@@ -2,10 +2,9 @@
 
 namespace Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Settings;
 
-use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Buckets\KeyingBucket;
 use RuntimeException;
 /**
- * Manager read, save and delete WordPress
+ * Manager read, save and delete wordpress
  * option usign Bucket as settings data interface.
  *
  * @package \Piggly\Wordpress
@@ -37,17 +36,14 @@ class Manager
     /**
      * Startup settings manager.
      *
-     * @param string $option Option name at WordPress.
+     * @param string $option Option name at Wordpress.
      * @param KeyingBucket $defaults Default settings.
      * @since 1.0.0
      * @return void
      */
     public function __construct(string $option, KeyingBucket $defaults = null)
     {
-        if ($defaults === null) {
-            $defaults = new KeyingBucket();
-        }
-        $this->_bucket = $defaults;
+        $this->_bucket = \is_null($defaults) ? new KeyingBucket() : $defaults;
         $this->_option = $option;
         $this->reload();
     }
@@ -62,7 +58,7 @@ class Manager
         return $this->_bucket;
     }
     /**
-     * Reload setting from WordPress options.
+     * Reload setting from Wordpress options.
      * It will replace any settings loaded to
      * current bucket. Be careful.
      *
@@ -71,33 +67,32 @@ class Manager
      */
     public function reload()
     {
-        $this->_bucket->import(\get_option($this->_option, []));
+        $this->_bucket->import(get_option($this->_option, []));
         return $this;
     }
     /**
-     * Delete all settings from WordPress options.
+     * Delete all settings from Wordpress options.
      *
      * @since 1.0.0
-     * @throws RuntimeException When cannot delete option.
      * @return self
      */
     public function delete()
     {
-        if (\delete_option($this->_option) === \false) {
-            throw new RuntimeException('Cannot delete plugin options. Unexpected error found.');
+        if (delete_option($this->_option) === \false) {
+            throw new RuntimeException(\sprintf('Cannot delete wordpress option `%s`.', $this->_option));
         }
         $this->_bucket = new KeyingBucket();
         return $this;
     }
     /**
-     * Save current bucket to WordPress options.
+     * Save current bucket to Wordpress options.
      *
      * @since 1.0.0
      * @return self
      */
     public function save()
     {
-        \update_option($this->_option, $this->_bucket->export());
+        update_option($this->_option, $this->_bucket->export());
         return $this;
     }
 }
