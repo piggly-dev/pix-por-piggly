@@ -6,16 +6,9 @@ use Piggly\WooPixGateway\Core\Gateway\PixGateway;
 use Piggly\WooPixGateway\CoreConnector;
 
 /**
- * Class for handling HBL Payment block checkout support.
+ * Class for handling Pix Payment block checkout support.
  */
 final class PixBlockGateway extends AbstractPaymentMethodType {
-
-	/**
-	 * The HBL Payment gateway instance.
-	 *
-	 * @var PixGateway
-	 */
-	private $gateway;
 
 	/**
 	 * The name of the payment method.
@@ -25,13 +18,25 @@ final class PixBlockGateway extends AbstractPaymentMethodType {
 	protected $name = 'wc_piggly_pix_gateway';
 
 	/**
-	 * Initializes the HBL Payment block.
+	 * Initializes the Pix Payment block.
 	 *
 	 * @since 2.2.3
 	 */
 	public function initialize() {
-		$this->settings = get_option( 'wc_piggly_pix_settings-payment_settings', array() );
-		$this->gateway  = new PixGateway();
+		$this->settings = get_option(
+			'wc_piggly_pix_settings',
+			array([
+				'gateway' => [
+					'enabled' => false,
+					'title' => 'Faça um Pix',
+					'description' => 'Você não precisa ter uma chave cadastrada. Pague os seus pedidos via Pix.',
+					'icon' => 'pix-payment-icon'
+				],
+				'account' => [
+					'key_value' => null,
+				]
+			])
+		);
 	}
 
 	/**
@@ -42,7 +47,7 @@ final class PixBlockGateway extends AbstractPaymentMethodType {
 	 * @return bool True if the payment method is active, false otherwise.
 	 */
 	public function is_active() {
-		return $this->gateway->is_available();
+		return empty($this->settings['account']['key_value']) ? 'no' : ($this->settings['gateway']['enabled'] === true ? 'yes' : 'no');
 	}
 
 	/**
@@ -54,8 +59,8 @@ final class PixBlockGateway extends AbstractPaymentMethodType {
 	 */
 	public function get_payment_method_script_handles() {
 		wp_register_script(
-			'wc-hbl-payment-blocks-integration',
-			CoreConnector::plugin()->getUrl().'assets/pgly.pix.checkout.js',
+			'wc-pix-por-piggly-blocks-integration',
+			CoreConnector::plugin()->getUrl().'assets/js/pgly.pix.checkout.js',
 			array(
 				'wc-blocks-registry',
 				'wc-settings',
@@ -67,7 +72,7 @@ final class PixBlockGateway extends AbstractPaymentMethodType {
 			true
 		);
 
-		return array( 'wc-piggly-pix-block-integration' );
+		return array( 'wc-pix-por-piggly-blocks-integration' );
 	}
 
 	/**
@@ -77,8 +82,9 @@ final class PixBlockGateway extends AbstractPaymentMethodType {
 	 */
 	public function get_payment_method_data() {
 		return array(
-			'title'       => $this->gateway->title,
-			'description' => $this->gateway->description,
+			'title'       => $this->settings['gateway']['title'],
+			'description' => $this->settings['gateway']['description'],
+			'icon'        => \apply_filters('woocommerce_gateway_icon', CoreConnector::plugin()->getUrl().'assets/images/'.$this->settings['icon'].'.png')
 		);
 	}
 }
