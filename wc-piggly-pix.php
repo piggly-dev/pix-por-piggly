@@ -2,7 +2,7 @@
 /**
  * @link https://studio.piggly.com.br/
  * @since 2.0.0
- * @version 2.0.0
+ * @version 2.1.0
  * @package \Piggly\WooPixGateway
  * @author Caique Araujo <caique@piggly.com.br>
  * @author Piggly Lab <dev@piggly.com.br>
@@ -15,8 +15,8 @@
  * Plugin Name:       Pix por Piggly (para Woocommerce)
  * Plugin URI:        https://studio.piggly.com.br/
  * Description:       O melhor plugin para pagamentos via Pix no Woocommerce. Aplique desconto automático, personalize o comportamento e muito mais.
- * Requires at least: 4.0
- * Requires PHP:      7.2
+ * Requires at least: 6.0
+ * Requires PHP:      8.0
  * Version:           2.1.0
  * Author:            Piggly Lab
  * Author URI:        https://studio.piggly.com.br/
