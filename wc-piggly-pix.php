@@ -2,12 +2,12 @@
 /**
  * @link https://studio.piggly.com.br/
  * @since 2.0.0
- * @version 2.0.0
+ * @version 2.1.1
  * @package \Piggly\WooPixGateway
  * @author Caique Araujo <caique@piggly.com.br>
  * @author Piggly Lab <dev@piggly.com.br>
  * @copyright 2021 Piggly Lab <dev@piggly.com.br>
- * 
+ *
  * This code is released under the GPL licence version 3
  * or later, available here http://www.gnu.org/licenses/gpl-3.0.txt
  *
@@ -15,15 +15,15 @@
  * Plugin Name:       Pix por Piggly (para Woocommerce)
  * Plugin URI:        https://studio.piggly.com.br/
  * Description:       O melhor plugin para pagamentos via Pix no Woocommerce. Aplique desconto automático, personalize o comportamento e muito mais.
- * Requires at least: 4.0
- * Requires PHP:      7.2
- * Version:           2.0.28
+ * Requires at least: 6.0
+ * Requires PHP:      8.0
+ * Version:           2.1.1
  * Author:            Piggly Lab
  * Author URI:        https://studio.piggly.com.br/
  * License:           GPLv3 or later
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.txt
  * Text Domain:       wc-piggly-pix
- * Domain Path:       /languages 
+ * Domain Path:       /languages
  * Network:           false
  */
 
@@ -40,7 +40,7 @@ use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Plugin;
 if ( ! defined( 'WPINC' ) ) exit;
 
 /** @var string Currently plugin version. Start at version 1.0.0 and use SemVer - https://semver.org */
-if (!defined('PGLY_PIX_GATEWAY_VERSION')) define( 'PGLY_PIX_GATEWAY_VERSION', '2.0.28' );
+if (!defined('PGLY_PIX_GATEWAY_VERSION')) define( 'PGLY_PIX_GATEWAY_VERSION', '2.1.1' );
 
 /** @var string Currently plugin version. Start at version 1.0.0 and use SemVer - https://semver.org */
 if (!defined('PGLY_PIX_GATEWAY_DBVERSION')) define( 'PGLY_PIX_GATEWAY_DBVERSION', '2.0.11' );
@@ -59,22 +59,22 @@ function pgly_pix_gateway_requirements () : bool
 	try
 	{
 		if ( version_compare( phpversion(), \PGLY_PIX_GATEWAY_PHPVERSION, '<' ) )
-		{ 
+		{
 			throw new Exception(
 				sprintf(
-					__('A versão mínima requirida para o <strong>PHP</strong> é %s', 'wc-piggly-pix'), 
+					__('A versão mínima requirida para o <strong>PHP</strong> é %s', 'wc-piggly-pix'),
 					\PGLY_PIX_GATEWAY_PHPVERSION
 				)
-			); 
+			);
 		}
 
 		require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
 
-		if ( !is_plugin_active ('woocommerce/woocommerce.php') ) 
+		if ( !is_plugin_active ('woocommerce/woocommerce.php') )
 		{
 			throw new Exception(
 				__('Verifique se o <strong>Woocommerce</strong> está ativado', 'wc-piggly-pix')
-			); 
+			);
 		}
 
 		return true;
@@ -108,9 +108,9 @@ if ( pgly_pix_gateway_requirements() )
 	require __DIR__ . '/vendor/autoload.php';
 
 	/**
-	 * Global function holder. 
+	 * Global function holder.
 	 * Works similar to a singleton's instance().
-	 * 
+	 *
 	 * @since 1.0.0
 	 * @return Core
 	 */
@@ -141,6 +141,24 @@ if ( pgly_pix_gateway_requirements() )
 		// Return core
 		return $core;
 	}
+
+	function pgly_pix_blocks_compatibility ()
+	{
+		// Add block compatibility
+	 	if ( \class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil') )
+	 	{
+	 		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+	 			'cart_checkout_blocks',
+	 			__FILE__,
+	 			true
+	 		);
+	 	}
+	}
+
+	add_action(
+	 	'before_woocommerce_init',
+	 	'pgly_pix_blocks_compatibility'
+	);
 
 	// Startup plugin core
 	pgly_pix_gateway()->startup();

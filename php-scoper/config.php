@@ -89,6 +89,12 @@ $config['patchers'][] = function ( $file_path, $prefix, $content ) {
 		);
 	}
 
+	if (strpos($file_path, 'monolog/monolog/src/Monolog/Logger.php') !== false) {
+		return str_replace(
+			"\\$prefix\\Fiber", '\\Fiber', $content
+		);
+	}
+
 	return $content;
 };
 

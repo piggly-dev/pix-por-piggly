@@ -1,8 +1,8 @@
-# Pix por Piggly v2.0.28
+# Pix por Piggly v2.1.1
 
-![Branch Lançamento](https://img.shields.io/badge/branch%2Fmaster%20v2.x.x-brightgreen?style=flat-square) ![Branch Desenvolvimento](https://img.shields.io/badge/branch%2Fdev-dev%20v2.x.x-orange?style=flat-square) ![Versão Atual](https://img.shields.io/badge/version-v2.0.25-brightgreen?style=flat-square) ![PHP](https://img.shields.io/badge/php-%5E7.2%20%7C%20%5E8.0-blue?style=flat-square) ![Software License](https://img.shields.io/badge/license-GPL%202.0-brightgreen?style=flat-square)
+![Branch Lançamento](https://img.shields.io/badge/branch%2Fmaster%20v2.x.x-brightgreen?style=flat-square) ![Branch Desenvolvimento](https://img.shields.io/badge/branch%2Fdev-dev%20v2.x.x-orange?style=flat-square) ![Versão Atual](https://img.shields.io/badge/version-v2.1.1-brightgreen?style=flat-square) ![PHP](https://img.shields.io/badge/php-%5E7.2%20%7C%20%5E8.0-blue?style=flat-square) ![Software License](https://img.shields.io/badge/license-GPL%202.0-brightgreen?style=flat-square)
 
-**Importante**: Como a regra de versionamento de código manda, a versão 2.x será incompatível com a versão 1.x não tenha dúvidas disso. A versão 2.x foi projetada para ser totalmente compatível com as APIs do Pix, que atualizam automaticamente os pedidos, e essas APIs vão mudar sim o comportamento do Pix. Versões desatualizadas de MySQL e PHP podem ser o problema e dificultar a compatibilidade. E estamos nos esforçando para lançar micro-correções para essas necessidades. A qualquer momento é possível fazer o downgrade para a versão 1.x e continuar utilizando todos os recursos dela que já estão otimizados e não precisavam de atualização como uma versão 1.x.
+> Compatível com WooCommerce Blocks e PHP 8.0+.
 
 O melhor plugin para pagamentos via Pix no Woocommerce. Na versão 2.0.0 o plugin está melhor mais dinâmico e muito mais responsivo. Veja mais detalhes.
 
@@ -34,6 +34,7 @@ O plugin é permitir que você utilize o método de pagamento Pix em sua loja **
 ## Versão `2.0.0`
 
 Na versão **2.0.0** promovemos várias mudanças no formato no plugin, tanto para facilitar quando para deixar o fluxo de pagamento mais simples e dinâmico. Algumas opções foram removidas, enquanto outras foram mantidas. Leia abaixo em detalhes tudo que está diferente.
+
 ### E-mails
 
 #### 👎 Antes
@@ -146,10 +147,10 @@ Para permitir isso, nosso plugin segue todas as propostas do padrão EMV®1, imp
 Dessa forma, nosso plugin gera os três principais métodos de pagamento Pix:
 
 1. Um **QR Code** com o código Pix;
-2. O código Pix em formato de texto para utilização da função **Pix Copia & Cola**; 
+2. O código Pix em formato de texto para utilização da função **Pix Copia & Cola**;
 3. Pagamento manual com os dados Pix fornecidos.
 
-Nosso plugin gera de forma automática o código Pix com base nas informações do Pedido e nas informações preenchidas na configuração do plugin. 
+Nosso plugin gera de forma automática o código Pix com base nas informações do Pedido e nas informações preenchidas na configuração do plugin.
 
 > Não importa como você digita a chave Pix, ela será automaticamente convertida para os formatos apropriados, okay? Caso ela esteja inválida, de acordo com o formato escolhido, você será notificado.
 
@@ -194,7 +195,7 @@ Na página de configurações do Plugin, acesse **Pedidos** e insira um valor e 
 
 ### Como conferir o pagamento Pix? ###
 
-A conferência do Pix ainda é manual, assim como acontece em uma transferência eletrônica. Para facilitar, o plugin gera os Pix com um código identificador. Esse código possuí um valor estático de 25 caracteres. 
+A conferência do Pix ainda é manual, assim como acontece em uma transferência eletrônica. Para facilitar, o plugin gera os Pix com um código identificador. Esse código possuí um valor estático de 25 caracteres.
 
 Abra o pedido criado no Woocommerce e verifique o código identificador do Pix, ao abrir o aplicativo do seu banco, você poderá ver detalhes sobre o recebimento Pix e, na maioria dos bancos, o pagamento estará identificado com o código identificador do Pix.
 
@@ -241,6 +242,16 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 **Preencha corretamente a sua chave Pix. Você pode testar nas configurações do plugin o funcionamento do Pix mesmo que o módulo esteja desativado.**
 
 ## Changelog ##
+
+### 2.1.1 ###
+
+* Corrigido os problemas de envio no comprovante.
+
+### 2.1.0 ###
+
+* Suporte ao PHP 8.0;
+* Correção de bugs;
+* Suporte ao WooCommerce Checkout Blocks.
 
 ### 2.0.28 ###
 

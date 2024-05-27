@@ -2,6 +2,7 @@
 namespace Piggly\WooPixGateway\Core;
 
 use Piggly\WooPixGateway\Core\Entities\PixEntity;
+use Piggly\WooPixGateway\Core\Gateway\PixBlockGateway;
 use Piggly\WooPixGateway\Core\Gateway\PixGateway;
 use Piggly\WooPixGateway\Core\Repo\PixRepo;
 use Piggly\WooPixGateway\CoreConnector;
@@ -13,7 +14,7 @@ use WC_Order;
 
 /**
  * Manages all woocommerce actions and filters.
- * 
+ *
  * @package \Piggly\WooPixGateway
  * @subpackage \Piggly\WooPixGateway\Core
  * @version 2.0.0
@@ -26,6 +27,7 @@ use WC_Order;
  */
 class Woocommerce extends Initiable
 {
+
 	/**
 	 * Startup method with all actions and
 	 * filter to run.
@@ -36,15 +38,15 @@ class Woocommerce extends Initiable
 	public function startup ()
 	{
 		// Action to change status behavior
-		WP::add_filter( 
-			'wc_order_statuses', 
-			$this, 
-			'add_order_statuses' 
+		WP::add_filter(
+			'wc_order_statuses',
+			$this,
+			'add_order_statuses'
 		);
 
 		WP::add_filter(
-			'woocommerce_payment_gateways', 
-			$this, 
+			'woocommerce_payment_gateways',
+			$this,
 			'add_gateway'
 		);
 
@@ -87,17 +89,34 @@ class Woocommerce extends Initiable
 		);
 
 		WP::add_action(
-			'manage_shop_order_posts_custom_column', 
+			'manage_shop_order_posts_custom_column',
 			$this,
-			'pix_column', 
-			20, 
+			'pix_column',
+			20,
 			2
 		);
+
+		WP::add_action(
+			'woocommerce_blocks_loaded',
+			$this,
+			'payment_block'
+		);
+	}
+
+	function payment_block() {
+		if ( class_exists( '\Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+			add_action(
+					'woocommerce_blocks_payment_method_type_registration',
+					function ( \Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
+						$payment_method_registry->register( new PixBlockGateway() );
+					}
+			);
+		}
 	}
 
 	/**
 	 * Add column to Woocommerce Orders.
-	 * 
+	 *
 	 * @since 2.0.23
 	 * @return void
 	 */
@@ -106,19 +125,19 @@ class Woocommerce extends Initiable
 		if ( $column !== 'order_status' ) return;
 
 		$order = new WC_Order( $post_id );
-		
+
 		if ( $order->get_payment_method() !== CoreConnector::plugin()->getName() )
 		{ return; }
 
 		$pix = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc_piggly_pix_latest_pix'));
-		
-		if ( empty($pix) ) return; 
+
+		if ( empty($pix) ) return;
 
 		printf('<mark class="order-status" style="margin-left: 8px; color: blue; background: #e6e6ff;"><span>Pix de Verificação %s - Banco %s</span></mark>', $pix->isType(PixEntity::TYPE_STATIC) ? 'Manual' : 'Automático', \str_pad($pix->getBank(), 3, '0', STR_PAD_LEFT));
 	}
 	/**
 	 * Add gateway to Woocommerce.
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @return void
 	 */
@@ -127,7 +146,7 @@ class Woocommerce extends Initiable
 		array_push( $gateways, PixGateway::class );
 		return $gateways;
 	}
-	
+
 	/**
 	 * Update pix to paid status when order is complete.
 	 *
@@ -141,7 +160,7 @@ class Woocommerce extends Initiable
 
 		if ( empty($order) )
 		{ return; }
-		
+
 		if ( $order->get_payment_method() !== CoreConnector::plugin()->getName() )
 		{ return; }
 
@@ -158,7 +177,7 @@ class Woocommerce extends Initiable
 		if ( !$pix->isStatus(PixEntity::STATUS_PAID) )
 		{ $pix->updateStatus(PixEntity::STATUS_PAID); }
 	}
-	
+
 	/**
 	 * Remove links to order when it was removed.
 	 *
@@ -167,15 +186,15 @@ class Woocommerce extends Initiable
 	 * @return void
 	 */
 	public function order_deleted ( $id )
-	{ 
+	{
 		$post_type = get_post_type($id);
 
-		if ($post_type !== 'shop_order') 
+		if ($post_type !== 'shop_order')
 		{ return; }
 
-		(new PixRepo($this->_plugin))->unlinkOrder($id); 
+		(new PixRepo($this->_plugin))->unlinkOrder($id);
 	}
-	
+
 	/**
 	 * Update pix to cancelled status when order is cancelled.
 	 *
@@ -189,7 +208,7 @@ class Woocommerce extends Initiable
 
 		if ( empty($order) )
 		{ return; }
-		
+
 		if ( $order->get_payment_method() !== CoreConnector::plugin()->getName() )
 		{ return; }
 
@@ -216,7 +235,7 @@ class Woocommerce extends Initiable
 	{
 		if ( $order->get_payment_method() !== CoreConnector::plugin()->getName() )
 		{ return $must_cancel; }
-		
+
 		$pix = (new PixRepo($this->_plugin))->latestStatus($order, ['created']);
 
 		// No transaction was created
@@ -232,7 +251,7 @@ class Woocommerce extends Initiable
 
 	/**
 	 * Add wc-pix-receipt to order status.
-	 * 
+	 *
 	 * @since 2.0.0
 	 * @param array $order_statuses
 	 * @return array

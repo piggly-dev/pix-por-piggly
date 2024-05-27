@@ -15,7 +15,7 @@ use Piggly\WooPixGateway\Vendor\Piggly\Pix\Parser;
 use RuntimeException;
 /**
  * Cob payload modeling.
- * 
+ *
  * @package \Piggly\Pix
  * @subpackage \Piggly\Pix\Api\Payloads
  * @version 2.0.0
@@ -30,177 +30,194 @@ class Cob
 {
     use UseExtra;
     /**
-     * Cob status as "NAO_SETADO" . 
-     * 
+     * Cob status as "NAO_SETADO" .
+     *
      * @var string
      * @since 2.0.0
      */
     const STATUS_UNSET = 'NAO_SETADO';
     /**
-     * Cob status as "ATIVA" . 
-     * 
+     * Cob status as "ATIVA" .
+     *
      * @var string
      * @since 2.0.0
      */
     const STATUS_ACTIVE = 'ATIVA';
     /**
-     * Cob status as "CONCLUIDA" . 
-     * 
+     * Cob status as "CONCLUIDA" .
+     *
      * @var string
      * @since 2.0.0
      */
     const STATUS_FINISHED = 'CONCLUIDA';
     /**
-     * Cob status as "REMOVIDA_PELO_USUARIO_RECEBEDOR" . 
-     * 
+     * Cob status as "REMOVIDA_PELO_USUARIO_RECEBEDOR" .
+     *
      * @var string
      * @since 2.0.0
      */
     const STATUS_REMOVED_BY_RECEPTOR = 'REMOVIDA_PELO_USUARIO_RECEBEDOR';
     /**
-     * Cob status as "REMOVIDA_PELO_PSP" . 
-     * 
+     * Cob status as "REMOVIDA_PELO_PSP" .
+     *
      * @var string
      * @since 2.0.0
      */
     const STATUS_REMOVED_BY_PSP = 'REMOVIDA_PELO_PSP';
     /**
      * All cob status available.
-     * 
+     *
      * @var array<string>
      * @since 2.0.0
      */
     const STATUSES = [self::STATUS_UNSET, self::STATUS_ACTIVE, self::STATUS_FINISHED, self::STATUS_REMOVED_BY_RECEPTOR, self::STATUS_REMOVED_BY_PSP];
     /**
-     * Cob type as "COB_IMMEDIATE". 
-     * 
+     * Cob type as "COB_IMMEDIATE".
+     *
      * @var string
      * @since 2.0.0
      */
     const TYPE_IMMEDIATE = 'COB_IMMEDIATE';
     /**
-     * Cob type as "COB_DUE". 
-     * 
+     * Cob type as "COB_DUE".
+     *
      * @var string
      * @since 2.0.0
      */
     const TYPE_DUE = 'COB_DUE';
     /**
      * All cob types available.
-     * 
+     *
      * @var array<string>
      * @since 2.0.0
      */
     const TYPES = [self::TYPE_IMMEDIATE, self::TYPE_DUE];
     /**
      * Receiver person.
-     * 
+     *
      * @since 2.0.0
-     * @var Person
+     * @var Person|null
      */
-    protected $receiver;
+    protected $receiver = null;
     /**
      * Debtor person.
-     * 
+     *
      * @since 2.0.0
-     * @var Person
+     * @var Person|null
      */
-    protected $debtor;
+    protected $debtor = null;
     /**
      * Calendar rules.
-     * 
+     *
      * @since 2.0.0
-     * @var Calendar
+     * @var Calendar|null
      */
-    protected $calendar;
+    protected $calendar = null;
     /**
      * Amount rules.
      * @since 2.0.0
-     * @var Amount
+     * @var Amount|null
      */
-    protected $amount;
+    protected $amount = null;
     /**
      * Location data.
-     * 
+     *
      * @since 2.0.0
-     * @var Location
+     * @var Location|null
      */
-    protected $location;
+    protected $location = null;
     /**
      * Pix data.
-     * 
+     *
      * @since 2.0.0
-     * @var Pix
+     * @var Pix|null
      */
-    protected $pix;
+    protected $pix = null;
+    /**
+     * Collection of pix related to cob.
+     *
+     * @since 3.0.0
+     * @var array<Pix>
+     */
+    protected $pixes = [];
     /**
      * Pix key.
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $pixKey;
+    protected $pixKey = null;
+    /**
+     * Pix key.
+     * @since 2.0.0
+     * @var string|null
+     */
+    protected $pixCopyAndPast = null;
     /**
      * Pix key type.
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $pixKeyType;
+    protected $pixKeyType = null;
     /**
      * Transaction id.
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $tid;
+    protected $tid = null;
     /**
      * Request message to debtor.
-     * 
+     *
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $requestToDebtor;
+    protected $requestToDebtor = null;
     /**
      * Cob revision.
-     * 
+     *
      * @since 2.0.0
-     * @var int
+     * @var int|null
      */
-    protected $revision;
+    protected $revision = null;
     /**
      * Cob status.
-     * 
+     *
      * @since 2.0.0
-     * @var string
+     * @var string|null
      */
-    protected $status;
+    protected $status = null;
     /**
      * Set the cob receiver.
      * Will change $person type to Person::TYPE_RECEIVER.
-     * 
+     *
      * @param Person $person
      * @since 2.0.0
+     * @since 3.0.0 Clone person to avoid changes.
      * @return self
      */
     public function setReceiver(Person $person)
     {
-        $this->receiver = $person->setType(Person::TYPE_RECEIVER);
+        $new_person = new Person(Person::TYPE_RECEIVER, $person->getName(), $person->getDocument());
+        $this->receiver = $new_person->import($person->export());
         return $this;
     }
     /**
      * Set the cob debtor.
      * Will change $person type to Person::TYPE_DEBTOR.
-     * 
+     *
      * @param Person $person
      * @since 2.0.0
+     * @since 3.0.0 Clone person to avoid changes.
      * @return self
      */
     public function setDebtor(Person $person)
     {
-        $this->debtor = $person->setType(Person::TYPE_DEBTOR);
+        $new_person = new Person(Person::TYPE_DEBTOR, $person->getName(), $person->getDocument());
+        $this->debtor = $new_person->import($person->export());
         return $this;
     }
     /**
      * Set the cob calendar rules.
-     * 
+     *
      * @param Calendar $calendar
      * @since 2.0.0
      * @return self
@@ -212,7 +229,7 @@ class Cob
     }
     /**
      * Set the cob amount rules.
-     * 
+     *
      * @param Amount $amount
      * @since 2.0.0
      * @return self
@@ -224,7 +241,7 @@ class Cob
     }
     /**
      * Set the cob location data.
-     * 
+     *
      * @param Location $location
      * @since 2.0.0
      * @return self
@@ -236,7 +253,7 @@ class Cob
     }
     /**
      * Set the cob pix data.
-     * 
+     *
      * @param Pix $pix
      * @since 2.0.0
      * @return self
@@ -244,11 +261,11 @@ class Cob
     public function setPix(Pix $pix)
     {
         $this->pix = $pix;
-        return $this;
+        \array_unshift($this->pixes, $pix);
     }
     /**
      * Set the cob pix key.
-     * 
+     *
      * @param string $pixKey
      * @since 2.0.0
      * @return self
@@ -261,8 +278,21 @@ class Cob
         return $this;
     }
     /**
+     * Set the cob pix copy and past key.
+     *
+     * @param string $emv
+     * @since 3.0.0
+     * @return self
+     * @throws CannotParseKeyTypeException Cannot parse type of pix key, may be invalid.
+     */
+    public function setPixCopyPaste(string $emv)
+    {
+        $this->pixCopyAndPast = $emv;
+        return $this;
+    }
+    /**
      * Set the cob transaction id.
-     * 
+     *
      * @param string $tid
      * @since 2.0.0
      * @return self
@@ -274,7 +304,7 @@ class Cob
     }
     /**
      * Set the cob request message to debtor.
-     * 
+     *
      * @param string $requestToDebtor
      * @since 2.0.0
      * @return self
@@ -286,7 +316,7 @@ class Cob
     }
     /**
      * Set the cob revision.
-     * 
+     *
      * @param int $revision
      * @since 2.0.0
      * @return self
@@ -298,7 +328,7 @@ class Cob
     }
     /**
      * Set the cob status.
-     * 
+     *
      * @param string $status
      * @since 2.0.0
      * @return self
@@ -316,7 +346,7 @@ class Cob
     }
     /**
      * Get receiver to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return Person|null
      */
@@ -326,7 +356,7 @@ class Cob
     }
     /**
      * Get debtor to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return Person|null
      */
@@ -336,7 +366,7 @@ class Cob
     }
     /**
      * Get calendar to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return Calendar|null
      */
@@ -346,7 +376,7 @@ class Cob
     }
     /**
      * Get amount to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return Amount|null
      */
@@ -356,7 +386,7 @@ class Cob
     }
     /**
      * Get location to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return Location|null
      */
@@ -366,7 +396,7 @@ class Cob
     }
     /**
      * Get pix to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return Pix|null
      */
@@ -376,7 +406,7 @@ class Cob
     }
     /**
      * Get pix key to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return string|null
      */
@@ -386,7 +416,7 @@ class Cob
     }
     /**
      * Get pix key to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return string|null
      */
@@ -396,7 +426,7 @@ class Cob
     }
     /**
      * Get request message to debtor of current cob.
-     * 
+     *
      * @since 2.0.0
      * @return string|null
      */
@@ -406,7 +436,7 @@ class Cob
     }
     /**
      * Get revision to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return int|null
      */
@@ -416,7 +446,7 @@ class Cob
     }
     /**
      * Get status to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return string|null
      */
@@ -426,7 +456,7 @@ class Cob
     }
     /**
      * Get tid to current cob.
-     * 
+     *
      * @since 2.0.0
      * @return string|null
      */
@@ -435,8 +465,58 @@ class Cob
         return $this->tid;
     }
     /**
+     * Add pix to cob.
+     *
+     * @param Pix|array $pix
+     * @since 3.0.0
+     * @return self
+     */
+    public function addPix($pix)
+    {
+        $pix = $pix instanceof Pix ? $pix : (new Pix($pix['endToEndId'], $pix['valor']))->import($pix);
+        $this->pixes[$pix->getE2eid()] = $pix;
+        return $this;
+    }
+    /**
+     * Get pix by e2eid.
+     *
+     * @param string $e2eid
+     * @since 3.0.0
+     * @return Pix|null
+     */
+    public function getPixBy(string $e2eid) : ?Pix
+    {
+        return $this->pixes[$e2eid] ?? null;
+    }
+    /**
+     * Get all refunds associated to pix transaction.
+     *
+     * @since 3.0.0
+     * @return array<Pix>
+     */
+    public function getPixes() : array
+    {
+        return $this->pixes;
+    }
+    /**
+     * Is this cob paid?
+     *
+     * @since 3.0.0
+     * @return bool
+     */
+    public function isPaid() : bool
+    {
+        if (static::isStatus(static::STATUS_FINISHED, $this->status)) {
+            return \true;
+        }
+        if (empty($this->getPix()) === \false) {
+            return empty($this->getPix()->getE2eid()) === \false;
+        }
+        return \false;
+    }
+    /**
      * Export this object to an array.
-     * 
+     *
      * @since 2.0.0
      * @return array
      */
@@ -479,57 +559,69 @@ class Cob
         if (isset($this->location)) {
             $array['loc'] = $this->location->export();
         }
-        if (isset($this->pix)) {
-            $array['pix'] = $this->pix->export();
+        if (empty($this->pixes) === \false) {
+            $array['pix'] = [];
+            foreach ($this->pixes as $pix) {
+                $array['pix'][] = $pix->export();
+            }
         }
         return $array;
     }
     /**
      * Import data from array.
-     * 
+     *
      * @param array $response
      * @since 2.0.0
      * @return self
      */
     public function import(array $response)
     {
-        if (isset($response['txid'])) {
-            $this->setTid($response['txid']);
-        }
-        if (isset($response['revisao'])) {
-            $this->setRevision(\intval($response['revisao']));
-        }
-        if (isset($response['solicitacaoPagador'])) {
-            $this->setRequestToDebtor($response['solicitacaoPagador']);
-        }
-        if (isset($response['chave'])) {
+        // Base data
+        if (empty($response['chave']) === \false) {
             $this->setPixKey($response['chave']);
         }
-        if (isset($response['status'])) {
-            $this->setStatus($response['status']);
+        if (empty($response['pixCopiaECola']) === \false) {
+            $this->setPixCopyPaste($response['pixCopiaECola']);
         }
-        if (isset($response['infoAdicionais'])) {
+        if (empty($response['solicitacaoPagador']) === \false) {
+            $this->setRequestToDebtor($response['solicitacaoPagador']);
+        }
+        if (empty($response['infoAdicionais']) === \false && \is_array($response['infoAdicionais'])) {
             foreach ($response['infoAdicionais'] as $info) {
                 $this->addExtra($info['nome'], $info['valor']);
             }
         }
-        if (isset($response['calendario'])) {
+        // Cob requested
+        if (empty($response['calendario']) === \false && \is_array($response['calendario'])) {
             $this->setCalendar((new Calendar())->import($response['calendario']));
         }
-        if (isset($response['loc'])) {
+        if (empty($response['devedor']) === \false && \is_array($response['devedor'])) {
+            $this->setDebtor((new Person(Person::TYPE_DEBTOR, $response['devedor']['nome'], $response['devedor']['cpf'] ?? $response['devedor']['cnpj']))->import($response['devedor']));
+        }
+        if (empty($response['loc']) === \false) {
             $this->setLocation((new Location())->import($response['loc']));
         }
-        if (isset($response['devedor'])) {
-            $this->setDebtor((new Person(Person::TYPE_DEBTOR))->import($response['devedor']));
-        }
-        if (isset($response['recebedor'])) {
-            $this->setReceiver((new Person(Person::TYPE_RECEIVER))->import($response['recebedor']));
-        }
-        if (isset($response['valor'])) {
+        if (empty($response['valor']) === \false) {
             $this->setAmount((new Amount())->import($response['valor']));
         }
-        if (isset($response['pix'])) {
-            $this->setPix((new Pix())->import($response['pix']));
+        // Cob response
+        if (empty($response['txid']) === \false) {
+            $this->setTid($response['txid']);
+        }
+        if (isset($response['revisao']) || empty($response['revisao']) === \false) {
+            $this->setRevision(\intval($response['revisao']));
+        }
+        if (empty($response['status']) === \false) {
+            $this->setStatus($response['status']);
+        }
+        if (empty($response['recebedor']) === \false && \is_array($response['recebedor'])) {
+            $this->setReceiver((new Person(Person::TYPE_RECEIVER, $response['recebedor']['nome'], $response['recebedor']['cpf'] ?? $response['recebedor']['cnpj']))->import($response['recebedor']));
+        }
+        if (empty($response['pix']) === \false && \is_array($response['pix'])) {
+            $pixes = isset($response['pix'][0]) ? $response['pix'] : [$response['pix']];
+            foreach ($pixes as $pix) {
+                $this->addPix($pix);
+            }
         }
         return $this;
     }

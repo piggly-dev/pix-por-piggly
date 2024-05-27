@@ -11,16 +11,12 @@
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
-		"noImplicitThis": true,
+		"noImplicitThis": false,
 		"baseUrl": "./js",
 		"resolveJsonModule": true,
 		"paths": {
-			"@/*": [
-				"admin/*",
-			],
-			"#/*": [
-				"front/*",
-			]
+			"@/*": ["admin/*"],
+			"#/*": ["front/*"]
 		},
 		"lib": [
 			"ES2015",
@@ -35,13 +31,6 @@
 			"scripthost"
 		]
 	},
-	"include": [
-		"./**/*.ts",
-		"./**/*.tsx",
-		"./**/*.vue",
-		"./**/*.json",
-	],
-	"exclude": [
-		"node_modules"
-	]
+	"include": ["./**/*.ts", "./**/*.tsx", "./**/*.vue", "./**/*.json"],
+	"exclude": ["node_modules"]
 }
