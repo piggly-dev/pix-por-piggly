@@ -5,12 +5,12 @@ Tags: woocommerce, payment, pix, e-commerce, shop, ecommerce, pagamento
 Requires at least: 6.0
 Requires PHP: 8.0
 Tested up to: 6.5
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 Language: pt_BR
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-== Pix por Piggly v2.1.0 ==
+== Pix por Piggly v2.1.1 ==
 
 > Compatível com WooCommerce Blocks e PHP 8.0+.
 
@@ -265,6 +265,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 10. Metabox Pix no pedido realizado via Pix.
 
 == Changelog ==
+
+= 2.1.1 =
+
+- Corrigido os problemas de envio do comprovante.
 
 = 2.1.0 =
 

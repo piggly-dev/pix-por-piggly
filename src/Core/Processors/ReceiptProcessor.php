@@ -9,7 +9,7 @@ use Piggly\WooPixGateway\Vendor\Piggly\Wordpress\Settings\KeyingBucket;
 /**
  * The receipt processor will process the file sent
  * and attach it to the Pix Entity
- * 
+ *
  * @package \Piggly\WooPixGateway
  * @subpackage \Piggly\WooPixGateway\Core\Processors
  * @version 2.0.0
@@ -25,7 +25,7 @@ class ReceiptProcessor
 	/**
 	 * Return the receipt data. Which include
 	 * a URl and path.
-	 * 
+	 *
 	 * It will return null if receipt is not
 	 * valid or dangerous.
 	 *
@@ -44,7 +44,7 @@ class ReceiptProcessor
 		// Delete file if exists
 		if ( \file_exists($data['path']) )
 		{ \unlink($data['path']); }
-			
+
 		return $this->new($pix);
 	}
 
@@ -60,7 +60,7 @@ class ReceiptProcessor
 	protected function new ( PixEntity $pix ) : ?array
 	{
 		$FILE_NAME = \sanitize_file_name($_FILES['pgly_pix_receipt']['name']);
-		$FILE_TMPNAME =  \sanitize_file_name($_FILES['pgly_pix_receipt']['tmp_name']);
+		$FILE_TMPNAME =  $_FILES['pgly_pix_receipt']['tmp_name'];
 
 		$expName = \explode('.', $FILE_NAME);
 
@@ -78,15 +78,15 @@ class ReceiptProcessor
 			$finfo = finfo_open(FILEINFO_MIME_TYPE);
 			$mime = finfo_file($finfo, $FILE_TMPNAME );
 			finfo_close($finfo);
-			
+
 			// Validate mime type
 			$mimeValidation = \in_array($mime, ['image/jpg','image/jpeg','image/png','application/pdf']);
 			$trusted = $mimeValidation;
 		}
 		catch ( Exception $e )
-		{ 
+		{
 			CoreConnector::debugger()->force()->error(\sprintf(CoreConnector::__translate('O usuário tentou realizar o upload, mas o arquivo não foi encontrado em `%s`. Verifique as configurações do PHP e as permissões da pasta. Verifique, ainda, a biblioteca MAGIC e a extensão file do PHP.'), $FILE_TMPNAME ));
-			throw new Exception(CoreConnector::__translate('O arquivo não pode ser enviado no momento. Tente novamente mais tarde.')); 
+			throw new Exception(CoreConnector::__translate('O arquivo não pode ser enviado no momento. Tente novamente mais tarde.'));
 		}
 
 		finally
@@ -103,21 +103,21 @@ class ReceiptProcessor
 
 		// Validate extension
 		$validateExt = \in_array($pathExt, ['jpg','jpeg','png','pdf']) || \in_array($nameExt, ['jpg','jpeg','png','pdf']);
-		
+
 		if ( !$validateExt && !$mimeValidation )
 		{ throw new Exception(CoreConnector::__translate('O nome do arquivo não indica uma imagem ou um PDF compatível.')); }
 
 		if ( !$mimeValidation )
 		{ throw new Exception(CoreConnector::__translate('O comprovante foi enviado em um tipo de arquivo não compatível. Envie uma imagem ou um PDF.')); }
-		
+
 		// Check file size
-		if ($_FILES['pgly_pix_receipt']['size'] > 2000000) 
+		if ($_FILES['pgly_pix_receipt']['size'] > 2000000)
 		{ throw new Exception(CoreConnector::__translate('O tamanho máximo permitido para o arquivo é 2MB, envie um arquivo menor.')); }
 
 		$mapExt = ['image/jpg'=>'jpg','image/jpeg'=>'jpeg','image/png'=>'png','application/pdf'=>'pdf'];
 		// Fix extension
 		$extension = $validateExt ? $pathExt ?? $nameExt : $mapExt[$mime];
-		
+
 		$upload     = wp_upload_dir();
 		$dirname    = dirname(CoreConnector::plugin()->getBasename());
 		$uploadPath = $upload['basedir'].'/'.$dirname.'/receipts/';
@@ -125,18 +125,18 @@ class ReceiptProcessor
 		$fileName   = md5('pix-'.$pix->getTxid().time()).'.'.$extension;
 		$file       = $uploadPath.$fileName;
 
-		if ( !\file_exists( $uploadPath ) ) 
+		if ( !\file_exists( $uploadPath ) )
 		{ wp_mkdir_p($uploadPath); }
 
 		if ( !\move_uploaded_file($FILE_TMPNAME , $file) )
-		{ 
+		{
 			CoreConnector::debugger()->force()->error(\sprintf(CoreConnector::__translate('Não foi mover o arquivo de upload de `%s` para `%s`.'), $FILE_TMPNAME , $file));
-			throw new Exception(CoreConnector::__translate('Não foi possível enviar o comprovante agora.')); 
+			throw new Exception(CoreConnector::__translate('Não foi possível enviar o comprovante agora.'));
 		}
-		
+
 		/** @var KeyingBucket $settings */
 		$settings = CoreConnector::settings()->get('orders', new KeyingBucket());
-			
+
 		$order = $pix->getOrder();
 		$pix->setReceipt($uploadUrl.$fileName, $file);
 
@@ -148,10 +148,10 @@ class ReceiptProcessor
 		);
 
 		if ( !$order->has_status([$settings->get('receipt_status', 'on-hold')]) )
-		{ 
-			$order->update_status( 
+		{
+			$order->update_status(
 				$settings->get('receipt_status', 'on-hold'),
-			); 
+			);
 		}
 
 		$order->save();
@@ -165,9 +165,9 @@ class ReceiptProcessor
 
 		// Do after save order
 		do_action('pgly_wc_piggly_pix_after_save_receipt', $pix, $order, $order->get_id());
-		
+
 		return [
-			'url' => $uploadUrl.$fileName, 
+			'url' => $uploadUrl.$fileName,
 			'path' => $file
 		];
 	}
