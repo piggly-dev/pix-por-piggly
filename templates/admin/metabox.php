@@ -7,10 +7,7 @@ use Piggly\WooPixGateway\Vendor\Piggly\Pix\Parser;
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-global $post;
-
-$order = new WC_Order( $post->ID );
-$pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc_piggly_pix_latest_pix'));
+$pix = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc_piggly_pix_latest_pix'));
 ?>
 
 <div id="pgly-pix-por-piggly" class="pgly-wps--settings" style="padding: 10px;">
@@ -32,20 +29,20 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 		<p style="margin: 16px auto; text-align: center; font-style: italic">Este Pix é verificado de forma automática a partir da API do Banco.</p>
 		<?php if (!$pix->isStatus(PixEntity::STATUS_PAID)) : ?>
 			<p style="margin: 16px auto; text-align: center;">Se o cliente já realizou o pagamento, clique no botão abaixo para validar:</p>
-			<button 
+			<button
 				class="pgly-wps--button pgly-async--behaviour pgly-wps-is-primary"
 				data-action="pgly_wc_piggly_pix_admin_cron_process"
 				data-response-container="woo-bdm-gateway-tx-<?php echo esc_attr($index);?>"
 				data-refresh="true"
 				data-tx="<?php echo esc_attr($pix->getTxid());?>">
 				Verificar Pagamento
-				<svg 
+				<svg
 					class="pgly-wps--spinner pgly-wps-is-white"
 					viewBox="0 0 50 50">
 					<circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
 				</svg>
 			</button>
-			
+
 			<div class="pgly-wps--response" id="pgly-pix-por-piggly-tx-<?php echo esc_attr($index);?>"></div>
 			<div class="pgly-wps--space"></div>
 
@@ -71,13 +68,13 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 		<img style="max-width:100%; height: auto;" src="<?php echo esc_url($pix->getQrCode()['url']);?>" alt="QR Code de Pagamento"/>
 	</div>
 	<?php endif; ?>
-	
+
 	<?php if ( $pix->isType(PixEntity::TYPE_STATIC) ) : ?>
 	<div class="pgly-wps--notification pgly-wps-is-danger">
 		O pagamento do Pix Estático não é verificado automaticamente.
 		Para atualizar o Pix automaticamente, é necessário
 		ter uma API do Pix conectada ao plugin.
-		Saiba mais em <strong>API do Pix</strong> no menu 
+		Saiba mais em <strong>API do Pix</strong> no menu
 		lateral "Pix por Piggly".
 	</div>
 	<?php endif; ?>
@@ -142,7 +139,7 @@ $pix   = (new PixRepo(CoreConnector::plugin()))->byId($order->get_meta('_pgly_wc
 			<strong>Verificação do Arquivo</strong>
 			<span><?php echo esc_html($pix->getReceipt()['trusted'] ? 'Arquivo Verificado' : 'O arquivo não pode ser verificado');?></span>
 		</div>
-		<a 
+		<a
 			class="pgly-wps--button pgly-wps-is-success pgly-wps-is-expanded"
 			href="<?php echo esc_url($pix->getReceipt()['url']);?>"
 			target="_blank">

@@ -1,6 +1,6 @@
-# Pix por Piggly v2.1.1
+# Pix por Piggly v2.1.2
 
-![Branch Lançamento](https://img.shields.io/badge/branch%2Fmaster%20v2.x.x-brightgreen?style=flat-square) ![Branch Desenvolvimento](https://img.shields.io/badge/branch%2Fdev-dev%20v2.x.x-orange?style=flat-square) ![Versão Atual](https://img.shields.io/badge/version-v2.1.1-brightgreen?style=flat-square) ![PHP](https://img.shields.io/badge/php-%5E7.2%20%7C%20%5E8.0-blue?style=flat-square) ![Software License](https://img.shields.io/badge/license-GPL%202.0-brightgreen?style=flat-square)
+![Branch Lançamento](https://img.shields.io/badge/branch%2Fmaster%20v2.x.x-brightgreen?style=flat-square) ![Branch Desenvolvimento](https://img.shields.io/badge/branch%2Fdev-dev%20v2.x.x-orange?style=flat-square) ![Versão Atual](https://img.shields.io/badge/version-v2.1.2-brightgreen?style=flat-square) ![PHP](https://img.shields.io/badge/php-%5E7.2%20%7C%20%5E8.0-blue?style=flat-square) ![Software License](https://img.shields.io/badge/license-GPL%202.0-brightgreen?style=flat-square)
 
 > Compatível com WooCommerce Blocks e PHP 8.0+.
 
@@ -242,6 +242,10 @@ Após a instalação do plugin, vá até `Plugins > Plugins instalados`, ative o
 **Preencha corretamente a sua chave Pix. Você pode testar nas configurações do plugin o funcionamento do Pix mesmo que o módulo esteja desativado.**
 
 ## Changelog ##
+
+### 2.1.2 ###
+
+* Suporte a metabox e flag de pagamento Pix nos pedidos para WooCommerce 8.4+.
 
 ### 2.1.1 ###
 
