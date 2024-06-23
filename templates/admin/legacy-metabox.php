@@ -3,7 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 global $post;
 
-$order = new WC_Order( $post->ID );
 $pix   = $order->get_meta('_wc_piggly_pix');
 $data  = [];
 ?>
@@ -19,14 +18,14 @@ $data  = [];
 	<div class="pgly-wps--space"></div>
 	<div class="pgly-wps--response" id="pix-por-piggly--response"></div>
 
-	<button 
+	<button
 		class="pgly-wps--button pgly-async--behaviour pgly-wps-is-primary"
 		data-action="pgly_wc_piggly_pix_admin_update"
 		data-response-container="pix-por-piggly--response"
 		data-refresh="true"
 		data-order="<?php echo esc_attr($order->get_id());?>">
 		Atualizar Versão
-		<svg 
+		<svg
 			class="pgly-wps--spinner pgly-wps-is-primary"
 			viewBox="0 0 50 50">
 			<circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
@@ -63,10 +62,10 @@ $data  = [];
 	<?php
 	$receipt = $order->get_meta('_wc_piggly_pix_receipt');
 	if ( !empty($receipt) ) : ?>
-		<a 
-			href="<?php echo esc_url($receipt)?>" 
-			target="_blank" 
-			style="display: block; text-align: center; margin: 0 0 6px;" 
+		<a
+			href="<?php echo esc_url($receipt)?>"
+			target="_blank"
+			style="display: block; text-align: center; margin: 0 0 6px;"
 			class="pgly-wps--button pgly-wps-is-expanded pgly-wps-is-success">
 			Comprovante Pix
 		</a>

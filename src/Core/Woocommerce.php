@@ -96,6 +96,14 @@ class Woocommerce extends Initiable
 			2
 		);
 
+		WP::add_filter(
+			'manage_woocommerce_page_wc-orders_custom_column',
+			$this,
+			'pix_column',
+			99,
+			2
+		);
+
 		WP::add_action(
 			'woocommerce_blocks_loaded',
 			$this,
